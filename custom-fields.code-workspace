@@ -1,0 +1,83 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "editor.fontSize": 14,
+    "terminal.integrated.fontSize": 14,
+    "editor.formatOnSave": true,
+    "editor.lineHeight": 18,
+
+    // 🔑 Sempre salvar arquivos com LF
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.rulers": [80, 180],
+
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "typescript.updateImportsOnFileMove.enabled": "always",
+
+    // ESLint
+    "eslint.validate": [
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact"
+    ],
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.stylelint": "never"
+    },
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "eslint.format.enable": true,
+    "eslint.enable": true,
+    "eslint.workingDirectories": [
+      { "directory": "backend" },
+      { "directory": "frontend" }
+    ],
+
+    // Prisma
+    "[prisma]": {
+      "editor.defaultFormatter": "Prisma.prisma"
+    },
+
+    // Typescript server
+    "typescript.tsserver.log": "off",
+    "typescript.tsserver.maxTsServerMemory": 4096,
+
+    // Excludes
+    "files.watcherExclude": {
+      "**/prisma-generated-types/*": true,
+      "**/node_modules/*": true,
+      "**/.git/*": true,
+      "**/dist": true,
+      "**/.next": true,
+      "**/.turbo": true,
+      "**/build": true
+    },
+    "files.exclude": {
+      "**/prisma-generated-types/*": true,
+      "**/node_modules/*": true,
+      "**/.git/*": true,
+      "**/dist": true,
+      "**/.next": true,
+      "**/.turbo": true,
+      "**/build": true
+    },
+    "search.exclude": {
+      "**/prisma-generated-types/*": true,
+      "**/node_modules/*": true,
+      "**/.git/*": true,
+      "**/dist": true,
+      "**/.next": true,
+      "**/.turbo": true,
+      "**/build": true
+    }
+  }
+}
