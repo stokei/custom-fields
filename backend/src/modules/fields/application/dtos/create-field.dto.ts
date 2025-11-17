@@ -1,14 +1,8 @@
+import { FieldOptionValueObjectProps } from '../../domain/value-objects/field-option.vo';
 import { FieldTypeEnum } from '../../domain/value-objects/field-type.vo';
 
-export interface FieldOptionReadModel {
-  value: string;
-  label: string;
-  order: number;
-  active: boolean;
-}
-
-export interface FieldReadModel {
-  id: string;
+export interface CreateFieldDTO {
+  tenantId: string;
   context: string;
   key: string;
   label: string;
@@ -18,9 +12,8 @@ export interface FieldReadModel {
   maxLength: number | null;
   pattern: string | null;
   placeholder: string | null;
-  createdAt: string;
-  updatedAt: string;
-  order: number;
+  group: string | null;
+  order: number | null;
   active: boolean;
-  options: FieldOptionReadModel[];
+  options: FieldOptionValueObjectProps[];
 }

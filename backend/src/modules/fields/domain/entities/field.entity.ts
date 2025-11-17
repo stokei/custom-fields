@@ -7,20 +7,32 @@ import {
   FieldOptionValueObject,
   FieldOptionValueObjectProps,
 } from '../value-objects/field-option.vo';
-import { FieldTypeValueObject } from '../value-objects/field-type.vo';
+import {
+  FieldTypeEnum,
+  FieldTypeValueObject,
+} from '../value-objects/field-type.vo';
 
 interface FieldProps {
+  organizationId: string;
   tenantId: string;
   context: string;
   key: string;
   label: string;
   type: FieldTypeValueObject;
   required: boolean;
-  isActive: boolean;
-  version: number;
-  order?: number;
-  placeholder?: string;
-  group?: string;
+  minLength: number | null;
+  maxLength: number | null;
+  pattern: string | null;
+  placeholder: string | null;
+  group: string;
+  createdAt: string;
+  updatedAt: string;
+  order: number;
+  active: boolean;
+  options: FieldOptionValueObject[];
+}
+interface CreateFieldInput extends Omit<FieldProps, 'type' | 'options'> {
+  type: FieldTypeEnum;
   options: FieldOptionValueObjectProps[];
 }
 
@@ -29,83 +41,135 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     super(props, id);
   }
 
-  get id() {
-    return super.id;
+  get id(): string {
+    return this._id.toString();
   }
-  get tenantId() {
+
+  get tenantId(): string {
     return this.props.tenantId;
   }
-  get context() {
+
+  get organizationId(): string {
+    return this.props.organizationId;
+  }
+
+  get context(): string {
     return this.props.context;
   }
-  get key() {
+
+  get key(): string {
     return this.props.key;
   }
-  get label() {
+
+  get label(): string {
     return this.props.label;
   }
-  get type() {
+
+  get type(): FieldTypeValueObject {
     return this.props.type;
   }
-  get required() {
+
+  get required(): boolean {
     return this.props.required;
   }
-  get isActive() {
-    return this.props.isActive;
+
+  get minLength(): number | null {
+    return this.props.minLength;
   }
-  get version() {
-    return this.props.version;
+
+  get maxLength(): number | null {
+    return this.props.maxLength;
   }
-  get options() {
+
+  get pattern(): string | null {
+    return this.props.pattern;
+  }
+
+  get placeholder(): string | null {
+    return this.props.placeholder;
+  }
+
+  get group(): string {
+    return this.props.group;
+  }
+
+  get order(): number {
+    return this.props.order;
+  }
+
+  get active(): boolean {
+    return this.props.active;
+  }
+
+  get createdAt(): string {
+    return this.props.createdAt;
+  }
+
+  get updatedAt(): string {
+    return this.props.updatedAt;
+  }
+
+  get options(): FieldOptionValueObject[] {
     return this.props.options;
   }
 
-  static create(input: FieldProps, id?: UniqueEntityID) {
+  static create(input: CreateFieldInput, id?: UniqueEntityID) {
     Guard.againstEmptyString(input.tenantId, 'tenantId');
     Guard.againstEmptyString(input.context, 'context');
     Guard.againstEmptyString(input.key, 'key');
     Guard.againstEmptyString(input.label, 'label');
+    Guard.againstEmptyString(input.type, 'type');
 
-    const options = input.options.map((o) => FieldOptionValueObject.create(o));
-    if (input.type.isSelect() && options.length === 0) {
-      throw new ValidationError('Select/Multi-Select requires options.');
+    const minLength = input.minLength ?? null;
+    const maxLength = input.maxLength ?? null;
+
+    if (minLength !== null && maxLength !== null && minLength > maxLength) {
+      throw new ValidationError('minLength cannot be greater than maxLength.');
+    }
+
+    const options = input.options?.map((o) => FieldOptionValueObject.create(o));
+    const type = FieldTypeValueObject.create(input.type);
+
+    if (type.isSelect() && options.length === 0) {
+      throw new ValidationError('Single-Select/Multi-Select requires options.');
     }
 
     const field = new FieldEntity(
       {
+        organizationId: input.organizationId,
         tenantId: input.tenantId,
         context: input.context,
         key: input.key,
         label: input.label,
-        type: input.type,
+        type,
         required: input.required,
-        isActive: true,
-        version: 1,
+        active: true,
         order: input.order,
         placeholder: input.placeholder,
         group: input.group,
+        maxLength: input.maxLength,
+        minLength: input.minLength,
+        pattern: input.pattern,
+        createdAt: input.createdAt,
+        updatedAt: input.updatedAt,
         options,
       },
       id,
     );
 
-    field.addDomainEvent(
-      new FieldCreatedEvent(field.id, field.tenantId, field.context, field.key),
-    );
     return field;
   }
 
-  changeLabel(newLabel: string) {
-    Guard.againstEmptyString(newLabel, 'label');
-    this.props.label = newLabel;
+  addFieldCreatedDomainEvent() {
+    this.addDomainEvent(new FieldCreatedEvent({ field: this }));
   }
 
   deactivate() {
-    this.props.isActive = false;
+    this.props.active = false;
   }
 
-  addOption(value: string, label: string, order?: number) {
-    if (!this.props.type.isSelect())
+  addOption({ value, label, order, active }: FieldOptionValueObjectProps) {
+    if (!this.type.isSelect())
       throw new ValidationError('Only select types accept options.');
     const exists = this.props.options.some((o) => o.value === value);
     if (exists) throw new ValidationError(`Option '${value}' already exists.`);
@@ -114,8 +178,28 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
         value,
         label,
         order,
-        active: true,
+        active: active ?? true,
       }),
     );
+  }
+
+  removeOptionByValue(value: string): void {
+    if (!this.type.isSelect) {
+      throw new ValidationError('Only select fields can have options.');
+    }
+
+    const beforeOptionsCount = this.props.options.length;
+    this.props.options = this.props.options.filter(
+      (opt) => opt.value !== value,
+    );
+    const currentOptionsCount = this.props.options.length;
+    if (currentOptionsCount === beforeOptionsCount) {
+      throw new ValidationError(`Option not found: ${value}`);
+    }
+    if (!currentOptionsCount) {
+      throw new ValidationError(
+        'Select/Multi-Select requires at least one option.',
+      );
+    }
   }
 }

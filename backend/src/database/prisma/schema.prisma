@@ -9,38 +9,41 @@ datasource db {
 }
 
 enum FieldType {
-  SHORT_ANSWER
-  PARAGRAPH
+  TEXT
+  TEXTAREA
   SINGLE_SELECT
   MULTI_SELECT
 }
 
 model Field {
-  id       String    @id @default(uuid())
-  tenantId String    @map("tenant_id")
-  context  String
-  key      String
-  label    String
-  type     FieldType
-  required Boolean   @default(false)
+  id             String    @id @default(uuid())
+  tenantId       String    @map("tenant_id")
+  organizationId String    @map("organization_id")
+  context        String
+  key            String
+  label          String
+  type           FieldType
+  required       Boolean   @default(false)
 
   minLength Int?    @map("min_length")
   maxLength Int?    @map("max_length")
   pattern   String?
 
   placeholder String?
-  group       String?
+  groupId     String  @map("group_id")
   order       Int?
 
   active    Boolean  @default(true)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  options    FieldOption[]
-  groupLinks FieldGroupField[]
+  options FieldOption[]
+
+  group FieldGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, context, key])
   @@index([tenantId, context, active])
+  @@map("fields")
 }
 
 model FieldOption {
@@ -57,35 +60,23 @@ model FieldOption {
 
   @@unique([fieldId, value])
   @@index([fieldId, active])
+  @@map("field_options")
 }
 
 model FieldGroup {
-  id        String   @id @default(uuid())
-  tenantId  String   @map("tenant_id")
-  context   String
-  slug      String
-  name      String
-  order     Int?     @default(0)
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id             String   @id @default(uuid())
+  tenantId       String   @map("tenant_id")
+  organizationId String   @map("organization_id")
+  slug           String
+  name           String
+  order          Int?     @default(0)
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
-  fields FieldGroupField[]
+  fields Field[]
 
-  @@unique([tenantId, context, slug])
-  @@index([tenantId, context, active])
-}
-
-model FieldGroupField {
-  id      String  @id @default(uuid())
-  fieldId String  @map("field_id")
-  groupId String  @map("group_id")
-  order   Int?    @default(0)
-  active  Boolean @default(true)
-
-  field Field      @relation(fields: [fieldId], references: [id], onDelete: Cascade)
-  group FieldGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
-
-  @@unique([fieldId, groupId])
-  @@index([groupId, active, order])
+  @@unique([tenantId, slug])
+  @@index([tenantId, active])
+  @@map("field_groups")
 }

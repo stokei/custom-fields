@@ -4,8 +4,8 @@ import { Guard } from '@/shared/domain/utils/guard';
 export interface FieldOptionValueObjectProps {
   value: string;
   label: string;
-  order?: number;
-  active?: boolean;
+  order: number;
+  active: boolean;
 }
 
 export class FieldOptionValueObject extends ValueObject<FieldOptionValueObjectProps> {

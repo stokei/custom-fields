@@ -3,10 +3,10 @@ import {
   FieldRepository,
   InjectFieldRepository,
 } from '@/modules/fields/domain/repositories/field.repository';
-import { FieldTypeValueObject } from '@/modules/fields/domain/value-objects/field-type.vo';
 import { DomainEventBusService } from '@/shared/infra/event-bus/domain-event-bus.service';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateFieldCommand } from './create-field.command';
+import { FieldMapper } from '../../mappers/field.mapper';
 
 @CommandHandler(CreateFieldCommand)
 export class CreateFieldHandler implements ICommandHandler<CreateFieldCommand> {
@@ -16,27 +16,13 @@ export class CreateFieldHandler implements ICommandHandler<CreateFieldCommand> {
     private readonly domainEventBusService: DomainEventBusService,
   ) { }
 
-  async execute(c: CreateFieldCommand) {
-    // regra de negócio no domínio
-    const field = FieldEntity.create({
-      tenantId: c.tenantId,
-      context: c.context,
-      key: c.key,
-      label: c.label,
-      type: FieldTypeValueObject.create(c.type),
-      required: c.required,
-      order: c.order,
-      placeholder: c.placeholder,
-      group: c.group,
-      options: c.options ?? [],
-      isActive: true,
-      version: 1,
-    });
+  async execute(command: CreateFieldCommand) {
+    const field = FieldEntity.create(command);
+    await this.repo.create(field);
 
-    await this.repo.save(field);
-
+    field.addFieldCreatedDomainEvent();
     this.domainEventBusService.publishAll(field.domainEvents);
 
-    return { id: field.id };
+    return FieldMapper.toReadModel(field);
   }
 }

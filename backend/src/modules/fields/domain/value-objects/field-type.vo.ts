@@ -1,15 +1,8 @@
+import { FieldType as FieldTypeEnum } from '@prisma/client';
 import { ValueObject } from '@/shared/domain/base/value-object';
 import { ValidationError } from '@/shared/domain/errors/validation-error';
 
-export enum FieldTypeEnum {
-  TEXT = 'TEXT',
-  NUMBER = 'NUMBER',
-  EMAIL = 'EMAIL',
-  PHONE = 'PHONE',
-  SINGLE_SELECT = 'SINGLE_SELECT',
-  MULTI_SELECT = 'MULTI_SELECT',
-  UPLOADER = 'UPLOADER',
-}
+export { FieldTypeEnum };
 
 interface FieldTypeProps {
   value: FieldTypeEnum;

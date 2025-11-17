@@ -1,10 +1,18 @@
 import { Inject } from '@nestjs/common';
-import { FieldReadModel } from '../../application/dtos/field-read-model.dto';
 import { FieldEntity } from '../entities/field.entity';
 
+export interface GetByTenantContextKeyParams {
+  tenantId: string;
+  context: string;
+  key: string;
+}
 export interface FieldRepository {
-  save(field: FieldEntity): Promise<void>;
-  findById(id: string): Promise<FieldReadModel | null>;
+  create(field: FieldEntity): Promise<void>;
+  update(field: FieldEntity): Promise<void>;
+  getByTenantContextKey(
+    params: GetByTenantContextKeyParams,
+  ): Promise<FieldEntity | null>;
 }
 
-export const InjectFieldRepository = () => Inject('FieldRepository');
+export const INJECT_FIELD_REPOSITORY_KEY = 'FieldRepository';
+export const InjectFieldRepository = () => Inject(INJECT_FIELD_REPOSITORY_KEY);

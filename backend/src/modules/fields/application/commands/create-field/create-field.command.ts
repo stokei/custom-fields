@@ -1,46 +1,39 @@
 import { FieldTypeEnum } from '@/modules/fields/domain/value-objects/field-type.vo';
-import { CommandBase } from 'src/shared/application/base/command-base';
+import { CreateFieldDTO } from '@/modules/fields/application/dtos/create-field.dto';
+import { CommandBase } from '@/shared/application/base/command-base';
+import { FieldOptionValueObjectProps } from '@/modules/fields/domain/value-objects/field-option.vo';
 
-interface CreateFieldOption {
-  value: string;
-  label: string;
-}
+export class CreateFieldCommand
+  implements CommandBase, Readonly<CreateFieldDTO> {
+  readonly tenantId: string;
+  readonly context: string;
+  readonly key: string;
+  readonly label: string;
+  readonly type: FieldTypeEnum;
+  readonly required: boolean;
+  readonly minLength: number | null;
+  readonly maxLength: number | null;
+  readonly pattern: string | null;
+  readonly placeholder: string | null;
+  readonly group: string | null;
+  readonly order: number | null;
+  readonly active: boolean;
+  readonly options: FieldOptionValueObjectProps[];
 
-interface CreateFieldCommandParams {
-  tenantId: string;
-  context: string;
-  key: string;
-  label: string;
-  type: FieldTypeEnum;
-  required: boolean;
-  options?: CreateFieldOption[];
-  order?: number;
-  placeholder?: string;
-  group?: string;
-}
-
-export class CreateFieldCommand implements CommandBase {
-  public readonly tenantId: string;
-  public readonly context: string;
-  public readonly key: string;
-  public readonly label: string;
-  public readonly type: FieldTypeEnum;
-  public readonly required: boolean;
-  public readonly options?: CreateFieldOption[];
-  public readonly order?: number;
-  public readonly placeholder?: string;
-  public readonly group?: string;
-
-  constructor(data: CreateFieldCommandParams) {
+  constructor(data: CreateFieldDTO) {
     this.tenantId = data.tenantId;
     this.context = data.context;
     this.key = data.key;
     this.label = data.label;
     this.type = data.type;
     this.required = data.required;
-    this.options = data.options;
-    this.order = data.order;
+    this.minLength = data.minLength;
+    this.maxLength = data.maxLength;
+    this.pattern = data.pattern;
     this.placeholder = data.placeholder;
     this.group = data.group;
+    this.order = data.order;
+    this.active = data.active;
+    this.options = data.options;
   }
 }
