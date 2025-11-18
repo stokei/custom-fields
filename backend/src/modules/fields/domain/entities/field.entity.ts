@@ -11,6 +11,7 @@ import {
   FieldTypeEnum,
   FieldTypeValueObject,
 } from '../value-objects/field-type.vo';
+import { convertToISODateString } from '@/utils/dates';
 
 interface FieldProps {
   organizationId: string;
@@ -20,10 +21,10 @@ interface FieldProps {
   label: string;
   type: FieldTypeValueObject;
   required: boolean;
-  minLength: number | null;
-  maxLength: number | null;
-  pattern: string | null;
-  placeholder: string | null;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  placeholder?: string;
   group: string;
   createdAt: string;
   updatedAt: string;
@@ -31,9 +32,12 @@ interface FieldProps {
   active: boolean;
   options: FieldOptionValueObject[];
 }
-interface CreateFieldInput extends Omit<FieldProps, 'type' | 'options'> {
+interface CreateFieldInput
+  extends Omit<FieldProps, 'type' | 'options' | 'createdAt' | 'updatedAt'> {
   type: FieldTypeEnum;
   options: FieldOptionValueObjectProps[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export class FieldEntity extends AggregateRoot<FieldProps> {
@@ -73,19 +77,19 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     return this.props.required;
   }
 
-  get minLength(): number | null {
+  get minLength(): number | undefined {
     return this.props.minLength;
   }
 
-  get maxLength(): number | null {
+  get maxLength(): number | undefined {
     return this.props.maxLength;
   }
 
-  get pattern(): string | null {
+  get pattern(): string | undefined {
     return this.props.pattern;
   }
 
-  get placeholder(): string | null {
+  get placeholder(): string | undefined {
     return this.props.placeholder;
   }
 
@@ -150,8 +154,8 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
         maxLength: input.maxLength,
         minLength: input.minLength,
         pattern: input.pattern,
-        createdAt: input.createdAt,
-        updatedAt: input.updatedAt,
+        createdAt: convertToISODateString(input.createdAt || Date.now()),
+        updatedAt: convertToISODateString(input.updatedAt || Date.now()),
         options,
       },
       id,
@@ -184,7 +188,7 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
   }
 
   removeOptionByValue(value: string): void {
-    if (!this.type.isSelect) {
+    if (!this.type.isSelect()) {
       throw new ValidationError('Only select fields can have options.');
     }
 

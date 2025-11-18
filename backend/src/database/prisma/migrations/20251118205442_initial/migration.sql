@@ -12,14 +12,14 @@ CREATE TABLE `fields` (
     `max_length` INTEGER NULL,
     `pattern` VARCHAR(191) NULL,
     `placeholder` VARCHAR(191) NULL,
-    `group_id` VARCHAR(191) NOT NULL,
-    `order` INTEGER NULL,
+    `group` VARCHAR(191) NOT NULL,
+    `order` INTEGER NOT NULL DEFAULT 0,
     `active` BOOLEAN NOT NULL DEFAULT true,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
-    INDEX `fields_tenant_id_context_active_idx`(`tenant_id`, `context`, `active`),
-    UNIQUE INDEX `fields_tenant_id_context_key_key`(`tenant_id`, `context`, `key`),
+    INDEX `fields_tenant_id_organization_id_group_context_active_idx`(`tenant_id`, `organization_id`, `group`, `context`, `active`),
+    UNIQUE INDEX `fields_tenant_id_organization_id_context_key_key`(`tenant_id`, `organization_id`, `context`, `key`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -29,7 +29,7 @@ CREATE TABLE `field_options` (
     `field_id` VARCHAR(191) NOT NULL,
     `value` VARCHAR(191) NOT NULL,
     `label` VARCHAR(191) NOT NULL,
-    `order` INTEGER NULL DEFAULT 0,
+    `order` INTEGER NOT NULL DEFAULT 0,
     `active` BOOLEAN NOT NULL DEFAULT true,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
@@ -40,24 +40,21 @@ CREATE TABLE `field_options` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `field_groups` (
+CREATE TABLE `field_values` (
     `id` VARCHAR(191) NOT NULL,
-    `tenant_id` VARCHAR(191) NOT NULL,
-    `organization_id` VARCHAR(191) NOT NULL,
-    `slug` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
-    `order` INTEGER NULL DEFAULT 0,
-    `active` BOOLEAN NOT NULL DEFAULT true,
+    `field_id` VARCHAR(191) NOT NULL,
+    `entityId` VARCHAR(191) NOT NULL,
+    `value` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
-    INDEX `field_groups_tenant_id_active_idx`(`tenant_id`, `active`),
-    UNIQUE INDEX `field_groups_tenant_id_slug_key`(`tenant_id`, `slug`),
+    INDEX `field_values_field_id_entityId_idx`(`field_id`, `entityId`),
+    UNIQUE INDEX `field_values_field_id_entityId_value_key`(`field_id`, `entityId`, `value`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `fields` ADD CONSTRAINT `fields_group_id_fkey` FOREIGN KEY (`group_id`) REFERENCES `field_groups`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `field_options` ADD CONSTRAINT `field_options_field_id_fkey` FOREIGN KEY (`field_id`) REFERENCES `fields`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `field_options` ADD CONSTRAINT `field_options_field_id_fkey` FOREIGN KEY (`field_id`) REFERENCES `fields`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `field_values` ADD CONSTRAINT `field_values_field_id_fkey` FOREIGN KEY (`field_id`) REFERENCES `fields`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

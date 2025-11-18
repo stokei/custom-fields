@@ -14,10 +14,10 @@ export interface FieldReadModel {
   label: string;
   type: FieldTypeEnum;
   required: boolean;
-  minLength: number | null;
-  maxLength: number | null;
-  pattern: string | null;
-  placeholder: string | null;
+  minLength: number | undefined;
+  maxLength: number | undefined;
+  pattern: string | undefined;
+  placeholder: string | undefined;
   createdAt: string;
   updatedAt: string;
   order: number;

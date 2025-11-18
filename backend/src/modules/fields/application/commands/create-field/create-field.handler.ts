@@ -12,13 +12,13 @@ import { FieldMapper } from '../../mappers/field.mapper';
 export class CreateFieldHandler implements ICommandHandler<CreateFieldCommand> {
   constructor(
     @InjectFieldRepository()
-    private readonly repo: FieldRepository,
+    private readonly fieldRepository: FieldRepository,
     private readonly domainEventBusService: DomainEventBusService,
   ) { }
 
   async execute(command: CreateFieldCommand) {
     const field = FieldEntity.create(command);
-    await this.repo.create(field);
+    await this.fieldRepository.save(field);
 
     field.addFieldCreatedDomainEvent();
     this.domainEventBusService.publishAll(field.domainEvents);

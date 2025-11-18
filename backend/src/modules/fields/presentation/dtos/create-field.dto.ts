@@ -14,7 +14,7 @@ import {
 
 import { FieldTypeEnum } from '../../domain/value-objects/field-type.vo';
 
-export class CreateFieldOptionDto {
+export class CreateFieldOptionDTO {
   @IsString()
   @IsNotEmpty()
   value!: string;
@@ -23,14 +23,13 @@ export class CreateFieldOptionDto {
   @IsNotEmpty()
   label!: string;
 
-  @IsOptional()
   @IsInt()
   @Min(0)
   @Max(2_147_483_647)
-  order?: number;
+  order: number;
 }
 
-export class CreateFieldDto {
+export class CreateFieldDTO {
   @IsString()
   @IsNotEmpty()
   context!: string;
@@ -66,17 +65,14 @@ export class CreateFieldDto {
   @IsString()
   placeholder?: string;
 
-  @IsOptional()
   @IsString()
-  group?: string;
+  group: string;
 
-  @IsOptional()
   @IsInt()
-  order?: number;
+  order: number;
 
-  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateFieldOptionDto)
-  options?: CreateFieldOptionDto[];
+  @Type(() => CreateFieldOptionDTO)
+  options: CreateFieldOptionDTO[];
 }

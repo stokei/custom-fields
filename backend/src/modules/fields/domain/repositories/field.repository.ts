@@ -7,8 +7,7 @@ export interface GetByTenantContextKeyParams {
   key: string;
 }
 export interface FieldRepository {
-  create(field: FieldEntity): Promise<void>;
-  update(field: FieldEntity): Promise<void>;
+  save(field: FieldEntity): Promise<void>;
   getByTenantContextKey(
     params: GetByTenantContextKeyParams,
   ): Promise<FieldEntity | null>;

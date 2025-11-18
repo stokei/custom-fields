@@ -5,6 +5,9 @@ export const REST_CONTROLLERS_URL_NAMES = {
   },
   FIELDS: {
     BASE: 'fields',
-    CREATE_FIELD: 'fields',
+    CREATE_FIELD: 'groups/:groupId/fields',
+    UPDATE_FIELD: 'groups/:groupId/fields/:fieldId',
+    GET_FIELDS_BY_CONTEXT: 'groups/:groupId/fields/:context',
+    DELETE_FIELD: 'groups/:groupId/fields/:fieldId',
   },
 };

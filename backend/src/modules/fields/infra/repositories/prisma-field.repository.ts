@@ -8,32 +8,51 @@ import {
 import { FieldEntity } from '../../domain/entities/field.entity';
 import { FieldMapper } from '../mappers/field.mapper';
 import { FieldOptionMapper } from '../mappers/field-option.mapper';
+import { FieldOptionValueObject } from '../../domain/value-objects/field-option.vo';
 
 @Injectable()
 export class PrismaFieldRepository implements FieldRepository {
   constructor(private readonly prisma: PrismaClientService) { }
 
-  async create(field: FieldEntity): Promise<void> {
-    const data = FieldMapper.toPersistence(field);
+  async save(field: FieldEntity): Promise<void> {
+    const { id: fieldId, ...data } = FieldMapper.toPersistence(field);
     await this.prisma.$transaction(async (transaction) => {
-      await transaction.field.create({ data });
-      await transaction.fieldOption.deleteMany({ where: { fieldId: data.id } });
-      const opts = field.options?.map((option) =>
+      await transaction.field.upsert({
+        where: { id: fieldId },
+        create: data,
+        update: data,
+      });
+      const desiredOptions = field.options?.map((option) =>
         FieldOptionMapper.toPersistence(field.id, option),
       );
-      if (opts.length) {
-        await transaction.fieldOption.createMany({
-          data: opts,
+      const existingOptions: PrismaFieldOption[] =
+        await transaction.fieldOption.findMany({
+          where: { fieldId: field.id },
+        });
+
+      const { toCreate, toUpdate, toDeleteIds } =
+        FieldOptionMapper.toDiffOptions(existingOptions, desiredOptions);
+      if (toDeleteIds.length) {
+        await transaction.fieldOption.deleteMany({
+          where: { id: { in: toDeleteIds } },
         });
       }
-    });
-  }
-
-  async update(field: FieldEntity): Promise<void> {
-    const { id, ...data } = FieldMapper.toPersistence(field);
-    await this.prisma.field.update({
-      where: { id },
-      data,
+      for (const updateItem of toUpdate) {
+        await transaction.fieldOption.update({
+          where: { id: updateItem.id },
+          data: updateItem.data,
+        });
+      }
+      if (toCreate?.length) {
+        await transaction.fieldOption.createMany({
+          data: toCreate.map((option) =>
+            FieldOptionMapper.toPersistence(
+              field.id,
+              FieldOptionValueObject.create(option),
+            ),
+          ),
+        });
+      }
     });
   }
 
@@ -52,14 +71,13 @@ export class PrismaFieldRepository implements FieldRepository {
       return null;
     }
 
-    const optionRows: PrismaFieldOption[] =
-      await this.prisma.fieldOption.findMany({
-        where: {
-          fieldId: field.id,
-          active: true,
-        },
-        orderBy: [{ order: 'asc' }, { label: 'asc' }],
-      });
+    const optionRows = await this.prisma.fieldOption.findMany({
+      where: {
+        fieldId: field.id,
+        active: true,
+      },
+      orderBy: [{ order: 'asc' }, { label: 'asc' }],
+    });
 
     return FieldMapper.toDomain(field, optionRows);
   }

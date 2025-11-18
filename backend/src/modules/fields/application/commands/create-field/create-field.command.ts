@@ -6,22 +6,24 @@ import { FieldOptionValueObjectProps } from '@/modules/fields/domain/value-objec
 export class CreateFieldCommand
   implements CommandBase, Readonly<CreateFieldDTO> {
   readonly tenantId: string;
+  readonly organizationId: string;
   readonly context: string;
   readonly key: string;
   readonly label: string;
   readonly type: FieldTypeEnum;
   readonly required: boolean;
-  readonly minLength: number | null;
-  readonly maxLength: number | null;
-  readonly pattern: string | null;
-  readonly placeholder: string | null;
-  readonly group: string | null;
-  readonly order: number | null;
+  readonly minLength?: number;
+  readonly maxLength?: number;
+  readonly pattern?: string;
+  readonly placeholder?: string;
+  readonly group: string;
+  readonly order: number;
   readonly active: boolean;
   readonly options: FieldOptionValueObjectProps[];
 
   constructor(data: CreateFieldDTO) {
     this.tenantId = data.tenantId;
+    this.organizationId = data.organizationId;
     this.context = data.context;
     this.key = data.key;
     this.label = data.label;

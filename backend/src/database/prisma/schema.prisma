@@ -30,19 +30,18 @@ model Field {
   pattern   String?
 
   placeholder String?
-  groupId     String  @map("group_id")
-  order       Int?
+  group       String
+  order       Int     @default(0)
 
   active    Boolean  @default(true)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   options FieldOption[]
+  values  FieldValue[]
 
-  group FieldGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
-
-  @@unique([tenantId, context, key])
-  @@index([tenantId, context, active])
+  @@unique([tenantId, organizationId, context, key])
+  @@index([tenantId, organizationId, group, context, active])
   @@map("fields")
 }
 
@@ -51,7 +50,7 @@ model FieldOption {
   fieldId   String   @map("field_id")
   value     String
   label     String
-  order     Int?     @default(0)
+  order     Int      @default(0)
   active    Boolean  @default(true)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -63,20 +62,17 @@ model FieldOption {
   @@map("field_options")
 }
 
-model FieldGroup {
-  id             String   @id @default(uuid())
-  tenantId       String   @map("tenant_id")
-  organizationId String   @map("organization_id")
-  slug           String
-  name           String
-  order          Int?     @default(0)
-  active         Boolean  @default(true)
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+model FieldValue {
+  id        String   @id @default(uuid())
+  fieldId   String   @map("field_id")
+  entityId  String
+  value     String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  fields Field[]
+  field Field @relation(fields: [fieldId], references: [id], onDelete: Cascade)
 
-  @@unique([tenantId, slug])
-  @@index([tenantId, active])
-  @@map("field_groups")
+  @@unique([fieldId, entityId, value])
+  @@index([fieldId, entityId])
+  @@map("field_values")
 }

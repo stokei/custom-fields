@@ -20,7 +20,12 @@ export class CreateFieldController {
     @Body() dto: CreateFieldDTO,
   ) {
     return this.commandBusService.execute(
-      new CreateFieldCommand({ tenantId, ...dto }),
+      new CreateFieldCommand({
+        ...dto,
+        tenantId,
+        organizationId: '',
+        active: true,
+      }),
     );
   }
 }

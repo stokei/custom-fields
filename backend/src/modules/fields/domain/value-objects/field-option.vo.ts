@@ -4,8 +4,8 @@ import { Guard } from '@/shared/domain/utils/guard';
 export interface FieldOptionValueObjectProps {
   value: string;
   label: string;
-  order: number;
-  active: boolean;
+  order?: number;
+  active?: boolean;
 }
 
 export class FieldOptionValueObject extends ValueObject<FieldOptionValueObjectProps> {
@@ -19,7 +19,7 @@ export class FieldOptionValueObject extends ValueObject<FieldOptionValueObjectPr
     return this.props.order ?? 0;
   }
   get active() {
-    return this.props.active;
+    return this.props.active ?? true;
   }
 
   static create({ value, label, order, active }: FieldOptionValueObjectProps) {
