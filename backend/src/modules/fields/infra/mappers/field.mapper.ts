@@ -21,11 +21,7 @@ export class FieldMapper {
       order: field.order ?? null,
       placeholder: field.placeholder ?? null,
       organizationId: field.organizationId,
-      group: {
-        connect: {
-          id: field.group,
-        },
-      },
+      group: field.group,
     };
   };
 
@@ -47,7 +43,7 @@ export class FieldMapper {
         createdAt: convertToISODateString(raw.createdAt),
         updatedAt: convertToISODateString(raw.updatedAt),
         active: !!raw.active,
-        group: raw.groupId,
+        group: raw.group,
         options: rawOptions?.map((option, defaultOrder) => ({
           active: option.active,
           value: option.value,

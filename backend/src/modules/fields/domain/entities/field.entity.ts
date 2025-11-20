@@ -1,6 +1,6 @@
 import { AggregateRoot } from '@/shared/domain/base/aggregate-root';
 import { ValidationError } from '@/shared/domain/errors/validation-error';
-import { Guard } from '@/shared/domain/utils/guard';
+import { Guard } from '@/shared/domain/guards/guard';
 import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { FieldCreatedEvent } from '../events/field-created/field-created.event';
 import {

@@ -1,24 +1,34 @@
 import { NestFactory } from '@nestjs/core';
 import { MainModule } from './main.module';
 import { SERVER_HOST, SERVER_PORT, SERVER_URL } from './environments';
-import { Logger, VersioningType } from '@nestjs/common';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
+import { HttpAllExceptionsFilter } from './shared/infra/http/filters/http-all-exceptions.filter';
+import { Swagger } from './shared/infra/docs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 const logger = new Logger('Bootstrap');
 
 async function bootstrap() {
-  const app = await NestFactory.create(MainModule, {
+  const app = await NestFactory.create<NestExpressApplication>(MainModule, {
     bodyParser: false,
     abortOnError: false,
   });
-
   app.enableCors({
     origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
   });
-
   app.enableVersioning({
     type: VersioningType.URI,
   });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  );
+  app.useGlobalFilters(new HttpAllExceptionsFilter());
 
+  Swagger.setup(app);
   await app.listen(SERVER_PORT, SERVER_HOST);
 
   logger.log(`Application is running on: ${SERVER_URL}`);

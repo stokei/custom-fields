@@ -7,7 +7,6 @@ export abstract class Entity<TProps> {
   constructor(props: TProps, id?: UniqueEntityID) {
     this._id = id ?? new UniqueEntityID();
     this.props = props;
-    Object.assign(this as unknown as Entity<TProps> & TProps, props);
   }
 
   get id(): string {

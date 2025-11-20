@@ -4,10 +4,17 @@ export const REST_CONTROLLERS_URL_NAMES = {
     STATUS: 'status',
   },
   FIELDS: {
+    DOCUMENTATION_TITLE: 'Fields',
     BASE: 'fields',
-    CREATE_FIELD: 'groups/:groupId/fields',
-    UPDATE_FIELD: 'groups/:groupId/fields/:fieldId',
-    GET_FIELDS_BY_CONTEXT: 'groups/:groupId/fields/:context',
-    DELETE_FIELD: 'groups/:groupId/fields/:fieldId',
+    CREATE_FIELD: 'fields',
+    UPDATE_FIELD: 'fields/:fieldId',
+    GET_FIELDS_BY_CONTEXT: 'fields/:context',
+    DELETE_FIELD: 'fields/:fieldId',
+  },
+  FIELD_VALUES: {
+    DOCUMENTATION_TITLE: 'Field Values',
+    BASE: 'field-values',
+    GET_VALUES: 'field-values/:context/:entityId',
+    UPSERT_VALUES: 'field-values/:context/:entityId',
   },
 };

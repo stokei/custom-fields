@@ -1,5 +1,5 @@
 import { ValueObject } from '@/shared/domain/base/value-object';
-import { Guard } from '@/shared/domain/utils/guard';
+import { Guard } from '@/shared/domain/guards/guard';
 
 export interface FieldOptionValueObjectProps {
   value: string;

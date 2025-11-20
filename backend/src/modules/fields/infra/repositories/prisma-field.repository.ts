@@ -1,6 +1,6 @@
 import { FieldOption as PrismaFieldOption } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
-import { PrismaClientService } from '@/shared/infra/prisma/prisma-client.service';
+import { PrismaClientService } from '@/shared/infra/database/prisma/prisma-client.service';
 import {
   FieldRepository,
   GetByTenantContextKeyParams,

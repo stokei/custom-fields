@@ -6,7 +6,7 @@ import {
 import { DomainEventBusService } from '@/shared/infra/event-bus/domain-event-bus.service';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateFieldCommand } from './create-field.command';
-import { FieldMapper } from '../../mappers/field.mapper';
+import { CreateFieldViewModel } from './create-field.viewmodel';
 
 @CommandHandler(CreateFieldCommand)
 export class CreateFieldHandler implements ICommandHandler<CreateFieldCommand> {
@@ -23,6 +23,6 @@ export class CreateFieldHandler implements ICommandHandler<CreateFieldCommand> {
     field.addFieldCreatedDomainEvent();
     this.domainEventBusService.publishAll(field.domainEvents);
 
-    return FieldMapper.toReadModel(field);
+    return CreateFieldViewModel.create(field);
   }
 }

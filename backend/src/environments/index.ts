@@ -5,4 +5,6 @@ export const SERVER_HOST: string = process.env.SERVER_HOST || '0.0.0.0';
 export const SERVER_URL: string =
   process.env.SERVER_URL || 'http://0.0.0.0:4000';
 
+export const VERSION: string = process.env.VERSION || '';
 export const DATABASE_URL: string = process.env.DATABASE_URL || '';
+export const UNKEY_ROOT_KEY: string = process.env.UNKEY_ROOT_KEY || '';
