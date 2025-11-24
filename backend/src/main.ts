@@ -10,7 +10,6 @@ const logger = new Logger('Bootstrap');
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(MainModule, {
-    bodyParser: false,
     abortOnError: false,
   });
   app.enableCors({

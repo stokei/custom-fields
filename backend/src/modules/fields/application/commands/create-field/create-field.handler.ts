@@ -23,6 +23,8 @@ export class CreateFieldHandler implements ICommandHandler<CreateFieldCommand> {
     field.addFieldCreatedDomainEvent();
     this.domainEventBusService.publishAll(field.domainEvents);
 
-    return CreateFieldViewModel.create(field);
+    return CreateFieldViewModel.create({
+      id: field.id,
+    });
   }
 }

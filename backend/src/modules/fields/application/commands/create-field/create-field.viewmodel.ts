@@ -1,14 +1,16 @@
-import { FieldEntity } from '@/modules/fields/domain/entities/field.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
+interface CreateFieldViewModelProps {
+  readonly id: string;
+}
 export class CreateFieldViewModel {
   @ApiProperty()
   readonly id: string;
-  private constructor(field: FieldEntity) {
-    this.id = field.id;
+  private constructor(data: CreateFieldViewModelProps) {
+    this.id = data.id;
   }
 
-  static create(field: FieldEntity) {
+  static create(field: CreateFieldViewModelProps) {
     return new CreateFieldViewModel(field);
   }
 }

@@ -1,4 +1,8 @@
 import { VERSION } from '@/environments';
+import {
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -8,6 +12,14 @@ export class Swagger {
       .setTitle('Fields - Rest API')
       .setDescription('Rest API for Custom Fields')
       .setVersion(VERSION)
+      .addGlobalResponse({
+        status: 500,
+        description: InternalServerErrorException.name,
+      })
+      .addGlobalResponse({
+        status: 401,
+        description: UnauthorizedException.name,
+      })
       .addApiKey(
         {
           type: 'apiKey',
@@ -17,26 +29,16 @@ export class Swagger {
         },
         'ApiKeyAuth',
       )
-      .addApiKey(
-        {
-          type: 'apiKey',
-          name: 'x-organization-id',
-          in: 'header',
-          description:
-            'Organization ID da organização responsável pelos campos',
-        },
-        'OrgIdAuth',
-      )
+      .addGlobalParameters({
+        name: 'x-organization-id',
+        in: 'header',
+        description: 'Organization ID da organização responsável pelos campos',
+      })
       .build();
 
     const createDocument = SwaggerModule.createDocument(app, document);
-
-    const httpAdapter = app.getHttpAdapter();
-    const instance = httpAdapter.getInstance();
-    instance.get('/openapi.json', (req, res) => {
-      res.json(createDocument);
+    SwaggerModule.setup('/docs', app, createDocument, {
+      jsonDocumentUrl: 'openapi.json',
     });
-
-    SwaggerModule.setup('/docs', app, createDocument);
   }
 }

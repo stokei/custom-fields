@@ -3,6 +3,7 @@ import { REST_VERSIONS } from '@/constants/rest-versions';
 import { CreateFieldCommand } from '@/modules/fields/application/commands/create-field/create-field.command';
 import { CreateFieldViewModel } from '@/modules/fields/application/commands/create-field/create-field.viewmodel';
 import { TenantContext } from '@/shared/domain/tenant-context/tenant-context';
+import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { CommandBusService } from '@/shared/infra/command-bus/command-bus.service';
 import { ApiWithTenantAuth } from '@/shared/infra/docs/decorators/api-auth.decorator';
 import { Tenant } from '@/shared/infra/http/decorators/tenant.decorator';
@@ -30,12 +31,15 @@ export class CreateFieldController {
   @Post()
   @UseGuards(ApiKeyGuard)
   @ApiOperation({
-    summary: 'Criar um campo',
+    summary: 'Create a new field',
   })
   @ApiBody({ type: CreateFieldDTO })
   @ApiCreatedResponse({
-    description: 'Sucesso',
+    description: 'Sucess',
     type: CreateFieldViewModel,
+    example: CreateFieldViewModel.create({
+      id: new UniqueEntityID().toString(),
+    }),
   })
   async createField(
     @Tenant() tenant: TenantContext,
