@@ -8,24 +8,13 @@ import { tenantContextStub } from '@/tests/stubs/http/tenant-context.stub';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateFieldController } from './create-field.controller';
 import { CommandBusServiceMockProvider } from '@/tests/mocks/bus/command-bus.mock';
+import { createFieldDTOStub } from '@/tests/stubs/dtos/fields/create-field-dto.stub';
 
 describe(CreateFieldController.name, () => {
   let controller: CreateFieldController;
   let commandBusService: jest.Mocked<CommandBusService<CreateFieldCommand>>;
 
-  const mockCreateFieldDTO: CreateFieldDTO = {
-    context: 'user',
-    key: 'first_name',
-    label: 'First Name',
-    type: FieldTypeEnum.TEXT,
-    required: true,
-    minLength: 2,
-    maxLength: 50,
-    placeholder: 'Enter your first name',
-    group: 'personal_info',
-    order: 1,
-    options: [],
-  };
+  const mockCreateFieldDTO = createFieldDTOStub();
 
   const mockFieldViewModel = CreateFieldViewModel.create({
     id: new UniqueEntityID().toString(),

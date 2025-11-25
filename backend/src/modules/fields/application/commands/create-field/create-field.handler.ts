@@ -25,6 +25,6 @@ export class CreateFieldHandler implements ICommandHandler<CreateFieldCommand> {
 
     return CreateFieldViewModel.create({
       id: field.id,
-    });
+    }).toJSON();
   }
 }

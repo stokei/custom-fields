@@ -131,7 +131,12 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
       throw new ValidationError('minLength cannot be greater than maxLength.');
     }
 
-    const options = input.options?.map((o) => FieldOptionValueObject.create(o));
+    const options = input.options?.map((option, order) =>
+      FieldOptionValueObject.create({
+        ...option,
+        order,
+      }),
+    );
     const type = FieldTypeValueObject.create(input.type);
 
     if (type.isSelect() && options.length === 0) {
