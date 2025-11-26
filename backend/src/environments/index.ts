@@ -1,3 +1,11 @@
+export enum EnvironmentType {
+  DEVELOPMENT = 'development',
+  PRODUCTION = 'production',
+  TEST = 'test',
+}
+export const ENVIRONMENT: EnvironmentType =
+  (process.env.NODE_ENV as EnvironmentType) || EnvironmentType.DEVELOPMENT;
+
 export const SERVER_PORT: number = process.env.SERVER_PORT
   ? +process.env.SERVER_PORT
   : 4000;

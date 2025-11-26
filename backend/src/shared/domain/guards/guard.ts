@@ -25,7 +25,9 @@ export class Guard {
     return actualValue > minValue
       ? Result.ok<GuardResponse>()
       : Result.fail<GuardResponse>(
-        `Number given {${actualValue}} is not greater than {${minValue}}`,
+        new Error(
+          `Number given {${actualValue}} is not greater than {${minValue}}`,
+        ),
       );
   }
   public static greaterOrEqualThan(
@@ -35,7 +37,9 @@ export class Guard {
     return actualValue >= minValue
       ? Result.ok<GuardResponse>()
       : Result.fail<GuardResponse>(
-        `Number given {${actualValue}} is not greater or equal than {${minValue}}`,
+        new Error(
+          `Number given {${actualValue}} is not greater or equal than {${minValue}}`,
+        ),
       );
   }
 
@@ -45,7 +49,9 @@ export class Guard {
   ): Result<GuardResponse> {
     return text.length >= numChars
       ? Result.ok<GuardResponse>()
-      : Result.fail<GuardResponse>(`Text is not at least ${numChars} chars.`);
+      : Result.fail<GuardResponse>(
+        new Error(`Text is not at least ${numChars} chars.`),
+      );
   }
 
   public static againstAtMost(
@@ -54,7 +60,7 @@ export class Guard {
   ): Result<GuardResponse> {
     if (text.length <= numChars) return Result.ok<GuardResponse>();
     return Result.fail<GuardResponse>(
-      `Text is greater than ${numChars} chars.`,
+      new Error(`Text is greater than ${numChars} chars.`),
     );
   }
 
@@ -63,7 +69,9 @@ export class Guard {
     argumentName: string,
   ): Result<GuardResponse> {
     if (argument === null || argument === undefined || argument === '') {
-      return Result.fail<GuardResponse>(`${argumentName} is null or undefined`);
+      return Result.fail<GuardResponse>(
+        new Error(`${argumentName} is null or undefined`),
+      );
     }
     return Result.ok<GuardResponse>();
   }
@@ -87,7 +95,7 @@ export class Guard {
     name: string,
   ): Result<GuardResponse> {
     if (value.trim().length === 0)
-      Result.fail<GuardResponse>(`Guard: ${name} is empty`);
+      Result.fail<GuardResponse>(new Error(`Guard: ${name} is empty`));
     return Result.ok<GuardResponse>();
   }
 
@@ -101,7 +109,9 @@ export class Guard {
       return Result.ok<GuardResponse>();
     }
     return Result.fail<GuardResponse>(
-      `${argumentName} isn't oneOf the correct types in ${JSON.stringify(validValues)}. Got "${value}".`,
+      new Error(
+        `${argumentName} isn't oneOf the correct types in ${JSON.stringify(validValues)}. Got "${value}".`,
+      ),
     );
   }
 
@@ -114,7 +124,7 @@ export class Guard {
     const isInRange = num >= min && num <= max;
     if (!isInRange) {
       return Result.fail<GuardResponse>(
-        `${argumentName} is not within range ${min} to ${max}.`,
+        new Error(`${argumentName} is not within range ${min} to ${max}.`),
       );
     }
     return Result.ok<GuardResponse>();
@@ -126,7 +136,7 @@ export class Guard {
     max: number,
     argumentName: string,
   ): Result<GuardResponse> {
-    let failingResult: Result<GuardResponse> = new Result(false, '');
+    let failingResult: Result<GuardResponse> = new Result(false, new Error(''));
 
     for (const num of numbers) {
       const numIsInRangeResult = this.inRange(num, min, max, argumentName);
@@ -135,7 +145,7 @@ export class Guard {
 
     if (failingResult) {
       return Result.fail<GuardResponse>(
-        `${argumentName} is not within the range.`,
+        new Error(`${argumentName} is not within the range.`),
       );
     }
     return Result.ok<GuardResponse>();

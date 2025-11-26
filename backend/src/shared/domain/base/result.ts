@@ -1,10 +1,10 @@
-export class Result<T, E = string> {
+export class Result<TValue, TError extends Error = Error> {
   public isSuccess: boolean;
   public isFailure: boolean;
-  private error: E | string;
-  private _value: T;
+  private error?: TError;
+  private _value: TValue;
 
-  public constructor(isSuccess: boolean, error?: E | string, value?: T) {
+  public constructor(isSuccess: boolean, error?: TError, value?: TValue) {
     if (isSuccess && error) {
       throw new Error(
         'InvalidOperation: A result cannot be successful and contain an error',
@@ -18,13 +18,13 @@ export class Result<T, E = string> {
 
     this.isSuccess = isSuccess;
     this.isFailure = !isSuccess;
-    this.error = error || '';
-    this._value = value as T;
+    this.error = error;
+    this._value = value as TValue;
 
     Object.freeze(this);
   }
 
-  public getValue(): T {
+  public getValue(): TValue {
     if (!this.isSuccess) {
       throw new Error(
         "Can't get the value of an error result. Use 'errorValue' instead.",
@@ -34,16 +34,20 @@ export class Result<T, E = string> {
     return this._value;
   }
 
-  public getErrorValue(): E {
-    return this.error as E;
+  public getErrorValue(): TError {
+    return this.error as TError;
   }
 
-  public static ok<U>(value?: U): Result<U> {
-    return new Result<U>(true, '', value);
+  public static ok<TValue, TError extends Error = Error>(
+    value?: TValue,
+  ): Result<TValue> {
+    return new Result<TValue, TError>(true, undefined, value);
   }
 
-  public static fail<U, E = string>(error: E): Result<U, E> {
-    return new Result<U, E>(false, error);
+  public static fail<TValue, TError extends Error = Error>(
+    error: TError,
+  ): Result<TValue, TError> {
+    return new Result<TValue, TError>(false, error);
   }
 
   public static combine(results: Result<any>[]): Result<any> {
@@ -53,45 +57,3 @@ export class Result<T, E = string> {
     return Result.ok();
   }
 }
-
-export type Either<L, A> = Left<L, A> | Right<L, A>;
-
-export class Left<L, A> {
-  readonly value: L;
-
-  constructor(value: L) {
-    this.value = value;
-  }
-
-  isLeft(): this is Left<L, A> {
-    return true;
-  }
-
-  isRight(): this is Right<L, A> {
-    return false;
-  }
-}
-
-export class Right<L, A> {
-  readonly value: A;
-
-  constructor(value: A) {
-    this.value = value;
-  }
-
-  isLeft(): this is Left<L, A> {
-    return false;
-  }
-
-  isRight(): this is Right<L, A> {
-    return true;
-  }
-}
-
-export const left = <L, A>(l: L): Either<L, A> => {
-  return new Left(l);
-};
-
-export const right = <L, A>(a: A): Either<L, A> => {
-  return new Right<L, A>(a);
-};

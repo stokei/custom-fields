@@ -30,11 +30,13 @@ export class PrismaFieldRepository implements FieldRepository {
           where: { fieldId: field.id },
         });
 
-      const { toCreate, toUpdate, toDeleteIds } =
-        FieldOptionMapper.toDiffOptions(existingOptions, desiredOptions);
-      if (toDeleteIds.length) {
+      const { toCreate, toUpdate, toDelete } = FieldOptionMapper.toDiffOptions(
+        existingOptions,
+        desiredOptions,
+      );
+      if (toDelete.length) {
         await transaction.fieldOption.deleteMany({
-          where: { id: { in: toDeleteIds } },
+          where: { id: { in: toDelete.map(({ id }) => id || '') } },
         });
       }
       for (const updateItem of toUpdate) {

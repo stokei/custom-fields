@@ -3,28 +3,42 @@ import {
   FieldRepository,
   InjectFieldRepository,
 } from '@/modules/fields/domain/repositories/field.repository';
+import { CommandHandlerBase } from '@/shared/application/base/command-base';
+import { Result } from '@/shared/domain/base/result';
 import { DomainEventBusService } from '@/shared/infra/event-bus/domain-event-bus.service';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler } from '@nestjs/cqrs';
 import { CreateFieldCommand } from './create-field.command';
 import { CreateFieldViewModel } from './create-field.viewmodel';
 
+export type CreateFieldCommandResponse = Result<CreateFieldViewModel>;
 @CommandHandler(CreateFieldCommand)
-export class CreateFieldHandler implements ICommandHandler<CreateFieldCommand> {
+export class CreateFieldHandler extends CommandHandlerBase<
+  CreateFieldCommand,
+  Promise<CreateFieldCommandResponse>
+> {
   constructor(
     @InjectFieldRepository()
     private readonly fieldRepository: FieldRepository,
     private readonly domainEventBusService: DomainEventBusService,
-  ) { }
+  ) {
+    super();
+  }
 
   async execute(command: CreateFieldCommand) {
-    const field = FieldEntity.create(command);
-    await this.fieldRepository.save(field);
+    try {
+      const field = FieldEntity.create(command);
+      await this.fieldRepository.save(field);
 
-    field.addFieldCreatedDomainEvent();
-    this.domainEventBusService.publishAll(field.domainEvents);
+      field.addFieldCreatedDomainEvent();
+      this.domainEventBusService.publishAll(field.domainEvents);
 
-    return CreateFieldViewModel.create({
-      id: field.id,
-    }).toJSON();
+      return Result.ok<CreateFieldViewModel>(
+        CreateFieldViewModel.create({
+          id: field.id,
+        }),
+      );
+    } catch (error) {
+      return Result.fail<CreateFieldViewModel>(error);
+    }
   }
 }

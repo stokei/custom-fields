@@ -1,19 +1,15 @@
 import { Prisma, FieldOption as PrismaFieldOption } from '@prisma/client';
 import { FieldOptionValueObject } from '../../domain/value-objects/field-option.vo';
 
-type FieldOptionPersistence = Prisma.FieldOptionCreateManyInput;
+export type FieldOptionPersistence = Prisma.FieldOptionCreateManyInput;
 
 interface OptionDiff {
   toCreate: FieldOptionPersistence[];
   toUpdate: Array<{
     id: string;
-    data: {
-      label: string;
-      order: number;
-      active: boolean;
-    };
+    data: FieldOptionPersistence;
   }>;
-  toDeleteIds: string[];
+  toDelete: FieldOptionPersistence[];
 }
 
 export class FieldOptionMapper {
@@ -56,7 +52,7 @@ export class FieldOptionMapper {
 
     const toCreate: OptionDiff['toCreate'] = [];
     const toUpdate: OptionDiff['toUpdate'] = [];
-    const toDeleteIds: OptionDiff['toDeleteIds'] = [];
+    const toDelete: OptionDiff['toDelete'] = [];
 
     for (const desiredOpt of desired) {
       const existingOpt = existingByValue.get(desiredOpt.value);
@@ -74,21 +70,17 @@ export class FieldOptionMapper {
       if (needsUpdate) {
         toUpdate.push({
           id: existingOpt.id,
-          data: {
-            label: desiredOpt.label,
-            order: desiredOpt.order ?? 0,
-            active: desiredOpt.active ?? true,
-          },
+          data: desiredOpt,
         });
       }
     }
 
     for (const existingOpt of existing) {
       if (!desiredByValue.has(existingOpt.value)) {
-        toDeleteIds.push(existingOpt.id);
+        toDelete.push(existingOpt);
       }
     }
 
-    return { toCreate, toUpdate, toDeleteIds };
+    return { toCreate, toUpdate, toDelete };
   };
 }
