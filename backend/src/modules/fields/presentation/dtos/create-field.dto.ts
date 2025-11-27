@@ -86,7 +86,7 @@ export class CreateFieldDTO {
   @IsInt()
   order: number;
 
-  @ApiProperty({ type: CreateFieldOptionDTO })
+  @ApiProperty({ type: [CreateFieldOptionDTO] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateFieldOptionDTO)

@@ -15,11 +15,12 @@ export class PrismaFieldRepository implements FieldRepository {
   constructor(private readonly prisma: PrismaClientService) { }
 
   async save(field: FieldEntity): Promise<void> {
-    const { id: fieldId, ...data } = FieldMapper.toPersistence(field);
+    const data = FieldMapper.toPersistence(field);
+    delete data.id;
     await this.prisma.$transaction(async (transaction) => {
       await transaction.field.upsert({
-        where: { id: fieldId },
-        create: data,
+        where: { id: field.id },
+        create: { id: field.id, ...data },
         update: data,
       });
       const desiredOptions = field.options?.map((option) =>
@@ -64,6 +65,7 @@ export class PrismaFieldRepository implements FieldRepository {
     const field = await this.prisma.field.findFirst({
       where: {
         tenantId: params.tenantId,
+        organizationId: params.organizationId,
         context: params.context,
         key: params.key,
       },

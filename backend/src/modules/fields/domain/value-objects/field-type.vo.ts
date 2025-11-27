@@ -1,6 +1,6 @@
-import { FieldType as FieldTypeEnum } from '@prisma/client';
 import { ValueObject } from '@/shared/domain/base/value-object';
-import { ValidationError } from '@/shared/domain/errors/validation-error';
+import { Guard } from '@/shared/domain/guards/guard';
+import { FieldType as FieldTypeEnum } from '@prisma/client';
 
 export { FieldTypeEnum };
 
@@ -15,8 +15,9 @@ export class FieldTypeValueObject extends ValueObject<FieldTypeProps> {
 
   static create(type: FieldTypeEnum) {
     const upper = type.toUpperCase() as FieldTypeEnum;
-    if (!Object.values(FieldTypeEnum).includes(upper)) {
-      throw new ValidationError(`Invalid field type: ${type}`);
+    const guard = Guard.isOneOf(upper, Object.values(FieldTypeEnum), 'options');
+    if (guard.isFailure) {
+      throw guard.getErrorValue();
     }
     return new FieldTypeValueObject({ value: upper });
   }

@@ -19,6 +19,12 @@ export abstract class ArrayList<T> {
     if (!filter) return this.currentItems;
     return this.currentItems.filter(filter);
   }
+  public getItemBy(
+    filter?: (value: T, index: number, array: T[]) => boolean,
+  ): T | undefined {
+    if (!filter) return;
+    return this.currentItems.find(filter);
+  }
 
   public size(): number {
     return this.currentItems.length;
@@ -34,7 +40,7 @@ export abstract class ArrayList<T> {
   }
 
   public isEmpty(): boolean {
-    return this.size() == 0;
+    return !this.size();
   }
 
   public getNewItems(): T[] {
@@ -46,20 +52,16 @@ export abstract class ArrayList<T> {
   }
 
   private isCurrentItem(item: T): boolean {
-    return (
-      this.currentItems.filter((v: T) => this.compareItems(item, v)).length !==
-      0
-    );
+    return !!this.currentItems.filter((v: T) => this.compareItems(item, v))
+      .length;
   }
 
   private isNewItem(item: T): boolean {
-    return this.new.filter((v: T) => this.compareItems(item, v)).length !== 0;
+    return !!this.new.filter((v: T) => this.compareItems(item, v)).length;
   }
 
   private isRemovedItem(item: T): boolean {
-    return (
-      this.removed.filter((v: T) => this.compareItems(item, v)).length !== 0
-    );
+    return !!this.removed.filter((v: T) => this.compareItems(item, v)).length;
   }
 
   private removeFromNew(item: T): void {
@@ -77,9 +79,7 @@ export abstract class ArrayList<T> {
   }
 
   private wasAddedInitially(item: T): boolean {
-    return (
-      this.initial.filter((v: T) => this.compareItems(item, v)).length !== 0
-    );
+    return !!this.initial.filter((v: T) => this.compareItems(item, v)).length;
   }
 
   public exists(item: T): boolean {

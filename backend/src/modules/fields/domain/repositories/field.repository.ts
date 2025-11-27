@@ -3,6 +3,7 @@ import { FieldEntity } from '../entities/field.entity';
 
 export interface GetByTenantContextKeyParams {
   tenantId: string;
+  organizationId: string;
   context: string;
   key: string;
 }

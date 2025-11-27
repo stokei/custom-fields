@@ -1,4 +1,5 @@
 import { FieldEntity } from '@/modules/fields/domain/entities/field.entity';
+import { FieldAlreadyExistsException } from '@/modules/fields/domain/errors/field-already-exists-exception';
 import {
   FieldRepository,
   InjectFieldRepository,
@@ -27,6 +28,23 @@ export class CreateFieldHandler extends CommandHandlerBase<
   async execute(command: CreateFieldCommand) {
     try {
       const field = FieldEntity.create(command);
+      const exists = await this.fieldRepository.getByTenantContextKey({
+        tenantId: command.tenantId,
+        organizationId: command.organizationId,
+        context: command.context,
+        key: command.key,
+      });
+      if (exists) {
+        return Result.fail<CreateFieldViewModel>(
+          FieldAlreadyExistsException.create({
+            tenantId: command.tenantId,
+            organizationId: command.organizationId,
+            context: command.context,
+            key: command.key,
+          }),
+        );
+      }
+
       await this.fieldRepository.save(field);
 
       field.addFieldCreatedDomainEvent();

@@ -1,14 +1,12 @@
+import { MainModule } from '@/main.module';
 import { CreateFieldCommand } from '@/modules/fields/application/commands/create-field/create-field.command';
 import { CreateFieldViewModel } from '@/modules/fields/application/commands/create-field/create-field.viewmodel';
-import { FieldTypeEnum } from '@/modules/fields/domain/value-objects/field-type.vo';
-import { CreateFieldDTO } from '@/modules/fields/presentation/dtos/create-field.dto';
 import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { CommandBusService } from '@/shared/infra/command-bus/command-bus.service';
+import { createFieldDTOStub } from '@/tests/stubs/dtos/fields/create-field-dto.stub';
 import { tenantContextStub } from '@/tests/stubs/http/tenant-context.stub';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateFieldController } from './create-field.controller';
-import { CommandBusServiceMockProvider } from '@/tests/mocks/bus/command-bus.mock';
-import { createFieldDTOStub } from '@/tests/stubs/dtos/fields/create-field-dto.stub';
 
 describe(CreateFieldController.name, () => {
   let controller: CreateFieldController;
@@ -22,8 +20,7 @@ describe(CreateFieldController.name, () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [CreateFieldController],
-      providers: [CommandBusServiceMockProvider],
+      imports: [MainModule],
     }).compile();
 
     controller = module.get<CreateFieldController>(CreateFieldController);
@@ -40,8 +37,6 @@ describe(CreateFieldController.name, () => {
     });
 
     it('should call commandBusService.execute with correct CreateFieldCommand', async () => {
-      commandBusService.execute.mockResolvedValue(mockFieldViewModel);
-
       await controller.createField(tenantContextStub, mockCreateFieldDTO);
 
       expect(commandBusService.execute).toHaveBeenCalledTimes(1);
@@ -66,8 +61,6 @@ describe(CreateFieldController.name, () => {
     });
 
     it('should return CreateFieldViewModel on success', async () => {
-      commandBusService.execute.mockResolvedValue(mockFieldViewModel);
-
       const result = await controller.createField(
         tenantContextStub,
         mockCreateFieldDTO,
@@ -78,8 +71,6 @@ describe(CreateFieldController.name, () => {
     });
 
     it('should include tenant information in the command', async () => {
-      commandBusService.execute.mockResolvedValue(mockFieldViewModel);
-
       await controller.createField(tenantContextStub, mockCreateFieldDTO);
 
       const callArgs = commandBusService.execute.mock.calls[0][0];

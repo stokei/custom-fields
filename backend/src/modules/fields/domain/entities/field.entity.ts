@@ -1,7 +1,8 @@
 import { AggregateRoot } from '@/shared/domain/base/aggregate-root';
-import { ValidationError } from '@/shared/domain/errors/validation-error';
 import { Guard } from '@/shared/domain/guards/guard';
 import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
+import { convertToISODateString } from '@/utils/dates';
+import { FieldOptionAlreadyExistsException } from '../errors/field-option-already-exists-exception';
 import { FieldCreatedEvent } from '../events/field-created/field-created.event';
 import {
   FieldOptionValueObject,
@@ -11,7 +12,6 @@ import {
   FieldTypeEnum,
   FieldTypeValueObject,
 } from '../value-objects/field-type.vo';
-import { convertToISODateString } from '@/utils/dates';
 
 interface FieldProps {
   organizationId: string;
@@ -118,29 +118,33 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
   }
 
   static create(input: CreateFieldInput, id?: UniqueEntityID) {
-    Guard.againstEmptyString(input.tenantId, 'tenantId');
-    Guard.againstEmptyString(input.context, 'context');
-    Guard.againstEmptyString(input.key, 'key');
-    Guard.againstEmptyString(input.label, 'label');
-    Guard.againstEmptyString(input.type, 'type');
+    const guards = Guard.againstNullOrUndefinedBulk([
+      { argument: input.tenantId, argumentName: 'tenantId' },
+      { argument: input.context, argumentName: 'context' },
+      { argument: input.key, argumentName: 'key' },
+      { argument: input.label, argumentName: 'label' },
+      { argument: input.type, argumentName: 'type' },
+    ]);
+    if (guards.isFailure) {
+      throw guards.getErrorValue();
+    }
 
     const minLength = input.minLength ?? null;
     const maxLength = input.maxLength ?? null;
+    const inputOptions = input.options || [];
 
-    if (minLength !== null && maxLength !== null && minLength > maxLength) {
-      throw new ValidationError('minLength cannot be greater than maxLength.');
+    if (minLength !== null && maxLength !== null) {
+      throw Guard.greaterThan(maxLength, minLength).getErrorValue();
     }
 
-    const options = input.options?.map((option, order) =>
-      FieldOptionValueObject.create({
-        ...option,
-        order,
-      }),
-    );
     const type = FieldTypeValueObject.create(input.type);
-
-    if (type.isSelect() && options.length === 0) {
-      throw new ValidationError('Single-Select/Multi-Select requires options.');
+    const optionsGuard = Guard.isOneOf(
+      type.value,
+      [FieldTypeEnum.SINGLE_SELECT, FieldTypeEnum.MULTI_SELECT],
+      'options',
+    );
+    if (optionsGuard.isFailure && !input?.options?.length) {
+      throw optionsGuard.getErrorValue();
     }
 
     const field = new FieldEntity(
@@ -161,11 +165,17 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
         pattern: input.pattern,
         createdAt: convertToISODateString(input.createdAt || Date.now()),
         updatedAt: convertToISODateString(input.updatedAt || Date.now()),
-        options,
+        options: [],
       },
       id,
     );
-
+    for (let index = 0; index < inputOptions.length; index++) {
+      const option = inputOptions[index];
+      field.addOption({
+        ...option,
+        order: index,
+      });
+    }
     return field;
   }
 
@@ -177,11 +187,14 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     this.props.active = false;
   }
 
-  addOption({ value, label, order, active }: FieldOptionValueObjectProps) {
-    if (!this.type.isSelect())
-      throw new ValidationError('Only select types accept options.');
+  private addOption({
+    value,
+    label,
+    order,
+    active,
+  }: FieldOptionValueObjectProps) {
     const exists = this.props.options.some((o) => o.value === value);
-    if (exists) throw new ValidationError(`Option '${value}' already exists.`);
+    if (exists) throw FieldOptionAlreadyExistsException.create({ value });
     this.props.options.push(
       FieldOptionValueObject.create({
         value,
@@ -190,25 +203,5 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
         active: active ?? true,
       }),
     );
-  }
-
-  removeOptionByValue(value: string): void {
-    if (!this.type.isSelect()) {
-      throw new ValidationError('Only select fields can have options.');
-    }
-
-    const beforeOptionsCount = this.props.options.length;
-    this.props.options = this.props.options.filter(
-      (opt) => opt.value !== value,
-    );
-    const currentOptionsCount = this.props.options.length;
-    if (currentOptionsCount === beforeOptionsCount) {
-      throw new ValidationError(`Option not found: ${value}`);
-    }
-    if (!currentOptionsCount) {
-      throw new ValidationError(
-        'Select/Multi-Select requires at least one option.',
-      );
-    }
   }
 }

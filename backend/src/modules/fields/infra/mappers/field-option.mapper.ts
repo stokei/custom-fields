@@ -9,7 +9,7 @@ interface OptionDiff {
     id: string;
     data: FieldOptionPersistence;
   }>;
-  toDelete: FieldOptionPersistence[];
+  toDelete: PrismaFieldOption[];
 }
 
 export class FieldOptionMapper {

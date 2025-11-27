@@ -1,6 +1,15 @@
 export type GuardResponse = string;
 
 import { Result } from '../base/result';
+import { ArgumentEmptyStringException } from '../errors/guards/argument-empty-string-exception';
+import { ArgumentNullOrUndefinedException } from '../errors/guards/argument-null-or-undefined-exception';
+import { NumberNotGreaterOrEqualThanException } from '../errors/guards/number-not-greater-or-equal-than-exception';
+import { NumberNotGreaterThanException } from '../errors/guards/number-not-greater-than-exception';
+import { NumberNotInRangeException } from '../errors/guards/number-not-in-range-exception';
+import { NumbersNotAllInRangeException } from '../errors/guards/numbers-not-all-in-range-exception';
+import { TextTooLongException } from '../errors/guards/text-too-long-exception';
+import { TextTooShortException } from '../errors/guards/text-too-short-exception';
+import { ValueNotOneOfException } from '../errors/guards/value-not-one-of-exception';
 
 export interface IGuardArgument {
   argument: any;
@@ -25,11 +34,10 @@ export class Guard {
     return actualValue > minValue
       ? Result.ok<GuardResponse>()
       : Result.fail<GuardResponse>(
-        new Error(
-          `Number given {${actualValue}} is not greater than {${minValue}}`,
-        ),
+        NumberNotGreaterThanException.create(minValue, actualValue),
       );
   }
+
   public static greaterOrEqualThan(
     minValue: number,
     actualValue: number,
@@ -37,9 +45,7 @@ export class Guard {
     return actualValue >= minValue
       ? Result.ok<GuardResponse>()
       : Result.fail<GuardResponse>(
-        new Error(
-          `Number given {${actualValue}} is not greater or equal than {${minValue}}`,
-        ),
+        NumberNotGreaterOrEqualThanException.create(minValue, actualValue),
       );
   }
 
@@ -50,7 +56,7 @@ export class Guard {
     return text.length >= numChars
       ? Result.ok<GuardResponse>()
       : Result.fail<GuardResponse>(
-        new Error(`Text is not at least ${numChars} chars.`),
+        TextTooShortException.create(numChars, text.length),
       );
   }
 
@@ -60,7 +66,7 @@ export class Guard {
   ): Result<GuardResponse> {
     if (text.length <= numChars) return Result.ok<GuardResponse>();
     return Result.fail<GuardResponse>(
-      new Error(`Text is greater than ${numChars} chars.`),
+      TextTooLongException.create(numChars, text.length),
     );
   }
 
@@ -70,9 +76,68 @@ export class Guard {
   ): Result<GuardResponse> {
     if (argument === null || argument === undefined || argument === '') {
       return Result.fail<GuardResponse>(
-        new Error(`${argumentName} is null or undefined`),
+        ArgumentNullOrUndefinedException.create(argumentName),
       );
     }
+    return Result.ok<GuardResponse>();
+  }
+
+  static againstEmptyString(
+    value: string,
+    name: string,
+  ): Result<GuardResponse> {
+    if (value.trim().length === 0) {
+      return Result.fail<GuardResponse>(
+        ArgumentEmptyStringException.create(name),
+      );
+    }
+    return Result.ok<GuardResponse>();
+  }
+
+  public static isOneOf<TValue = any>(
+    value: TValue,
+    validValues: TValue[],
+    argumentName: string,
+  ): Result<GuardResponse> {
+    const isValid = validValues.some((validValue) => validValue === value);
+    if (isValid) {
+      return Result.ok<GuardResponse>();
+    }
+    return Result.fail<GuardResponse>(
+      ValueNotOneOfException.create(argumentName, value, validValues),
+    );
+  }
+
+  public static inRange(
+    num: number,
+    min: number,
+    max: number,
+    argumentName: string,
+  ): Result<GuardResponse> {
+    const isInRange = num >= min && num <= max;
+    if (!isInRange) {
+      return Result.fail<GuardResponse>(
+        NumberNotInRangeException.create(argumentName, num, min, max),
+      );
+    }
+    return Result.ok<GuardResponse>();
+  }
+
+  public static allInRange(
+    numbers: number[],
+    min: number,
+    max: number,
+    argumentName: string,
+  ): Result<GuardResponse> {
+    for (const num of numbers) {
+      const numIsInRangeResult = this.inRange(num, min, max, argumentName);
+      if (numIsInRangeResult.isFailure) {
+        return Result.fail<GuardResponse>(
+          NumbersNotAllInRangeException.create(argumentName, numbers, min, max),
+        );
+      }
+    }
+
     return Result.ok<GuardResponse>();
   }
 
@@ -87,67 +152,6 @@ export class Guard {
       if (result.isFailure) return result;
     }
 
-    return Result.ok<GuardResponse>();
-  }
-
-  static againstEmptyString(
-    value: string,
-    name: string,
-  ): Result<GuardResponse> {
-    if (value.trim().length === 0)
-      Result.fail<GuardResponse>(new Error(`Guard: ${name} is empty`));
-    return Result.ok<GuardResponse>();
-  }
-
-  public static isOneOf(
-    value: any,
-    validValues: any[],
-    argumentName: string,
-  ): Result<GuardResponse> {
-    const isValid = validValues.some((validValue) => validValue === value);
-    if (isValid) {
-      return Result.ok<GuardResponse>();
-    }
-    return Result.fail<GuardResponse>(
-      new Error(
-        `${argumentName} isn't oneOf the correct types in ${JSON.stringify(validValues)}. Got "${value}".`,
-      ),
-    );
-  }
-
-  public static inRange(
-    num: number,
-    min: number,
-    max: number,
-    argumentName: string,
-  ): Result<GuardResponse> {
-    const isInRange = num >= min && num <= max;
-    if (!isInRange) {
-      return Result.fail<GuardResponse>(
-        new Error(`${argumentName} is not within range ${min} to ${max}.`),
-      );
-    }
-    return Result.ok<GuardResponse>();
-  }
-
-  public static allInRange(
-    numbers: number[],
-    min: number,
-    max: number,
-    argumentName: string,
-  ): Result<GuardResponse> {
-    let failingResult: Result<GuardResponse> = new Result(false, new Error(''));
-
-    for (const num of numbers) {
-      const numIsInRangeResult = this.inRange(num, min, max, argumentName);
-      if (!numIsInRangeResult.isFailure) failingResult = numIsInRangeResult;
-    }
-
-    if (failingResult) {
-      return Result.fail<GuardResponse>(
-        new Error(`${argumentName} is not within the range.`),
-      );
-    }
     return Result.ok<GuardResponse>();
   }
 }
