@@ -19,60 +19,68 @@ export interface IGuardArgument {
 export type GuardArgumentCollection = IGuardArgument[];
 
 export class Guard {
-  public static combine(guardResults: Result<any>[]): Result<GuardResponse> {
-    for (const result of guardResults) {
-      if (result.isFailure) return result;
-    }
-
-    return Result.ok<GuardResponse>();
-  }
-
   public static greaterThan(
+    argumentName: string,
     minValue: number,
     actualValue: number,
   ): Result<GuardResponse> {
     return actualValue > minValue
       ? Result.ok<GuardResponse>()
       : Result.fail<GuardResponse>(
-        NumberNotGreaterThanException.create(minValue, actualValue),
+        NumberNotGreaterThanException.create(argumentName, {
+          minValue,
+          actualValue,
+        }),
       );
   }
 
   public static greaterOrEqualThan(
+    argumentName: string,
     minValue: number,
     actualValue: number,
   ): Result<GuardResponse> {
     return actualValue >= minValue
       ? Result.ok<GuardResponse>()
       : Result.fail<GuardResponse>(
-        NumberNotGreaterOrEqualThanException.create(minValue, actualValue),
+        NumberNotGreaterOrEqualThanException.create(argumentName, {
+          minValue,
+          actualValue,
+        }),
       );
   }
 
   public static againstAtLeast(
+    argumentName: string,
     numChars: number,
     text: string,
   ): Result<GuardResponse> {
     return text.length >= numChars
       ? Result.ok<GuardResponse>()
       : Result.fail<GuardResponse>(
-        TextTooShortException.create(numChars, text.length),
+        TextTooShortException.create(argumentName, {
+          minLength: numChars,
+          actualLength: text.length,
+        }),
       );
   }
 
   public static againstAtMost(
+    argumentName: string,
     numChars: number,
     text: string,
   ): Result<GuardResponse> {
     if (text.length <= numChars) return Result.ok<GuardResponse>();
     return Result.fail<GuardResponse>(
-      TextTooLongException.create(numChars, text.length),
+      TextTooLongException.create(argumentName, {
+        maxLength: numChars,
+        actualLength: text.length,
+      }),
     );
   }
 
   public static againstNullOrUndefined(
-    argument: any,
     argumentName: string,
+    argument: any,
   ): Result<GuardResponse> {
     if (argument === null || argument === undefined || argument === '') {
       return Result.fail<GuardResponse>(
@@ -83,57 +91,64 @@ export class Guard {
   }
 
   static againstEmptyString(
+    argumentName: string,
     value: string,
-    name: string,
   ): Result<GuardResponse> {
     if (value.trim().length === 0) {
       return Result.fail<GuardResponse>(
-        ArgumentEmptyStringException.create(name),
+        ArgumentEmptyStringException.create(argumentName),
       );
     }
     return Result.ok<GuardResponse>();
   }
 
   public static isOneOf<TValue = any>(
+    argumentName: string,
     value: TValue,
     validValues: TValue[],
-    argumentName: string,
   ): Result<GuardResponse> {
     const isValid = validValues.some((validValue) => validValue === value);
     if (isValid) {
       return Result.ok<GuardResponse>();
     }
     return Result.fail<GuardResponse>(
-      ValueNotOneOfException.create(argumentName, value, validValues),
+      ValueNotOneOfException.create<TValue>(argumentName, {
+        value,
+        validValues,
+      }),
     );
   }
 
   public static inRange(
+    argumentName: string,
     num: number,
     min: number,
     max: number,
-    argumentName: string,
   ): Result<GuardResponse> {
     const isInRange = num >= min && num <= max;
     if (!isInRange) {
       return Result.fail<GuardResponse>(
-        NumberNotInRangeException.create(argumentName, num, min, max),
+        NumberNotInRangeException.create(argumentName, { num, min, max }),
       );
     }
     return Result.ok<GuardResponse>();
   }
 
   public static allInRange(
+    argumentName: string,
     numbers: number[],
     min: number,
     max: number,
-    argumentName: string,
   ): Result<GuardResponse> {
     for (const num of numbers) {
-      const numIsInRangeResult = this.inRange(num, min, max, argumentName);
+      const numIsInRangeResult = this.inRange(argumentName, num, min, max);
       if (numIsInRangeResult.isFailure) {
         return Result.fail<GuardResponse>(
-          NumbersNotAllInRangeException.create(argumentName, numbers, min, max),
+          NumbersNotAllInRangeException.create(argumentName, {
+            numbers,
+            min,
+            max,
+          }),
         );
       }
     }
@@ -146,9 +161,17 @@ export class Guard {
   ): Result<GuardResponse> {
     for (const arg of args) {
       const result = this.againstNullOrUndefined(
-        arg.argument,
         arg.argumentName,
+        arg.argument,
       );
+      if (result.isFailure) return result;
+    }
+
+    return Result.ok<GuardResponse>();
+  }
+
+  public static combine(guardResults: Result<any>[]): Result<GuardResponse> {
+    for (const result of guardResults) {
       if (result.isFailure) return result;
     }
 

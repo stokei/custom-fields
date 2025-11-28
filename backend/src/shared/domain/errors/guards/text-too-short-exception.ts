@@ -6,18 +6,16 @@ export interface TextTooShortDetails {
 }
 
 export class TextTooShortException extends ValidationException<TextTooShortDetails> {
-  private constructor(details: TextTooShortDetails) {
+  private constructor(argumentName: string, details: TextTooShortDetails) {
     super(
+      argumentName,
       `Text is not at least ${details.minLength} chars.`,
       'TEXT_TOO_SHORT',
       details,
     );
   }
 
-  static create(numChars: number, actualLength: number) {
-    return new TextTooShortException({
-      minLength: numChars,
-      actualLength,
-    });
+  static create(argumentName: string, details: TextTooShortDetails) {
+    return new TextTooShortException(argumentName, details);
   }
 }

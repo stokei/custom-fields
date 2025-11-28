@@ -9,23 +9,27 @@ interface FieldTypeProps {
 }
 
 export class FieldTypeValueObject extends ValueObject<FieldTypeProps> {
+  public readonly typesWithOptions: FieldTypeEnum[] = [
+    FieldTypeEnum.CHECKBOX,
+    FieldTypeEnum.RADIO,
+    FieldTypeEnum.SINGLE_SELECT,
+    FieldTypeEnum.MULTI_SELECT,
+  ];
+
   get value() {
     return this.props.value;
   }
 
+  get hasOptions(): boolean {
+    return this.typesWithOptions.includes(this.value);
+  }
+
   static create(type: FieldTypeEnum) {
     const upper = type.toUpperCase() as FieldTypeEnum;
-    const guard = Guard.isOneOf(upper, Object.values(FieldTypeEnum), 'options');
+    const guard = Guard.isOneOf('options', upper, Object.values(FieldTypeEnum));
     if (guard.isFailure) {
       throw guard.getErrorValue();
     }
     return new FieldTypeValueObject({ value: upper });
-  }
-
-  isSelect(): boolean {
-    return (
-      this.value === FieldTypeEnum.SINGLE_SELECT ||
-      this.value === FieldTypeEnum.MULTI_SELECT
-    );
   }
 }

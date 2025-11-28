@@ -6,18 +6,16 @@ export interface TextTooLongDetails {
 }
 
 export class TextTooLongException extends ValidationException<TextTooLongDetails> {
-  private constructor(details: TextTooLongDetails) {
+  private constructor(argumentName: string, details: TextTooLongDetails) {
     super(
+      argumentName,
       `Text is greater than ${details.maxLength} chars.`,
       'TEXT_TOO_LONG',
       details,
     );
   }
 
-  static create(numChars: number, actualLength: number) {
-    return new TextTooLongException({
-      maxLength: numChars,
-      actualLength,
-    });
+  static create(argumentName: string, details: TextTooLongDetails) {
+    return new TextTooLongException(argumentName, details);
   }
 }

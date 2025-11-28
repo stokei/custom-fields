@@ -46,7 +46,7 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
   }
 
   get id(): string {
-    return this._id.toString();
+    return super.id;
   }
 
   get tenantId(): string {
@@ -118,15 +118,17 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
   }
 
   static create(input: CreateFieldInput, id?: UniqueEntityID) {
-    const guards = Guard.againstNullOrUndefinedBulk([
-      { argument: input.tenantId, argumentName: 'tenantId' },
-      { argument: input.context, argumentName: 'context' },
-      { argument: input.key, argumentName: 'key' },
-      { argument: input.label, argumentName: 'label' },
-      { argument: input.type, argumentName: 'type' },
+    const inputValuesAreNullOrUndefinedGuard = Guard.combine([
+      Guard.againstNullOrUndefined('tenantId', input.tenantId),
+      Guard.againstNullOrUndefined('organizationId', input.organizationId),
+      Guard.againstNullOrUndefined('context', input.context),
+      Guard.againstNullOrUndefined('key', input.key),
+      Guard.againstNullOrUndefined('label', input.label),
+      Guard.againstNullOrUndefined('group', input.group),
+      Guard.againstNullOrUndefined('type', input.type),
     ]);
-    if (guards.isFailure) {
-      throw guards.getErrorValue();
+    if (inputValuesAreNullOrUndefinedGuard.isFailure) {
+      throw inputValuesAreNullOrUndefinedGuard.getErrorValue();
     }
 
     const minLength = input.minLength ?? null;
@@ -134,17 +136,24 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     const inputOptions = input.options || [];
 
     if (minLength !== null && maxLength !== null) {
-      throw Guard.greaterThan(maxLength, minLength).getErrorValue();
+      const minLengthIsGreaterThanMaxLengthGuard = Guard.greaterThan(
+        'minLength',
+        minLength,
+        maxLength,
+      );
+      if (minLengthIsGreaterThanMaxLengthGuard.isFailure) {
+        throw minLengthIsGreaterThanMaxLengthGuard.getErrorValue();
+      }
     }
 
     const type = FieldTypeValueObject.create(input.type);
-    const optionsGuard = Guard.isOneOf(
-      type.value,
-      [FieldTypeEnum.SINGLE_SELECT, FieldTypeEnum.MULTI_SELECT],
+    const optionsIsOneOfGuard = Guard.isOneOf(
       'options',
+      type.value,
+      type.typesWithOptions,
     );
-    if (optionsGuard.isFailure && !input?.options?.length) {
-      throw optionsGuard.getErrorValue();
+    if (type.hasOptions && !input?.options?.length) {
+      throw optionsIsOneOfGuard.getErrorValue();
     }
 
     const field = new FieldEntity(
@@ -194,7 +203,13 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     active,
   }: FieldOptionValueObjectProps) {
     const exists = this.props.options.some((o) => o.value === value);
-    if (exists) throw FieldOptionAlreadyExistsException.create({ value });
+    if (exists)
+      throw FieldOptionAlreadyExistsException.create(
+        `option[${order}] - ${label}`,
+        {
+          value,
+        },
+      );
     this.props.options.push(
       FieldOptionValueObject.create({
         value,

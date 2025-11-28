@@ -1,7 +1,6 @@
 import { ValidationException } from '../base/validation-exception';
 
 export interface ValueNotOneOfDetails<TValue = any> {
-  argumentName: string;
   value: TValue;
   validValues: TValue[];
 }
@@ -9,11 +8,15 @@ export interface ValueNotOneOfDetails<TValue = any> {
 export class ValueNotOneOfException<TValue = any> extends ValidationException<
   ValueNotOneOfDetails<TValue>
 > {
-  private constructor(details: ValueNotOneOfDetails) {
+  private constructor(
+    argumentName: string,
+    details: ValueNotOneOfDetails<TValue>,
+  ) {
     super(
-      `${details.argumentName} isn't oneOf the correct types in ${JSON.stringify(
+      argumentName,
+      `isn't oneOf the correct types in ${JSON.stringify(
         details.validValues,
-      )}. Got "${details.value}".`,
+      )}. Got "${details.value + ''}".`,
       'VALUE_NOT_ONE_OF',
       details,
     );
@@ -21,13 +24,8 @@ export class ValueNotOneOfException<TValue = any> extends ValidationException<
 
   static create<TValue = any>(
     argumentName: string,
-    value: TValue,
-    validValues: TValue[],
+    details: ValueNotOneOfDetails<TValue>,
   ) {
-    return new ValueNotOneOfException<TValue>({
-      argumentName,
-      value,
-      validValues,
-    });
+    return new ValueNotOneOfException<TValue>(argumentName, details);
   }
 }

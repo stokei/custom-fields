@@ -10,7 +10,8 @@ interface FieldAlreadyExistsDetails {
 export class FieldAlreadyExistsException extends ValidationException<FieldAlreadyExistsDetails> {
   private constructor(details: FieldAlreadyExistsDetails) {
     super(
-      `Field with key "${details.key}" already exists in organization "${details.organizationId}" and context "${details.context}".`,
+      'Field',
+      `key "${details.key}" already exists in organization "${details.organizationId}" and context "${details.context}".`,
       'FIELD_ALREADY_EXISTS',
       details,
     );

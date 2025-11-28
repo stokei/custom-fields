@@ -23,8 +23,15 @@ export class FieldOptionValueObject extends ValueObject<FieldOptionValueObjectPr
   }
 
   static create({ value, label, order, active }: FieldOptionValueObjectProps) {
-    Guard.againstEmptyString(value, 'option.value');
-    Guard.againstEmptyString(label, 'option.label');
+    const guardResult = Guard.combine([
+      Guard.againstNullOrUndefined('option.value', value),
+      Guard.againstNullOrUndefined('option.label', label),
+      Guard.greaterOrEqualThan('option.order', 0, order ?? 0),
+    ]);
+    if (guardResult.isFailure) {
+      throw guardResult.getErrorValue();
+    }
+
     return new FieldOptionValueObject({
       value,
       label,

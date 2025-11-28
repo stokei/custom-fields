@@ -5,8 +5,12 @@ interface FieldOptionAlreadyExistsDetails {
 }
 
 export class FieldOptionAlreadyExistsException extends ValidationException<FieldOptionAlreadyExistsDetails> {
-  private constructor(details: FieldOptionAlreadyExistsDetails) {
+  private constructor(
+    argumentName: string,
+    details: FieldOptionAlreadyExistsDetails,
+  ) {
     super(
+      argumentName,
       `Option '${details.value}' already exists.`,
       'FIELD_OPTION_ALREADY_EXISTS',
       details,
@@ -14,8 +18,9 @@ export class FieldOptionAlreadyExistsException extends ValidationException<Field
   }
 
   static create(
+    argumentName: string,
     details: FieldOptionAlreadyExistsDetails,
   ): FieldOptionAlreadyExistsException {
-    return new FieldOptionAlreadyExistsException(details);
+    return new FieldOptionAlreadyExistsException(argumentName, details);
   }
 }
