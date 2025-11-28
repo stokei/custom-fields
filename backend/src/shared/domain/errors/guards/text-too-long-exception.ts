@@ -1,3 +1,4 @@
+import { ExceptionCode } from '../base/exception-codes';
 import { ValidationException } from '../base/validation-exception';
 
 export interface TextTooLongDetails {
@@ -10,8 +11,8 @@ export class TextTooLongException extends ValidationException<TextTooLongDetails
     super(
       argumentName,
       `Text is greater than ${details.maxLength} chars.`,
-      'TEXT_TOO_LONG',
-      details,
+      ExceptionCode.TEXT_TOO_LONG,
+      [details],
     );
   }
 

@@ -8,7 +8,7 @@ import { LocalApiKeyVerifier } from './local/local-api-key-verifier.service';
 const ApiKeyVerifier = createProviderByEnvironment({
   [EnvironmentType.DEVELOPMENT]: {
     provide: API_KEY_VERIFIER,
-    useClass: UnkeyApiKeyVerifier,
+    useClass: LocalApiKeyVerifier,
   },
   [EnvironmentType.PRODUCTION]: {
     provide: API_KEY_VERIFIER,

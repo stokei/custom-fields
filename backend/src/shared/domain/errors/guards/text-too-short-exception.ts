@@ -1,3 +1,4 @@
+import { ExceptionCode } from '../base/exception-codes';
 import { ValidationException } from '../base/validation-exception';
 
 export interface TextTooShortDetails {
@@ -10,8 +11,8 @@ export class TextTooShortException extends ValidationException<TextTooShortDetai
     super(
       argumentName,
       `Text is not at least ${details.minLength} chars.`,
-      'TEXT_TOO_SHORT',
-      details,
+      ExceptionCode.TEXT_TOO_SHORT,
+      [details],
     );
   }
 

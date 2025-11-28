@@ -1,8 +1,14 @@
-export class DomainException<TDetails = Record<string, unknown>> extends Error {
-  public readonly code: string;
-  public readonly details?: TDetails;
+import { ExceptionCode } from './exception-codes';
 
-  protected constructor(message: string, code: string, details?: TDetails) {
+export class DomainException<TDetails = Record<string, unknown>> extends Error {
+  public readonly code: ExceptionCode;
+  public readonly details?: TDetails[];
+
+  protected constructor(
+    message: string,
+    code: ExceptionCode,
+    details?: TDetails[],
+  ) {
     super(message);
     this.name = this.constructor.name;
     this.code = code;

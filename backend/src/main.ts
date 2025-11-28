@@ -1,23 +1,13 @@
+import { Logger, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { MainModule } from './main.module';
-import { SERVER_HOST, SERVER_PORT, SERVER_URL } from './environments';
-import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
-import { HttpAllExceptionsFilter } from './shared/infra/http/filters/http-all-exceptions.filter';
-import { Swagger } from './shared/infra/docs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { ValidationException } from './shared/domain/errors/base/validation-exception';
+import { SERVER_HOST, SERVER_PORT, SERVER_URL } from './environments';
+import { MainModule } from './main.module';
+import { Swagger } from './shared/infra/docs/swagger';
+import { HttpAllExceptionsFilter } from './shared/infra/http/filters/http-all-exceptions.filter';
+import { ClassValidatiorValidationPipe } from './shared/infra/http/pipes/validation.pipe';
 
 const logger = new Logger('Bootstrap');
-class ClassValidatorValidationError extends ValidationException {
-  constructor(details?: any) {
-    super(
-      'Validation failed',
-      'Invalid request body',
-      'VALIDATION_ERROR',
-      details,
-    );
-  }
-}
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(MainModule, {
@@ -31,18 +21,7 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      exceptionFactory(errors) {
-        const details = errors.map((err) => ({
-          field: err.property,
-          constraints: err.constraints,
-        }));
-        return new ClassValidatorValidationError(details);
-      },
-    }),
-  );
+  app.useGlobalPipes(ClassValidatiorValidationPipe.create());
   app.useGlobalFilters(new HttpAllExceptionsFilter());
 
   Swagger.setup(app);

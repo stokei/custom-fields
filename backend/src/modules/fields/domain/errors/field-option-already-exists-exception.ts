@@ -1,3 +1,4 @@
+import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
 import { ValidationException } from '@/shared/domain/errors/base/validation-exception';
 
 interface FieldOptionAlreadyExistsDetails {
@@ -12,8 +13,8 @@ export class FieldOptionAlreadyExistsException extends ValidationException<Field
     super(
       argumentName,
       `Option '${details.value}' already exists.`,
-      'FIELD_OPTION_ALREADY_EXISTS',
-      details,
+      ExceptionCode.FIELD_OPTION_ALREADY_EXISTS,
+      [details],
     );
   }
 

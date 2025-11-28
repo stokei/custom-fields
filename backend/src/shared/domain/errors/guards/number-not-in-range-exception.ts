@@ -1,3 +1,4 @@
+import { ExceptionCode } from '../base/exception-codes';
 import { ValidationException } from '../base/validation-exception';
 
 export interface NumberNotInRangeDetails {
@@ -11,8 +12,8 @@ export class NumberNotInRangeException extends ValidationException<NumberNotInRa
     super(
       argumentName,
       `is not within range ${details.min} to ${details.max}.`,
-      'NUMBER_NOT_IN_RANGE',
-      details,
+      ExceptionCode.NUMBER_NOT_IN_RANGE,
+      [details],
     );
   }
 

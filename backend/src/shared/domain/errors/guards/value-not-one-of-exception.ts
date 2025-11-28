@@ -1,3 +1,4 @@
+import { ExceptionCode } from '../base/exception-codes';
 import { ValidationException } from '../base/validation-exception';
 
 export interface ValueNotOneOfDetails<TValue = any> {
@@ -17,8 +18,8 @@ export class ValueNotOneOfException<TValue = any> extends ValidationException<
       `isn't oneOf the correct types in ${JSON.stringify(
         details.validValues,
       )}. Got "${details.value + ''}".`,
-      'VALUE_NOT_ONE_OF',
-      details,
+      ExceptionCode.VALUE_NOT_ONE_OF,
+      [details],
     );
   }
 

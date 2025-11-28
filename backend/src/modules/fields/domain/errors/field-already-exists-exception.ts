@@ -1,3 +1,4 @@
+import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
 import { ValidationException } from '@/shared/domain/errors/base/validation-exception';
 
 interface FieldAlreadyExistsDetails {
@@ -12,8 +13,8 @@ export class FieldAlreadyExistsException extends ValidationException<FieldAlread
     super(
       'Field',
       `key "${details.key}" already exists in organization "${details.organizationId}" and context "${details.context}".`,
-      'FIELD_ALREADY_EXISTS',
-      details,
+      ExceptionCode.FIELD_ALREADY_EXISTS,
+      [details],
     );
   }
 

@@ -1,3 +1,4 @@
+import { ExceptionCode } from '../base/exception-codes';
 import { ValidationException } from '../base/validation-exception';
 
 export interface NumberNotGreaterThanDetails {
@@ -13,8 +14,8 @@ export class NumberNotGreaterThanException extends ValidationException<NumberNot
     super(
       argumentName,
       `Number given {${details.actualValue}} is not greater than {${details.minValue}}.`,
-      'NUMBER_NOT_GREATER_THAN',
-      details,
+      ExceptionCode.NUMBER_NOT_GREATER_THAN,
+      [details],
     );
   }
 

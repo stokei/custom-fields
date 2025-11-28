@@ -9,7 +9,8 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { ValidationError as ClassValidatorValidationError } from 'class-validator';
+import { HttpExceptionResponse } from '../errors/http-exception-response';
+import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
 
 @Catch()
 export class HttpAllExceptionsFilter implements ExceptionFilter {
@@ -18,16 +19,16 @@ export class HttpAllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const request = ctx.getRequest();
 
-    const structuredErrorResponse = {
-      error: {
-        type: 'INTERNAL_ERROR',
-        message: 'Internal Server Error',
-      } as any,
+    const structuredErrorResponse = HttpExceptionResponse.create({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      timestamp: new Date().toISOString(),
       path: request.url,
       method: request.method,
-    };
+      error: {
+        type: 'INTERNAL_ERROR',
+        code: 'INTERNAL_ERROR',
+        message: 'Internal Server Error',
+      } as any,
+    });
 
     // ─────────────────────────────────────────────
     // 1) CLASS-VALIDATOR ERRORS
@@ -61,7 +62,7 @@ export class HttpAllExceptionsFilter implements ExceptionFilter {
         structuredErrorResponse.statusCode = HttpStatus.CONFLICT;
         structuredErrorResponse.error = {
           type: 'DOMAIN_ERROR',
-          code: 'UNIQUE_CONSTRAINT',
+          code: ExceptionCode.UNIQUE_CONSTRAINT,
           message: 'Resource already exists (unique constraint violation).',
           details: {
             prismaCode: exception.code,
@@ -72,7 +73,7 @@ export class HttpAllExceptionsFilter implements ExceptionFilter {
         structuredErrorResponse.statusCode = HttpStatus.NOT_FOUND;
         structuredErrorResponse.error = {
           type: 'NOT_FOUND',
-          code: 'RECORD_NOT_FOUND',
+          code: ExceptionCode.RECORD_NOT_FOUND,
           message: 'Record not found.',
           details: {
             prismaCode: exception.code,
@@ -101,35 +102,13 @@ export class HttpAllExceptionsFilter implements ExceptionFilter {
       const errorMessage =
         typeof errorResponse === 'string'
           ? errorResponse
-          : (errorResponse as any)['message'] || 'Internal Server Error';
+          : errorResponse['message'];
 
       structuredErrorResponse.error = {
         type: 'HTTP_ERROR',
-        message: errorMessage,
-        details:
-          typeof errorResponse === 'object' ? (errorResponse as any) : null,
+        message: errorMessage || 'Internal Server Error',
+        details: typeof errorResponse === 'object' ? errorResponse : null,
       };
-
-      const isClassValidatorError =
-        Array.isArray((errorResponse as any)?.message) &&
-        (errorResponse as any).message[0]?.constraints;
-      //console.log(exception);
-      if (isClassValidatorError) {
-        const errors = (errorResponse as any)
-          ?.message as ClassValidatorValidationError[];
-
-        const details = errors.map((err) => ({
-          field: err.property,
-          constraints: err.constraints,
-        }));
-        structuredErrorResponse.statusCode = HttpStatus.BAD_REQUEST;
-        structuredErrorResponse.error = {
-          type: 'VALIDATION_ERROR',
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid request body',
-          details,
-        };
-      }
     }
     structuredErrorResponse.error.message = Array.isArray(
       structuredErrorResponse.error.message,
