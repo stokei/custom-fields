@@ -5,8 +5,19 @@ import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { HttpAllExceptionsFilter } from './shared/infra/http/filters/http-all-exceptions.filter';
 import { Swagger } from './shared/infra/docs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { ValidationException } from './shared/domain/errors/base/validation-exception';
 
 const logger = new Logger('Bootstrap');
+class ClassValidatorValidationError extends ValidationException {
+  constructor(details?: any) {
+    super(
+      'Validation failed',
+      'Invalid request body',
+      'VALIDATION_ERROR',
+      details,
+    );
+  }
+}
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(MainModule, {
@@ -23,6 +34,13 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      exceptionFactory(errors) {
+        const details = errors.map((err) => ({
+          field: err.property,
+          constraints: err.constraints,
+        }));
+        return new ClassValidatorValidationError(details);
+      },
     }),
   );
   app.useGlobalFilters(new HttpAllExceptionsFilter());

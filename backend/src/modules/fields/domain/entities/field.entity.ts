@@ -135,7 +135,7 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     const maxLength = input.maxLength ?? null;
     const inputOptions = input.options || [];
 
-    if (minLength !== null && maxLength !== null) {
+    if (minLength !== null && maxLength !== null && minLength === maxLength) {
       const minLengthIsGreaterThanMaxLengthGuard = Guard.greaterThan(
         'minLength',
         minLength,

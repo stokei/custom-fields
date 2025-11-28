@@ -1,8 +1,5 @@
 import { VERSION } from '@/environments';
-import {
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -13,12 +10,24 @@ export class Swagger {
       .setDescription('Rest API for Custom Fields')
       .setVersion(VERSION)
       .addGlobalResponse({
-        status: 500,
-        description: InternalServerErrorException.name,
+        status: HttpStatus.UNAUTHORIZED,
+        description: 'Unauthorized error',
       })
       .addGlobalResponse({
-        status: 401,
-        description: UnauthorizedException.name,
+        status: HttpStatus.BAD_REQUEST,
+        description: 'Arguments validation error',
+      })
+      .addGlobalResponse({
+        status: HttpStatus.NOT_FOUND,
+        description: 'Entity not found error',
+      })
+      .addGlobalResponse({
+        status: HttpStatus.CONFLICT,
+        description: 'Some resource conflict error',
+      })
+      .addGlobalResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        description: 'Internal server error',
       })
       .addApiKey(
         {
