@@ -1,8 +1,12 @@
+import { HttpStatus } from '@nestjs/common';
 import { ExceptionCode } from './exception-codes';
+import { ExceptionType } from './exception-types';
 
 export class DomainException<TDetails = Record<string, unknown>> extends Error {
   public readonly code: ExceptionCode;
   public readonly details?: TDetails[];
+  public static readonly TYPE: ExceptionType = ExceptionType.DOMAIN_ERROR;
+  public static readonly HTTP_STATUS_CODE: HttpStatus = HttpStatus.CONFLICT;
 
   protected constructor(
     message: string,

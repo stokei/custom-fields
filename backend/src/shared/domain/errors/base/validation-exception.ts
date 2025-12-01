@@ -1,9 +1,13 @@
+import { HttpStatus } from '@nestjs/common';
 import { DomainException } from './domain-exception';
 import { ExceptionCode } from './exception-codes';
+import { ExceptionType } from './exception-types';
 
 export class ValidationException<
   TDetails = Record<string, unknown>,
 > extends DomainException<TDetails> {
+  public static readonly TYPE: ExceptionType = ExceptionType.VALIDATION_ERROR;
+  public static readonly HTTP_STATUS_CODE: HttpStatus = HttpStatus.BAD_REQUEST;
   protected constructor(
     argumentName: string,
     message: string | string[],

@@ -6,7 +6,7 @@ import { CreateFieldViewModel } from '@/modules/fields/application/commands/crea
 import { TenantContext } from '@/shared/domain/tenant-context/tenant-context';
 import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { CommandBusService } from '@/shared/infra/command-bus/command-bus.service';
-import { ApiWithTenantAuth } from '@/shared/infra/docs/decorators/api-auth.decorator';
+import { ApiWithTenantAuth } from '@/shared/infra/docs/decorators/auth/api-auth.decorator';
 import { Tenant } from '@/shared/infra/http/decorators/tenant.decorator';
 import { ApiKeyGuard } from '@/shared/infra/http/guards/api-key.guard';
 import { HttpControllerBase } from '@/shared/presentation/base/http/controller-base';
@@ -18,6 +18,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateFieldDTO } from '../../../dtos/create-field.dto';
+import { ApiDocCoreExceptionsResponse } from '@/shared/infra/docs/decorators/errors/core-exceptions';
+import { HttpMethod } from '@/shared/infra/http/enums/http-method';
 
 @Controller({
   path: REST_CONTROLLERS_URL_NAMES.FIELDS.CREATE_FIELD,
@@ -47,6 +49,10 @@ export class CreateFieldController extends HttpControllerBase {
     example: CreateFieldViewModel.create({
       id: new UniqueEntityID().toString(),
     }),
+  })
+  @ApiDocCoreExceptionsResponse({
+    path: REST_CONTROLLERS_URL_NAMES.FIELDS.CREATE_FIELD,
+    method: HttpMethod.POST,
   })
   async createField(
     @Tenant() tenant: TenantContext,

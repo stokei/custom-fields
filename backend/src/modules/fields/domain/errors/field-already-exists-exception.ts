@@ -2,7 +2,6 @@ import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
 import { ValidationException } from '@/shared/domain/errors/base/validation-exception';
 
 interface FieldAlreadyExistsDetails {
-  tenantId: string;
   context: string;
   organizationId: string;
   key: string;

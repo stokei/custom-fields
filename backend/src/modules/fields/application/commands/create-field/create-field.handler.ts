@@ -37,7 +37,6 @@ export class CreateFieldHandler extends CommandHandlerBase<
       if (exists) {
         return Result.fail<CreateFieldViewModel>(
           FieldAlreadyExistsException.create({
-            tenantId: command.tenantId,
             organizationId: command.organizationId,
             context: command.context,
             key: command.key,
