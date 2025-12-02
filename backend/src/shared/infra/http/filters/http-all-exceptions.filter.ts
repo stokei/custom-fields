@@ -61,6 +61,7 @@ export class HttpAllExceptionsFilter implements ExceptionFilter {
         structuredErrorResponse.setError({
           type: ExceptionType.DOMAIN_ERROR,
           code: ExceptionCode.UNIQUE_CONSTRAINT,
+          // CRIAR EXCESSÃO ESPECÍFICA PARA ISSO
           message: ['Resource already exists (unique constraint violation).'],
           details: [
             {
