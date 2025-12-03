@@ -53,7 +53,6 @@ export class FieldMapper {
       },
       new UniqueEntityID(raw.id),
     );
-    field.clearEvents();
     return field;
   }
 }

@@ -27,7 +27,10 @@ export class CreateFieldHandler extends CommandHandlerBase<
 
   async execute(command: CreateFieldCommand) {
     try {
-      const field = FieldEntity.create(command);
+      const field = FieldEntity.create({
+        ...command,
+        active: true,
+      });
       const exists = await this.fieldRepository.getByTenantContextKey({
         tenantId: command.tenantId,
         organizationId: command.organizationId,
@@ -46,7 +49,6 @@ export class CreateFieldHandler extends CommandHandlerBase<
 
       await this.fieldRepository.save(field);
 
-      field.addFieldCreatedDomainEvent();
       this.domainEventBusService.publishAll(field.domainEvents);
 
       return Result.ok<CreateFieldViewModel>(

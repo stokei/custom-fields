@@ -18,7 +18,6 @@ export class CreateFieldCommand
   readonly placeholder?: string;
   readonly group: string;
   readonly order: number;
-  readonly active: boolean;
   readonly options: FieldOptionValueObjectProps[];
 
   constructor(data: CreateFieldDTO) {
@@ -35,7 +34,6 @@ export class CreateFieldCommand
     this.placeholder = data.placeholder;
     this.group = data.group;
     this.order = data.order;
-    this.active = data.active;
     this.options = data.options;
   }
 }

@@ -5,13 +5,12 @@ import {
 } from '@/shared/domain/ports/api-key-verifier.port';
 import { Injectable } from '@nestjs/common';
 import { Unkey } from '@unkey/api';
-import { LoggerService } from '../../logger/logger.service';
 
 @Injectable()
 export class UnkeyApiKeyVerifier implements ApiKeyVerifier {
   private readonly client: Unkey;
 
-  constructor(private readonly loggerService: LoggerService) {
+  constructor() {
     this.client = new Unkey({
       rootKey: UNKEY_ROOT_KEY,
     });
@@ -33,8 +32,7 @@ export class UnkeyApiKeyVerifier implements ApiKeyVerifier {
         valid: true,
         tenantId,
       };
-    } catch (error) {
-      this.loggerService.error(UnkeyApiKeyVerifier.name, error?.message);
+    } catch {
       return {
         valid: false,
       };

@@ -1,125 +1,156 @@
 import { DomainException } from '@/shared/domain/errors/base/domain-exception';
-import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
 import { ExceptionType } from '@/shared/domain/errors/base/exception-types';
+import { HttpException } from '@/shared/domain/errors/base/http-exception';
+import { InternalException } from '@/shared/domain/errors/base/internal-exception';
 import { NotFoundException } from '@/shared/domain/errors/base/not-found-exception';
 import { ValidationException } from '@/shared/domain/errors/base/validation-exception';
 import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
-  HttpException,
-  HttpStatus,
+  HttpException as NestHttpException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { PrismaRecordNotFoundException } from '../../database/prisma/errors/prisma-record-not-found-exception';
+import { PrismaResourceAlreadyExistsException } from '../../database/prisma/errors/prisma-resource-already-exists-exception';
+import { PrismaSomeValidationException } from '../../database/prisma/errors/prisma-some-validation-exception';
+import { LoggerService } from '../../logger/logger.service';
 import { HttpExceptionResponse } from '../errors/http-exception-response';
 
 @Catch()
 export class HttpAllExceptionsFilter implements ExceptionFilter {
+  constructor(private readonly loggerService: LoggerService) { }
+
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
 
+    const internalException = InternalException.create();
     const structuredErrorResponse = HttpExceptionResponse.create({
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      statusCode: InternalException.HTTP_STATUS_CODE,
       path: request.url,
       method: request.method,
       error: {
-        type: ExceptionType.INTERNAL_ERROR,
-        code: ExceptionCode.INTERNAL_ERROR,
-        message: ['Internal Server Error'],
+        type: internalException.type,
+        code: internalException.code,
+        message: [internalException.message],
       },
     });
 
     if (exception instanceof ValidationException) {
-      structuredErrorResponse.setStatusCode(HttpStatus.BAD_REQUEST);
+      structuredErrorResponse.setStatusCode(
+        ValidationException.HTTP_STATUS_CODE,
+      );
       structuredErrorResponse.setError({
-        type: ExceptionType.VALIDATION_ERROR,
+        type: ValidationException.TYPE,
         code: exception.code,
         message: [exception.message],
         details: exception.details,
       });
     } else if (exception instanceof NotFoundException) {
-      structuredErrorResponse.setStatusCode(HttpStatus.NOT_FOUND);
+      structuredErrorResponse.setStatusCode(NotFoundException.HTTP_STATUS_CODE);
       structuredErrorResponse.setError({
-        type: ExceptionType.NOT_FOUND,
+        type: NotFoundException.TYPE,
         code: exception.code,
         message: [exception.message],
         details: exception.details,
       });
     } else if (exception instanceof DomainException) {
-      structuredErrorResponse.setStatusCode(HttpStatus.CONFLICT);
+      structuredErrorResponse.setStatusCode(DomainException.HTTP_STATUS_CODE);
       structuredErrorResponse.setError({
-        type: ExceptionType.DOMAIN_ERROR,
+        type: DomainException.TYPE,
         code: exception.code,
         message: [exception.message],
         details: exception.details,
       });
     } else if (exception instanceof Prisma.PrismaClientKnownRequestError) {
       if (exception.code === 'P2002') {
-        structuredErrorResponse.setStatusCode(HttpStatus.CONFLICT);
+        const exceptionClass = PrismaResourceAlreadyExistsException.create(
+          exception.meta?.target as string,
+        );
+        structuredErrorResponse.setStatusCode(
+          PrismaResourceAlreadyExistsException.HTTP_STATUS_CODE,
+        );
         structuredErrorResponse.setError({
-          type: ExceptionType.DOMAIN_ERROR,
-          code: ExceptionCode.UNIQUE_CONSTRAINT,
-          // CRIAR EXCESSÃO ESPECÍFICA PARA ISSO
-          message: ['Resource already exists (unique constraint violation).'],
-          details: [
-            {
-              prismaCode: exception.code,
-              target: (exception.meta as any)?.target,
-            },
-          ],
+          type: exceptionClass.type,
+          code: exceptionClass.code,
+          message: [exceptionClass.message],
+          details: exceptionClass.details,
         });
       } else if (exception.code === 'P2025') {
-        structuredErrorResponse.setStatusCode(HttpStatus.NOT_FOUND);
+        const exceptionClass = PrismaRecordNotFoundException.create(
+          exception.meta?.target as string,
+        );
+        structuredErrorResponse.setStatusCode(
+          PrismaRecordNotFoundException.HTTP_STATUS_CODE,
+        );
         structuredErrorResponse.setError({
-          type: ExceptionType.NOT_FOUND,
-          code: ExceptionCode.RECORD_NOT_FOUND,
-          message: ['Record not found.'],
-          details: [
-            {
-              prismaCode: exception.code,
-              cause: exception.meta,
-            },
-          ],
+          type: exceptionClass.type,
+          code: exceptionClass.code,
+          message: [exceptionClass.message],
+          details: exceptionClass.details,
         });
       } else {
-        structuredErrorResponse.setStatusCode(HttpStatus.BAD_REQUEST);
+        const exceptionClass = PrismaSomeValidationException.create(
+          exception.meta?.target as string,
+          exception.message,
+        );
+        structuredErrorResponse.setStatusCode(
+          PrismaSomeValidationException.HTTP_STATUS_CODE,
+        );
         structuredErrorResponse.setError({
-          type: ExceptionType.VALIDATION_ERROR,
-          code: ExceptionCode.VALIDATION_ERROR,
-          message: [exception.message],
-          details: [exception.meta],
+          type: exceptionClass.type,
+          code: exceptionClass.code,
+          message: [exceptionClass.message],
+          details: exceptionClass.details,
         });
       }
     } else if (exception instanceof Prisma.PrismaClientValidationError) {
-      structuredErrorResponse.setStatusCode(HttpStatus.BAD_REQUEST);
+      const exceptionClass = PrismaSomeValidationException.create(
+        'ClientValidationError',
+        exception.message,
+      );
+      structuredErrorResponse.setStatusCode(
+        PrismaSomeValidationException.HTTP_STATUS_CODE,
+      );
       structuredErrorResponse.setError({
-        type: ExceptionType.VALIDATION_ERROR,
-        code: ExceptionCode.VALIDATION_ERROR,
-        message: [exception.message],
+        type: exceptionClass.type,
+        code: exceptionClass.code,
+        message: [exceptionClass.message],
+        details: exceptionClass.details,
       });
-    } else if (exception instanceof HttpException) {
+    } else if (exception instanceof NestHttpException) {
       structuredErrorResponse.setStatusCode(exception.getStatus());
       const errorResponse = exception.getResponse();
       const errorMessage =
         typeof errorResponse === 'string'
           ? errorResponse
           : errorResponse['message'];
-
+      const exceptionClass = HttpException.create(
+        errorMessage,
+        typeof errorResponse === 'object' ? [errorResponse] : undefined,
+      );
       structuredErrorResponse.setError({
-        type: ExceptionType.HTTP_ERROR,
-        code: ExceptionCode.HTTP_ERROR,
+        type: exceptionClass.type,
+        code: exceptionClass.code,
         message: [errorMessage || 'Internal Server Error'],
-        details:
-          typeof errorResponse === 'object' ? [errorResponse] : undefined,
+        details: exceptionClass.details,
       });
     }
-    structuredErrorResponse.error.message = Array.isArray(
-      structuredErrorResponse.error.message,
-    )
-      ? structuredErrorResponse.error.message
-      : [structuredErrorResponse.error.message];
+    const exceptionTypesThatCanBeLogged: ExceptionType[] = [
+      ExceptionType.INTERNAL_ERROR,
+      ExceptionType.HTTP_ERROR,
+    ];
+    const canLog = exceptionTypesThatCanBeLogged.includes(
+      structuredErrorResponse.error.type,
+    );
+    if (canLog) {
+      this.loggerService.error(
+        HttpAllExceptionsFilter.name,
+        JSON.stringify(structuredErrorResponse),
+      );
+    }
     response
       .status(structuredErrorResponse.statusCode)
       .json(structuredErrorResponse);

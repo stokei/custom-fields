@@ -9,7 +9,7 @@ interface FieldTypeProps {
 }
 
 export class FieldTypeValueObject extends ValueObject<FieldTypeProps> {
-  public readonly typesWithOptions: FieldTypeEnum[] = [
+  public static readonly TYPES_WITH_OPTIONS: FieldTypeEnum[] = [
     FieldTypeEnum.CHECKBOX,
     FieldTypeEnum.RADIO,
     FieldTypeEnum.SINGLE_SELECT,
@@ -21,7 +21,7 @@ export class FieldTypeValueObject extends ValueObject<FieldTypeProps> {
   }
 
   get hasOptions(): boolean {
-    return this.typesWithOptions.includes(this.value);
+    return FieldTypeValueObject.TYPES_WITH_OPTIONS.includes(this.value);
   }
 
   static create(type: FieldTypeEnum) {

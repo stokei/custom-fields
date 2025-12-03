@@ -34,8 +34,6 @@ export class CreateFieldDTO {
   group: string;
   @ApiProperty({ type: 'number' })
   order: number;
-  @ApiProperty({ type: 'boolean' })
-  active: boolean;
   @ApiProperty({ type: CreateFieldOptionDTO })
   options: CreateFieldOptionDTO[];
 }

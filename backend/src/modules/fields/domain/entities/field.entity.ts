@@ -32,7 +32,7 @@ interface FieldProps {
   active: boolean;
   options: FieldOptionValueObject[];
 }
-interface CreateFieldInput
+export interface CreateFieldInput
   extends Omit<FieldProps, 'type' | 'options' | 'createdAt' | 'updatedAt'> {
   type: FieldTypeEnum;
   options: FieldOptionValueObjectProps[];
@@ -133,7 +133,6 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
 
     const minLength = input.minLength ?? null;
     const maxLength = input.maxLength ?? null;
-    const inputOptions = input.options || [];
 
     if (minLength !== null && maxLength !== null && minLength === maxLength) {
       const minLengthIsGreaterThanMaxLengthGuard = Guard.greaterThan(
@@ -147,13 +146,18 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     }
 
     const type = FieldTypeValueObject.create(input.type);
-    const optionsIsOneOfGuard = Guard.isOneOf(
-      'options',
-      type.value,
-      type.typesWithOptions,
-    );
-    if (type.hasOptions && !input?.options?.length) {
-      throw optionsIsOneOfGuard.getErrorValue();
+    let inputOptions = input.options || [];
+    if (type.hasOptions) {
+      const optionsRequiredGuard = Guard.againstEmptyArray(
+        'options',
+        input.options,
+      );
+      if (optionsRequiredGuard.isFailure) {
+        throw optionsRequiredGuard.getErrorValue();
+      }
+    }
+    if (!type.hasOptions && !!input.options.length) {
+      inputOptions = [];
     }
 
     const field = new FieldEntity(
@@ -185,15 +189,10 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
         order: index,
       });
     }
+    if (!id) {
+      field.addDomainEvent(new FieldCreatedEvent({ field }));
+    }
     return field;
-  }
-
-  addFieldCreatedDomainEvent() {
-    this.addDomainEvent(new FieldCreatedEvent({ field: this }));
-  }
-
-  deactivate() {
-    this.props.active = false;
   }
 
   private addOption({

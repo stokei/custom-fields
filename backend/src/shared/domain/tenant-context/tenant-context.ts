@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { Guard } from '../guards/guard';
 
 export class TenantContext {
   private constructor(
@@ -7,11 +7,12 @@ export class TenantContext {
   ) { }
 
   static create(tenantId: string, organizationId: string) {
-    if (!tenantId?.trim?.()?.length) {
-      throw new BadRequestException('tenantId is required');
-    }
-    if (!organizationId?.trim?.()?.length) {
-      throw new BadRequestException('organizationId is required');
+    const guardResult = Guard.combine([
+      Guard.againstNullOrUndefined('tenantId', tenantId),
+      Guard.againstNullOrUndefined('organizationId', organizationId),
+    ]);
+    if (guardResult.isFailure) {
+      throw guardResult.getErrorValue();
     }
     return new TenantContext(tenantId, organizationId);
   }

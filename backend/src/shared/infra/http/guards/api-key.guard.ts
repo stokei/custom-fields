@@ -1,14 +1,11 @@
+import { Guard } from '@/shared/domain/guards/guard';
 import {
   ApiKeyVerifier,
   InjectApiKeyVerifier,
 } from '@/shared/domain/ports/api-key-verifier.port';
 import { TenantContext } from '@/shared/domain/tenant-context/tenant-context';
-import {
-  BadRequestException,
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { InvalidApiKeyException } from '../errors/invalid-api-key-exception';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
@@ -22,20 +19,18 @@ export class ApiKeyGuard implements CanActivate {
     const request = http.getRequest();
 
     const rawApiKey = request.headers['x-api-key'];
-    if (typeof rawApiKey !== 'string' || rawApiKey.trim().length === 0) {
-      throw new BadRequestException('Missing x-api-key header');
-    }
     const organizationId = request.headers['x-organization-id'];
-    if (
-      typeof organizationId !== 'string' ||
-      organizationId.trim().length === 0
-    ) {
-      throw new BadRequestException('Missing x-organization-id header');
+    const guardResult = Guard.combine([
+      Guard.againstNullOrUndefined('x-api-key', rawApiKey),
+      Guard.againstNullOrUndefined('x-organization-id', organizationId),
+    ]);
+    if (guardResult.isFailure) {
+      throw guardResult.getErrorValue();
     }
 
     const verification = await this.apiKeyVerifier.verify(rawApiKey);
     if (!verification.valid) {
-      throw new BadRequestException('Invalid API key');
+      throw InvalidApiKeyException.create();
     }
 
     const tenantId = verification?.tenantId || '';

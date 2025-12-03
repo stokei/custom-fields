@@ -64,7 +64,6 @@ export class CreateFieldController extends HttpControllerBase {
           ...dto,
           tenantId: tenant.tenantId,
           organizationId: tenant.organizationId,
-          active: true,
         }),
       ),
     );

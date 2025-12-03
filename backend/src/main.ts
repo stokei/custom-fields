@@ -6,6 +6,7 @@ import { MainModule } from './main.module';
 import { Swagger } from './shared/infra/docs/swagger';
 import { HttpAllExceptionsFilter } from './shared/infra/http/filters/http-all-exceptions.filter';
 import { ClassValidatiorValidationPipe } from './shared/infra/http/pipes/validation.pipe';
+import { LoggerService } from './shared/infra/logger/logger.service';
 
 const logger = new Logger('Bootstrap');
 
@@ -21,8 +22,9 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
+  const loggerService = app.get(LoggerService);
   app.useGlobalPipes(ClassValidatiorValidationPipe.create());
-  app.useGlobalFilters(new HttpAllExceptionsFilter());
+  app.useGlobalFilters(new HttpAllExceptionsFilter(loggerService));
 
   Swagger.setup(app);
   await app.listen(SERVER_PORT, SERVER_HOST);

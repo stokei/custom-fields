@@ -1,6 +1,7 @@
 export type GuardResponse = string;
 
 import { Result } from '../base/result';
+import { ArgumentEmptyArrayException } from '../errors/guards/argument-empty-array-exception';
 import { ArgumentEmptyStringException } from '../errors/guards/argument-empty-string-exception';
 import { ArgumentNullOrUndefinedException } from '../errors/guards/argument-null-or-undefined-exception';
 import { NumberNotGreaterOrEqualThanException } from '../errors/guards/number-not-greater-or-equal-than-exception';
@@ -82,6 +83,9 @@ export class Guard {
     argumentName: string,
     argument: any,
   ): Result<GuardResponse> {
+    if (typeof argument === 'string') {
+      return this.againstEmptyString(argumentName, argument);
+    }
     if (argument === null || argument === undefined || argument === '') {
       return Result.fail<GuardResponse>(
         ArgumentNullOrUndefinedException.create(argumentName),
@@ -94,9 +98,21 @@ export class Guard {
     argumentName: string,
     value: string,
   ): Result<GuardResponse> {
-    if (value.trim().length === 0) {
+    if (!value.trim().length) {
       return Result.fail<GuardResponse>(
         ArgumentEmptyStringException.create(argumentName),
+      );
+    }
+    return Result.ok<GuardResponse>();
+  }
+
+  static againstEmptyArray<TValue = string>(
+    argumentName: string,
+    value: TValue[],
+  ): Result<GuardResponse> {
+    if (!value?.length) {
+      return Result.fail<GuardResponse>(
+        ArgumentEmptyArrayException.create(argumentName),
       );
     }
     return Result.ok<GuardResponse>();

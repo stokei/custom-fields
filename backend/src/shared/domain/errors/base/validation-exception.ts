@@ -6,6 +6,7 @@ import { ExceptionType } from './exception-types';
 export class ValidationException<
   TDetails = Record<string, unknown>,
 > extends DomainException<TDetails> {
+  public readonly type: ExceptionType;
   public static readonly TYPE: ExceptionType = ExceptionType.VALIDATION_ERROR;
   public static readonly HTTP_STATUS_CODE: HttpStatus = HttpStatus.BAD_REQUEST;
   protected constructor(
@@ -20,5 +21,7 @@ export class ValidationException<
       ? message.map((value) => `${argument}${value}`).join('; ')
       : `${argument}${message}`;
     super(messageFormatted, code, details);
+
+    this.type = ValidationException.TYPE;
   }
 }
