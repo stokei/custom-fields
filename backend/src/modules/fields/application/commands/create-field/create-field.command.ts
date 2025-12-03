@@ -1,10 +1,29 @@
 import { FieldTypeEnum } from '@/modules/fields/domain/value-objects/field-type.vo';
-import { CreateFieldDTO } from '@/modules/fields/application/dtos/create-field.dto';
 import { CommandBase } from '@/shared/application/base/command-base';
 import { FieldOptionValueObjectProps } from '@/modules/fields/domain/value-objects/field-option.vo';
 
-export class CreateFieldCommand
-  implements CommandBase, Readonly<CreateFieldDTO> {
+interface CreateFieldOptionDTO {
+  value: string;
+  label: string;
+}
+interface CreateFieldDTO {
+  tenantId: string;
+  organizationId: string;
+  context: string;
+  key: string;
+  label: string;
+  type: FieldTypeEnum;
+  required: boolean;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  placeholder?: string;
+  group: string;
+  order: number;
+  options: CreateFieldOptionDTO[];
+}
+
+export class CreateFieldCommand implements CommandBase, CreateFieldDTO {
   readonly tenantId: string;
   readonly organizationId: string;
   readonly context: string;

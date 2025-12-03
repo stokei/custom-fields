@@ -6,6 +6,10 @@ import {
 import { TenantContext } from '@/shared/domain/tenant-context/tenant-context';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { InvalidApiKeyException } from '../errors/invalid-api-key-exception';
+import {
+  APIKEY_HEADER_NAME,
+  ORGANIZATION_ID_HEADER_NAME,
+} from '@/constants/rest-headers';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
@@ -18,23 +22,23 @@ export class ApiKeyGuard implements CanActivate {
     const http = context.switchToHttp();
     const request = http.getRequest();
 
-    const rawApiKey = request.headers['x-api-key'];
-    const organizationId = request.headers['x-organization-id'];
+    const apiKey = request.headers[APIKEY_HEADER_NAME];
+    const organizationId = request.headers[ORGANIZATION_ID_HEADER_NAME];
     const guardResult = Guard.combine([
-      Guard.againstNullOrUndefined('x-api-key', rawApiKey),
-      Guard.againstNullOrUndefined('x-organization-id', organizationId),
+      Guard.againstNullOrUndefined(APIKEY_HEADER_NAME, apiKey),
+      Guard.againstNullOrUndefined(ORGANIZATION_ID_HEADER_NAME, organizationId),
     ]);
     if (guardResult.isFailure) {
       throw guardResult.getErrorValue();
     }
 
-    const verification = await this.apiKeyVerifier.verify(rawApiKey);
+    const verification = await this.apiKeyVerifier.verify(apiKey);
     if (!verification.valid) {
       throw InvalidApiKeyException.create();
     }
 
     const tenantId = verification?.tenantId || '';
-    request.tenant = TenantContext.create(tenantId, organizationId);
+    request.tenant = TenantContext.create(apiKey, tenantId, organizationId);
     return true;
   }
 }

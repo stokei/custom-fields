@@ -15,5 +15,7 @@ const config: Config = {
     '^@/e2e/(.*)$': '<rootDir>/e2e/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
+  clearMocks: true,
+  resetMocks: true,
 };
 export default config;

@@ -7,8 +7,6 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  Max,
-  Min,
   ValidateNested,
 } from 'class-validator';
 
@@ -25,12 +23,6 @@ export class CreateFieldOptionDTO {
   @IsString()
   @IsNotEmpty()
   label!: string;
-
-  @ApiProperty({ type: 'number' })
-  @IsInt()
-  @Min(0)
-  @Max(2_147_483_647)
-  order: number;
 }
 
 export class CreateFieldDTO {

@@ -3,6 +3,7 @@
 import type { Config } from 'jest';
 
 const config: Config = {
+  detectOpenHandles: true,
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '.',
   testRegex: '.*\\.spec\\.ts$',
@@ -16,6 +17,8 @@ const config: Config = {
     '^@/e2e/(.*)$': '<rootDir>/e2e/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
+  clearMocks: true,
+  resetMocks: true,
 };
 
 export default config;
