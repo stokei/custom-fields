@@ -56,7 +56,6 @@
       "**/prisma-generated-types/*": true,
       "**/node_modules/*": true,
       "**/.git/*": true,
-      "**/dist": true,
       "**/.next": true,
       "**/.turbo": true,
       "**/build": true
@@ -65,7 +64,6 @@
       "**/prisma-generated-types/*": true,
       "**/node_modules/*": true,
       "**/.git/*": true,
-      "**/dist": true,
       "**/.next": true,
       "**/.turbo": true,
       "**/build": true

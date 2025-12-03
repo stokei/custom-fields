@@ -7,6 +7,7 @@ import { Swagger } from './shared/infra/docs/swagger';
 import { HttpAllExceptionsFilter } from './shared/infra/http/filters/http-all-exceptions.filter';
 import { ClassValidatiorValidationPipe } from './shared/infra/http/pipes/validation.pipe';
 import { LoggerService } from './shared/infra/logger/logger.service';
+import { join } from 'path';
 
 const logger = new Logger('Bootstrap');
 
@@ -25,6 +26,7 @@ async function bootstrap() {
   const loggerService = app.get(LoggerService);
   app.useGlobalPipes(ClassValidatiorValidationPipe.create());
   app.useGlobalFilters(new HttpAllExceptionsFilter(loggerService));
+  app.useStaticAssets(join(__dirname, '..', 'assets'));
 
   Swagger.setup(app);
   await app.listen(SERVER_PORT, SERVER_HOST);
