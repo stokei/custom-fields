@@ -6,7 +6,7 @@ import { QueryHandlerBase } from '@/shared/application/base/query-base';
 import { Result } from '@/shared/domain/base/result';
 import { QueryHandler } from '@nestjs/cqrs';
 import { GetAllFieldsByContextQuery } from './get-all-fields-by-context.query';
-import { GetAllFieldsByContextViewModel } from './get-all-fields-by-context.viewmodel';
+import { GetAllFieldsByContextViewModel } from '../../viewmodels/get-all-fields-by-context/get-all-fields-by-context.viewmodel';
 import { Guard } from '@/shared/domain/guards/guard';
 
 export type GetAllFieldsByContextQueryResponse = Result<GetAllFieldsByContextViewModel>;

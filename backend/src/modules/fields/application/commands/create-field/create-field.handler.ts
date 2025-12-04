@@ -9,7 +9,7 @@ import { Result } from '@/shared/domain/base/result';
 import { DomainEventBusService } from '@/shared/infra/event-bus/domain-event-bus.service';
 import { CommandHandler } from '@nestjs/cqrs';
 import { CreateFieldCommand } from './create-field.command';
-import { CreateFieldViewModel } from './create-field.viewmodel';
+import { CreateFieldViewModel } from '../../viewmodels/create-field/create-field.viewmodel';
 
 export type CreateFieldCommandResponse = Result<CreateFieldViewModel>;
 @CommandHandler(CreateFieldCommand)

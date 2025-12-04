@@ -2,7 +2,7 @@ import { REST_CONTROLLERS_URL_NAMES } from '@/constants/rest-controllers';
 import { REST_VERSIONS } from '@/constants/rest-versions';
 import { CreateFieldCommand } from '@/modules/fields/application/commands/create-field/create-field.command';
 import { CreateFieldCommandResponse } from '@/modules/fields/application/commands/create-field/create-field.handler';
-import { CreateFieldViewModel } from '@/modules/fields/application/commands/create-field/create-field.viewmodel';
+import { CreateFieldViewModel } from '@/modules/fields/application/viewmodels/create-field/create-field.viewmodel';
 import { TenantContext } from '@/shared/domain/tenant-context/tenant-context';
 import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { CommandBusService } from '@/shared/infra/command-bus/command-bus.service';
