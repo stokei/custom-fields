@@ -11,7 +11,6 @@ export default defineConfig(
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
   {
     languageOptions: {
       globals: {
@@ -36,7 +35,8 @@ export default defineConfig(
       '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/no-require-imports': 'off',
-      'prettier/prettier': ['error', { endOfLine: 'auto' }],
+      'prettier/prettier': 'error',
     },
   },
+  eslintPluginPrettierRecommended,
 );

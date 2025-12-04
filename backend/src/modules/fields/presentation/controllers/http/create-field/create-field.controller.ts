@@ -13,12 +13,7 @@ import { HttpMethod } from '@/shared/infra/http/enums/http-method';
 import { ApiKeyGuard } from '@/shared/infra/http/guards/api-key.guard';
 import { HttpControllerBase } from '@/shared/presentation/base/http/controller-base';
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import {
-  ApiBody,
-  ApiCreatedResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateFieldDTO } from './create-field.dto';
 
 @Controller({
@@ -54,10 +49,7 @@ export class CreateFieldController extends HttpControllerBase {
     path: REST_CONTROLLERS_URL_NAMES.FIELDS.CREATE_FIELD,
     method: HttpMethod.POST,
   })
-  async createField(
-    @Tenant() tenant: TenantContext,
-    @Body() dto: CreateFieldDTO,
-  ) {
+  async createField(@Tenant() tenant: TenantContext, @Body() dto: CreateFieldDTO) {
     return this.rejectOrResolve(() =>
       this.commandBusService.execute(
         new CreateFieldCommand({

@@ -1,10 +1,7 @@
 import request from 'supertest';
 import { AppTesting } from './create-testing-module';
 import { tenantContextStub } from '@/tests/stubs/http/tenant-context.stub';
-import {
-  APIKEY_HEADER_NAME,
-  ORGANIZATION_ID_HEADER_NAME,
-} from '@/constants/rest-headers';
+import { APIKEY_HEADER_NAME, ORGANIZATION_ID_HEADER_NAME } from '@/constants/rest-headers';
 
 export const createRequestTesting = (app: AppTesting) => {
   const req = request(app.getHttpServer());

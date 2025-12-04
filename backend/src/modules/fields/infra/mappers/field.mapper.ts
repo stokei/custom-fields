@@ -1,10 +1,6 @@
 import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { convertToISODateString } from '@/utils/dates';
-import {
-  Prisma,
-  Field as PrismaField,
-  FieldOption as PrismaFieldOption,
-} from '@prisma/client';
+import { Prisma, Field as PrismaField, FieldOption as PrismaFieldOption } from '@prisma/client';
 import { FieldEntity } from '../../domain/entities/field.entity';
 
 export class FieldMapper {

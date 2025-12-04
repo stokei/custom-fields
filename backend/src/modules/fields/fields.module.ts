@@ -9,4 +9,4 @@ import { PresentationControllers } from './presentation';
   controllers: PresentationControllers,
   providers: [...ApplicationProviders, ...DomainProviders, ...InfraProviders],
 })
-export class FieldsModule { }
+export class FieldsModule {}

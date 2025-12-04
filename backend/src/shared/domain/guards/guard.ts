@@ -28,11 +28,11 @@ export class Guard {
     return actualValue > minValue
       ? Result.ok<GuardResponse>()
       : Result.fail<GuardResponse>(
-        NumberNotGreaterThanException.create(argumentName, {
-          minValue,
-          actualValue,
-        }),
-      );
+          NumberNotGreaterThanException.create(argumentName, {
+            minValue,
+            actualValue,
+          }),
+        );
   }
 
   public static greaterOrEqualThan(
@@ -43,11 +43,11 @@ export class Guard {
     return actualValue >= minValue
       ? Result.ok<GuardResponse>()
       : Result.fail<GuardResponse>(
-        NumberNotGreaterOrEqualThanException.create(argumentName, {
-          minValue,
-          actualValue,
-        }),
-      );
+          NumberNotGreaterOrEqualThanException.create(argumentName, {
+            minValue,
+            actualValue,
+          }),
+        );
   }
 
   public static againstAtLeast(
@@ -58,11 +58,11 @@ export class Guard {
     return text.length >= numChars
       ? Result.ok<GuardResponse>()
       : Result.fail<GuardResponse>(
-        TextTooShortException.create(argumentName, {
-          minLength: numChars,
-          actualLength: text.length,
-        }),
-      );
+          TextTooShortException.create(argumentName, {
+            minLength: numChars,
+            actualLength: text.length,
+          }),
+        );
   }
 
   public static againstAtMost(
@@ -79,29 +79,19 @@ export class Guard {
     );
   }
 
-  public static againstNullOrUndefined(
-    argumentName: string,
-    argument: any,
-  ): Result<GuardResponse> {
+  public static againstNullOrUndefined(argumentName: string, argument: any): Result<GuardResponse> {
     if (typeof argument === 'string') {
       return this.againstEmptyString(argumentName, argument);
     }
     if (argument === null || argument === undefined || argument === '') {
-      return Result.fail<GuardResponse>(
-        ArgumentNullOrUndefinedException.create(argumentName),
-      );
+      return Result.fail<GuardResponse>(ArgumentNullOrUndefinedException.create(argumentName));
     }
     return Result.ok<GuardResponse>();
   }
 
-  static againstEmptyString(
-    argumentName: string,
-    value: string,
-  ): Result<GuardResponse> {
+  static againstEmptyString(argumentName: string, value: string): Result<GuardResponse> {
     if (!value.trim().length) {
-      return Result.fail<GuardResponse>(
-        ArgumentEmptyStringException.create(argumentName),
-      );
+      return Result.fail<GuardResponse>(ArgumentEmptyStringException.create(argumentName));
     }
     return Result.ok<GuardResponse>();
   }
@@ -111,9 +101,7 @@ export class Guard {
     value: TValue[],
   ): Result<GuardResponse> {
     if (!value?.length) {
-      return Result.fail<GuardResponse>(
-        ArgumentEmptyArrayException.create(argumentName),
-      );
+      return Result.fail<GuardResponse>(ArgumentEmptyArrayException.create(argumentName));
     }
     return Result.ok<GuardResponse>();
   }
@@ -172,14 +160,9 @@ export class Guard {
     return Result.ok<GuardResponse>();
   }
 
-  public static againstNullOrUndefinedBulk(
-    args: GuardArgumentCollection,
-  ): Result<GuardResponse> {
+  public static againstNullOrUndefinedBulk(args: GuardArgumentCollection): Result<GuardResponse> {
     for (const arg of args) {
-      const result = this.againstNullOrUndefined(
-        arg.argumentName,
-        arg.argument,
-      );
+      const result = this.againstNullOrUndefined(arg.argumentName, arg.argument);
       if (result.isFailure) return result;
     }
 

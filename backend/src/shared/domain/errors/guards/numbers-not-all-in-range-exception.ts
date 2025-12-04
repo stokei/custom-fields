@@ -8,10 +8,7 @@ export interface NumbersNotAllInRangeDetails {
 }
 
 export class NumbersNotAllInRangeException extends ValidationException<NumbersNotAllInRangeDetails> {
-  private constructor(
-    argumentName: string,
-    details: NumbersNotAllInRangeDetails,
-  ) {
+  private constructor(argumentName: string, details: NumbersNotAllInRangeDetails) {
     super(
       argumentName,
       `is not within the range ${details.min} to ${details.max}.`,

@@ -20,9 +20,7 @@ export const convertToISOTimestamp = (date: Date | number | string): number => {
   return dayjs(date).toDate().getTime();
 };
 
-export const convertToISODateString = (
-  date: Date | number | string,
-): string => {
+export const convertToISODateString = (date: Date | number | string): string => {
   return dayjs(date).toISOString();
 };
 
@@ -40,10 +38,7 @@ export const isExpiredDate = (date: Date | number | string): boolean => {
   return now.isAfter(dateToCompare);
 };
 
-export const addSeconds = (
-  seconds: number,
-  startAt?: string | number | Date,
-) => {
+export const addSeconds = (seconds: number, startAt?: string | number | Date) => {
   const date = dayjs(startAt || Date.now());
   if (!seconds) {
     return date.toDate();
@@ -51,10 +46,7 @@ export const addSeconds = (
   return date.add(seconds, 'second').toDate();
 };
 
-export const addMinutes = (
-  minutes: number,
-  startAt?: string | number | Date,
-) => {
+export const addMinutes = (minutes: number, startAt?: string | number | Date) => {
   const date = dayjs(startAt || Date.now());
   if (!minutes) {
     return date.toDate();
@@ -94,10 +86,7 @@ export const addMonths = (months: number, startAt?: string | number | Date) => {
   return date.add(months, 'month').toDate();
 };
 
-export const addQuarters = (
-  quarters: number,
-  startAt?: string | number | Date,
-) => {
+export const addQuarters = (quarters: number, startAt?: string | number | Date) => {
   const date = dayjs(startAt || Date.now());
   if (!quarters) {
     return date.toDate();

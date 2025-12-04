@@ -7,11 +7,15 @@ export interface GetByTenantContextKeyParams {
   context: string;
   key: string;
 }
+export interface GetAllByTenantContextParams {
+  tenantId: string;
+  organizationId: string;
+  context: string;
+}
 export interface FieldRepository {
   save(field: FieldEntity): Promise<void>;
-  getByTenantContextKey(
-    params: GetByTenantContextKeyParams,
-  ): Promise<FieldEntity | null>;
+  getByTenantContextKey(params: GetByTenantContextKeyParams): Promise<FieldEntity | null>;
+  getAllByTenantContext(params: GetAllByTenantContextParams): Promise<FieldEntity[]>;
 }
 
 export const INJECT_FIELD_REPOSITORY_KEY = 'FieldRepository';

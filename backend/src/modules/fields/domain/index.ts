@@ -1,3 +1,1 @@
-import { Services } from './services';
-
-export const DomainProviders = [...Services];
+export const DomainProviders = [];

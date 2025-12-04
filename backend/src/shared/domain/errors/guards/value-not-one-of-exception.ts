@@ -9,24 +9,16 @@ export interface ValueNotOneOfDetails<TValue = any> {
 export class ValueNotOneOfException<TValue = any> extends ValidationException<
   ValueNotOneOfDetails<TValue>
 > {
-  private constructor(
-    argumentName: string,
-    details: ValueNotOneOfDetails<TValue>,
-  ) {
+  private constructor(argumentName: string, details: ValueNotOneOfDetails<TValue>) {
     super(
       argumentName,
-      `isn't oneOf the correct types in ${JSON.stringify(
-        details.validValues,
-      )}. Got "${details.value + ''}".`,
+      `isn't oneOf the correct types in ${JSON.stringify(details.validValues)}. Got "${details.value + ''}".`,
       ExceptionCode.VALUE_NOT_ONE_OF,
       [details],
     );
   }
 
-  static create<TValue = any>(
-    argumentName: string,
-    details: ValueNotOneOfDetails<TValue>,
-  ) {
+  static create<TValue = any>(argumentName: string, details: ValueNotOneOfDetails<TValue>) {
     return new ValueNotOneOfException<TValue>(argumentName, details);
   }
 }

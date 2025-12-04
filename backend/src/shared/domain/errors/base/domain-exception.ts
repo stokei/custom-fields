@@ -9,11 +9,7 @@ export class DomainException<TDetails = Record<string, unknown>> extends Error {
   public static readonly TYPE: ExceptionType = ExceptionType.DOMAIN_ERROR;
   public static readonly HTTP_STATUS_CODE: HttpStatus = HttpStatus.CONFLICT;
 
-  protected constructor(
-    message: string,
-    code: ExceptionCode,
-    details?: TDetails[],
-  ) {
+  protected constructor(message: string, code: ExceptionCode, details?: TDetails[]) {
     super(message);
     this.name = this.constructor.name;
     this.code = code;

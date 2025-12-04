@@ -8,10 +8,7 @@ interface ClassValidatorValidationExceptionDetails {
 }
 export class ClassValidatorValidationException extends ValidationException<ClassValidatorValidationExceptionDetails> {
   public messages: string[];
-  private constructor(
-    message: string[],
-    details?: ClassValidatorValidationExceptionDetails[],
-  ) {
+  private constructor(message: string[], details?: ClassValidatorValidationExceptionDetails[]) {
     super('', message, ExceptionCode.VALIDATION_ERROR, details);
     this.messages = message;
   }

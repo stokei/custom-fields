@@ -9,10 +9,7 @@ interface ApiDocDomainExceptionParams {
   method?: HttpMethod;
 }
 
-export const ApiDocDomainExceptionResponse = ({
-  path,
-  method,
-}: ApiDocDomainExceptionParams) => {
+export const ApiDocDomainExceptionResponse = ({ path, method }: ApiDocDomainExceptionParams) => {
   class DomainExceptionExample extends DomainException {
     constructor() {
       super('name', ExceptionCode.DOMAIN_ERROR, [

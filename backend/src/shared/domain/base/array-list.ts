@@ -13,15 +13,11 @@ export abstract class ArrayList<T> {
 
   abstract compareItems(a: T, b: T): boolean;
 
-  public getItems(
-    filter?: (value: T, index: number, array: T[]) => boolean,
-  ): T[] {
+  public getItems(filter?: (value: T, index: number, array: T[]) => boolean): T[] {
     if (!filter) return this.currentItems;
     return this.currentItems.filter(filter);
   }
-  public getItemBy(
-    filter?: (value: T, index: number, array: T[]) => boolean,
-  ): T | undefined {
+  public getItemBy(filter?: (value: T, index: number, array: T[]) => boolean): T | undefined {
     if (!filter) return;
     return this.currentItems.find(filter);
   }
@@ -52,8 +48,7 @@ export abstract class ArrayList<T> {
   }
 
   private isCurrentItem(item: T): boolean {
-    return !!this.currentItems.filter((v: T) => this.compareItems(item, v))
-      .length;
+    return !!this.currentItems.filter((v: T) => this.compareItems(item, v)).length;
   }
 
   private isNewItem(item: T): boolean {
@@ -69,9 +64,7 @@ export abstract class ArrayList<T> {
   }
 
   private removeFromCurrent(item: T): void {
-    this.currentItems = this.currentItems.filter(
-      (v) => !this.compareItems(item, v),
-    );
+    this.currentItems = this.currentItems.filter((v) => !this.compareItems(item, v));
   }
 
   private removeFromRemoved(item: T): void {

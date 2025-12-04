@@ -6,14 +6,10 @@ export class Result<TValue, TError extends Error = Error> {
 
   public constructor(isSuccess: boolean, error?: TError, value?: TValue) {
     if (isSuccess && error) {
-      throw new Error(
-        'InvalidOperation: A result cannot be successful and contain an error',
-      );
+      throw new Error('InvalidOperation: A result cannot be successful and contain an error');
     }
     if (!isSuccess && !error) {
-      throw new Error(
-        'InvalidOperation: A failing result needs to contain an error message',
-      );
+      throw new Error('InvalidOperation: A failing result needs to contain an error message');
     }
 
     this.isSuccess = isSuccess;
@@ -26,9 +22,7 @@ export class Result<TValue, TError extends Error = Error> {
 
   public getValue(): TValue {
     if (!this.isSuccess) {
-      throw new Error(
-        "Can't get the value of an error result. Use 'errorValue' instead.",
-      );
+      throw new Error("Can't get the value of an error result. Use 'errorValue' instead.");
     }
 
     return this._value;
@@ -38,15 +32,11 @@ export class Result<TValue, TError extends Error = Error> {
     return this.error as TError;
   }
 
-  public static ok<TValue, TError extends Error = Error>(
-    value?: TValue,
-  ): Result<TValue> {
+  public static ok<TValue, TError extends Error = Error>(value?: TValue): Result<TValue> {
     return new Result<TValue, TError>(true, undefined, value);
   }
 
-  public static fail<TValue, TError extends Error = Error>(
-    error: TError,
-  ): Result<TValue, TError> {
+  public static fail<TValue, TError extends Error = Error>(error: TError): Result<TValue, TError> {
     return new Result<TValue, TError>(false, error);
   }
 

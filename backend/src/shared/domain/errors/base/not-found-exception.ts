@@ -7,12 +7,8 @@ export abstract class NotFoundException extends DomainException {
   public readonly type: ExceptionType;
   public static readonly TYPE: ExceptionType = ExceptionType.NOT_FOUND;
   public static readonly HTTP_STATUS_CODE: HttpStatus = HttpStatus.NOT_FOUND;
-  protected constructor(
-    entityName: string,
-    identifier: string | Record<string, unknown>,
-  ) {
-    const details =
-      typeof identifier === 'string' ? { id: identifier } : identifier;
+  protected constructor(entityName: string, identifier: string | Record<string, unknown>) {
+    const details = typeof identifier === 'string' ? { id: identifier } : identifier;
 
     super(`${entityName} not found`, ExceptionCode.NOT_FOUND, [details]);
 

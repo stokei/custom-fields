@@ -6,4 +6,4 @@ import { PresentationControllers } from './presentation';
   controllers: PresentationControllers,
   providers: [],
 })
-export class HealthChecksModule { }
+export class HealthChecksModule {}

@@ -7,8 +7,7 @@ export class HttpException<TDetails = Record<string, unknown>> extends Error {
   public readonly type: ExceptionType;
   public readonly details?: TDetails[];
   public static readonly TYPE: ExceptionType = ExceptionType.HTTP_ERROR;
-  public static readonly HTTP_STATUS_CODE: HttpStatus =
-    HttpStatus.INTERNAL_SERVER_ERROR;
+  public static readonly HTTP_STATUS_CODE: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
   private constructor(message: string, details?: TDetails[]) {
     super(message);
@@ -20,10 +19,7 @@ export class HttpException<TDetails = Record<string, unknown>> extends Error {
     Object.setPrototypeOf(this, new.target.prototype);
   }
 
-  static create<TDetails = Record<string, unknown>>(
-    message: string,
-    details?: TDetails[],
-  ) {
+  static create<TDetails = Record<string, unknown>>(message: string, details?: TDetails[]) {
     return new HttpException<TDetails>(message, details);
   }
 }

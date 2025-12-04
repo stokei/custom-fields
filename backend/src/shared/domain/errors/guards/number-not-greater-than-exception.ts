@@ -7,10 +7,7 @@ export interface NumberNotGreaterThanDetails {
 }
 
 export class NumberNotGreaterThanException extends ValidationException<NumberNotGreaterThanDetails> {
-  private constructor(
-    argumentName: string,
-    details: NumberNotGreaterThanDetails,
-  ) {
+  private constructor(argumentName: string, details: NumberNotGreaterThanDetails) {
     super(
       argumentName,
       `Number given {${details.actualValue}} is not greater than {${details.minValue}}.`,

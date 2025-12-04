@@ -10,9 +10,7 @@ interface ApiDocCoreExceptionResponseParams {
   method?: HttpMethod;
 }
 
-export const ApiDocCoreExceptionsResponse = (
-  params: ApiDocCoreExceptionResponseParams,
-) => {
+export const ApiDocCoreExceptionsResponse = (params: ApiDocCoreExceptionResponseParams) => {
   return applyDecorators(
     ApiDocDomainExceptionResponse(params),
     ApiDocNotFoundExceptionResponse(params),

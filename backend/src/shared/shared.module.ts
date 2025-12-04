@@ -8,4 +8,4 @@ const Providers = [...InfraProviders];
   providers: Providers,
   exports: Providers,
 })
-export class SharedModule { }
+export class SharedModule {}

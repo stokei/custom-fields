@@ -97,18 +97,15 @@ describe(FieldEntity.name, () => {
     expect(FieldEntity.create(input).options.length).toStrictEqual(0);
   });
 
-  it.each(REQUIRED_FIELDS)(
-    `should throw an error when '%s' are empty`,
-    (fieldKey) => {
-      expect(() =>
-        FieldEntity.create(
-          mountFieldEntityProps({
-            [fieldKey]: undefined,
-          }),
-        ),
-      ).toThrow(ArgumentNullOrUndefinedException.create(fieldKey));
-    },
-  );
+  it.each(REQUIRED_FIELDS)(`should throw an error when '%s' are empty`, (fieldKey) => {
+    expect(() =>
+      FieldEntity.create(
+        mountFieldEntityProps({
+          [fieldKey]: undefined,
+        }),
+      ),
+    ).toThrow(ArgumentNullOrUndefinedException.create(fieldKey));
+  });
 
   it('should throw an error when options are required and it is not provided', () => {
     const input = mountFieldEntityProps({

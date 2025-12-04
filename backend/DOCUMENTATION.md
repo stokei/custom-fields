@@ -26,8 +26,8 @@ Body:
   "placeholder": "Selecione um status",
   "order": 10,
   "options": [
-    { "value": "active", "label": "Ativo", "order": 1 },
-    { "value": "inactive", "label": "Inativo", "order": 2 }
+    { "value": "active", "label": "Ativo" },
+    { "value": "inactive", "label": "Inativo" }
   ]
 }
 ```

@@ -1,12 +1,20 @@
-import { MainModule } from '@/main.module';
+import { FieldAlreadyExistsException } from '@/modules/fields/domain/errors/field-already-exists-exception';
+import {
+  FieldRepository,
+  INJECT_FIELD_REPOSITORY_KEY,
+} from '@/modules/fields/domain/repositories/field.repository';
 import { FieldTypeEnum } from '@/modules/fields/domain/value-objects/field-type.vo';
+import { ArgumentNullOrUndefinedException } from '@/shared/domain/errors/guards/argument-null-or-undefined-exception';
+import { DomainEventBusService } from '@/shared/infra/event-bus/domain-event-bus.service';
+import { domainEventBusServiceMock } from '@/tests/mocks/event-bus/domain-event-bus-service.mock';
+import { fieldRepositoryMock } from '@/tests/mocks/fields/repositories/field-repository.mock';
+import { createTestingModule } from '@/tests/mocks/server/create-testing-module';
+import { createSingleSelectFieldEntityStub } from '@/tests/stubs/fields/entities/single-select.stub';
 import { tenantContextStub } from '@/tests/stubs/http/tenant-context.stub';
-import { Test, TestingModule } from '@nestjs/testing';
 import { CreateFieldCommand } from './create-field.command';
 import { CreateFieldHandler } from './create-field.handler';
-import { FieldAlreadyExistsException } from '@/modules/fields/domain/errors/field-already-exists-exception';
 
-const commonCreateFieldCommand = new CreateFieldCommand({
+const createFieldCommand = new CreateFieldCommand({
   ...tenantContextStub,
   context: 'CUSTOMER',
   group: 'GENERAL',
@@ -24,16 +32,23 @@ const commonCreateFieldCommand = new CreateFieldCommand({
     { value: 'inactive', label: 'Inativo' },
   ],
 });
+const singleSelectFieldEntityStub = createSingleSelectFieldEntityStub(createFieldCommand);
 
 describe(CreateFieldHandler.name, () => {
   let createFieldHandler: CreateFieldHandler;
+  let domainEventBusService: DomainEventBusService;
+  let fieldRepository: FieldRepository;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [MainModule],
-    }).compile();
-
+    const module = await createTestingModule()
+      .overrideProvider(INJECT_FIELD_REPOSITORY_KEY)
+      .useValue(fieldRepositoryMock)
+      .overrideProvider(DomainEventBusService)
+      .useValue(domainEventBusServiceMock)
+      .compile();
     createFieldHandler = module.get(CreateFieldHandler);
+    domainEventBusService = module.get(DomainEventBusService);
+    fieldRepository = module.get(INJECT_FIELD_REPOSITORY_KEY);
   });
 
   afterEach(() => {
@@ -46,27 +61,37 @@ describe(CreateFieldHandler.name, () => {
     });
 
     it('should return successfully with correct data', async () => {
-      const createFieldPromise = await createFieldHandler.execute(
-        commonCreateFieldCommand,
-      );
+      jest.spyOn(fieldRepository, 'save').mockResolvedValue();
+      jest.spyOn(domainEventBusService, 'publishAll').mockResolvedValue(undefined);
+      const createFieldPromise = await createFieldHandler.execute(createFieldCommand);
+
+      expect(fieldRepositoryMock.save).toHaveBeenCalledTimes(1);
+      expect(domainEventBusServiceMock.publishAll).toHaveBeenCalledTimes(1);
       expect(createFieldPromise.isSuccess).toBeTruthy();
     });
 
     it('should throw error when field already exists', async () => {
-      const firstCreateFieldPromise = await createFieldHandler.execute(
-        commonCreateFieldCommand,
-      );
-      const secondCreateFieldPromise = await createFieldHandler.execute(
-        commonCreateFieldCommand,
-      );
-      expect(firstCreateFieldPromise.isSuccess).toBeTruthy();
-      expect(secondCreateFieldPromise.isFailure).toBeTruthy();
-      expect(secondCreateFieldPromise.getErrorValue()).toStrictEqual(
+      jest
+        .spyOn(fieldRepository, 'getByTenantContextKey')
+        .mockResolvedValue(singleSelectFieldEntityStub);
+      const createFieldPromise = await createFieldHandler.execute(createFieldCommand);
+      expect(createFieldPromise.isFailure).toBeTruthy();
+      expect(createFieldPromise.getErrorValue()).toStrictEqual(
         FieldAlreadyExistsException.create({
-          organizationId: commonCreateFieldCommand.organizationId,
-          context: commonCreateFieldCommand.context,
-          key: commonCreateFieldCommand.key,
+          organizationId: createFieldCommand.organizationId,
+          context: createFieldCommand.context,
+          key: createFieldCommand.key,
         }),
+      );
+    });
+
+    it('should return error when required params are empty', async () => {
+      createFieldCommand.context = undefined as unknown as string;
+      const createFieldPromise = await createFieldHandler.execute(createFieldCommand);
+
+      expect(createFieldPromise.isFailure).toBeTruthy();
+      expect(createFieldPromise.getErrorValue()).toStrictEqual(
+        ArgumentNullOrUndefinedException.create('context'),
       );
     });
   });

@@ -5,7 +5,7 @@ export class TenantContext {
     public readonly apiKey: string,
     public readonly tenantId: string,
     public readonly organizationId: string,
-  ) { }
+  ) {}
 
   static create(apiKey: string, tenantId: string, organizationId: string) {
     const guardResult = Guard.combine([

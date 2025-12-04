@@ -1,6 +1,5 @@
 import { AlreadyExistsException } from '@/shared/domain/errors/base/already-exists-exception';
 import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
-import { ValidationException } from '@/shared/domain/errors/base/validation-exception';
 import { HttpMethod } from '@/shared/infra/http/enums/http-method';
 import { ClassValidatorValidationException } from '@/shared/infra/http/errors/class-validator-validation-exception';
 import { HttpExceptionResponse } from '@/shared/infra/http/errors/http-exception-response';

@@ -8,10 +8,7 @@ import {
   FieldOptionValueObject,
   FieldOptionValueObjectProps,
 } from '../value-objects/field-option.vo';
-import {
-  FieldTypeEnum,
-  FieldTypeValueObject,
-} from '../value-objects/field-type.vo';
+import { FieldTypeEnum, FieldTypeValueObject } from '../value-objects/field-type.vo';
 
 interface FieldProps {
   organizationId: string;
@@ -148,10 +145,7 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     const type = FieldTypeValueObject.create(input.type);
     let inputOptions = input.options || [];
     if (type.hasOptions) {
-      const optionsRequiredGuard = Guard.againstEmptyArray(
-        'options',
-        input.options,
-      );
+      const optionsRequiredGuard = Guard.againstEmptyArray('options', input.options);
       if (optionsRequiredGuard.isFailure) {
         throw optionsRequiredGuard.getErrorValue();
       }
@@ -195,20 +189,12 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     return field;
   }
 
-  private addOption({
-    value,
-    label,
-    order,
-    active,
-  }: FieldOptionValueObjectProps) {
+  private addOption({ value, label, order, active }: FieldOptionValueObjectProps) {
     const exists = this.props.options.some((o) => o.value === value);
     if (exists)
-      throw FieldOptionAlreadyExistsException.create(
-        `option[${order}] - ${label}`,
-        {
-          value,
-        },
-      );
+      throw FieldOptionAlreadyExistsException.create(`option[${order}] - ${label}`, {
+        value,
+      });
     this.props.options.push(
       FieldOptionValueObject.create({
         value,

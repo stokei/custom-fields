@@ -1,12 +1,10 @@
 import { ArrayList } from '@/shared/domain/base/array-list';
 import { Injectable } from '@nestjs/common';
-import {
-  Field as PrismaField,
-  FieldOption as PrismaFieldOption,
-} from '@prisma/client';
+import { Field as PrismaField, FieldOption as PrismaFieldOption } from '@prisma/client';
 import { FieldEntity } from '../../domain/entities/field.entity';
 import {
   FieldRepository,
+  GetAllByTenantContextParams,
   GetByTenantContextKeyParams,
 } from '../../domain/repositories/field.repository';
 import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
@@ -39,18 +37,18 @@ export class LocalFieldRepository implements FieldRepository {
     const data = FieldMapper.toPersistence(field);
     const fieldPersistence: PrismaField = {
       id: data.id ?? new UniqueEntityID().toString(),
-      tenantId: data.tenantId as string,
-      organizationId: data.organizationId as string,
-      context: data.context as string,
-      key: data.key as string,
-      label: data.label as string,
-      type: data.type as PrismaField['type'],
+      tenantId: data.tenantId,
+      organizationId: data.organizationId,
+      context: data.context,
+      key: data.key,
+      label: data.label,
+      type: data.type,
       required: data.required ?? false,
       minLength: data.minLength ?? null,
       maxLength: data.maxLength ?? null,
       pattern: data.pattern ?? null,
       placeholder: data.placeholder ?? null,
-      group: data.group as string,
+      group: data.group,
       order: data.order ?? 0,
       active: data.active ?? true,
       createdAt: new Date(),
@@ -107,9 +105,7 @@ export class LocalFieldRepository implements FieldRepository {
     }
   }
 
-  async getByTenantContextKey(
-    params: GetByTenantContextKeyParams,
-  ): Promise<FieldEntity | null> {
+  async getByTenantContextKey(params: GetByTenantContextKeyParams): Promise<FieldEntity | null> {
     const field = this.fields.getItems(
       (field) =>
         field.tenantId === params.tenantId &&
@@ -128,5 +124,19 @@ export class LocalFieldRepository implements FieldRepository {
     );
 
     return FieldMapper.toDomain(field, optionRows);
+  }
+
+  async getAllByTenantContext(params: GetAllByTenantContextParams): Promise<FieldEntity[]> {
+    const fields = this.fields.getItems(
+      (field) =>
+        field.context === params.context &&
+        field.organizationId === params.organizationId &&
+        field.tenantId === params.tenantId,
+    );
+
+    return fields?.map((field) => {
+      const options = this.fieldOptions.get(field.id);
+      return FieldMapper.toDomain(field, options?.getItems() || []);
+    });
   }
 }

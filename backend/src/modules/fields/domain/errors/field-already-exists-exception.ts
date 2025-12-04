@@ -17,9 +17,7 @@ export class FieldAlreadyExistsException extends ValidationException<FieldAlread
     );
   }
 
-  static create(
-    details: FieldAlreadyExistsDetails,
-  ): FieldAlreadyExistsException {
+  static create(details: FieldAlreadyExistsDetails): FieldAlreadyExistsException {
     return new FieldAlreadyExistsException(details);
   }
 }

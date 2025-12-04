@@ -9,9 +9,7 @@ export interface ApiKeyVerificationFailure {
   valid: false;
 }
 
-export type ApiKeyVerificationResult =
-  | ApiKeyVerificationSuccess
-  | ApiKeyVerificationFailure;
+export type ApiKeyVerificationResult = ApiKeyVerificationSuccess | ApiKeyVerificationFailure;
 
 export interface ApiKeyVerifier {
   verify(apiKey: string): Promise<ApiKeyVerificationResult>;

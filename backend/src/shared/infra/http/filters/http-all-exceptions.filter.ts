@@ -19,7 +19,7 @@ import { HttpExceptionResponse } from '../errors/http-exception-response';
 
 @Catch()
 export class HttpAllExceptionsFilter implements ExceptionFilter {
-  constructor(private readonly loggerService: LoggerService) { }
+  constructor(private readonly loggerService: LoggerService) {}
 
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -39,9 +39,7 @@ export class HttpAllExceptionsFilter implements ExceptionFilter {
     });
 
     if (exception instanceof ValidationException) {
-      structuredErrorResponse.setStatusCode(
-        ValidationException.HTTP_STATUS_CODE,
-      );
+      structuredErrorResponse.setStatusCode(ValidationException.HTTP_STATUS_CODE);
       structuredErrorResponse.setError({
         type: ValidationException.TYPE,
         code: exception.code,
@@ -82,9 +80,7 @@ export class HttpAllExceptionsFilter implements ExceptionFilter {
         const exceptionClass = PrismaRecordNotFoundException.create(
           exception.meta?.target as string,
         );
-        structuredErrorResponse.setStatusCode(
-          PrismaRecordNotFoundException.HTTP_STATUS_CODE,
-        );
+        structuredErrorResponse.setStatusCode(PrismaRecordNotFoundException.HTTP_STATUS_CODE);
         structuredErrorResponse.setError({
           type: exceptionClass.type,
           code: exceptionClass.code,
@@ -96,9 +92,7 @@ export class HttpAllExceptionsFilter implements ExceptionFilter {
           exception.meta?.target as string,
           exception.message,
         );
-        structuredErrorResponse.setStatusCode(
-          PrismaSomeValidationException.HTTP_STATUS_CODE,
-        );
+        structuredErrorResponse.setStatusCode(PrismaSomeValidationException.HTTP_STATUS_CODE);
         structuredErrorResponse.setError({
           type: exceptionClass.type,
           code: exceptionClass.code,
@@ -111,9 +105,7 @@ export class HttpAllExceptionsFilter implements ExceptionFilter {
         'ClientValidationError',
         exception.message,
       );
-      structuredErrorResponse.setStatusCode(
-        PrismaSomeValidationException.HTTP_STATUS_CODE,
-      );
+      structuredErrorResponse.setStatusCode(PrismaSomeValidationException.HTTP_STATUS_CODE);
       structuredErrorResponse.setError({
         type: exceptionClass.type,
         code: exceptionClass.code,
@@ -124,9 +116,7 @@ export class HttpAllExceptionsFilter implements ExceptionFilter {
       structuredErrorResponse.setStatusCode(exception.getStatus());
       const errorResponse = exception.getResponse();
       const errorMessage =
-        typeof errorResponse === 'string'
-          ? errorResponse
-          : errorResponse['message'];
+        typeof errorResponse === 'string' ? errorResponse : errorResponse['message'];
       const exceptionClass = HttpException.create(
         errorMessage,
         typeof errorResponse === 'object' ? [errorResponse] : undefined,
@@ -142,17 +132,13 @@ export class HttpAllExceptionsFilter implements ExceptionFilter {
       ExceptionType.INTERNAL_ERROR,
       ExceptionType.HTTP_ERROR,
     ];
-    const canLog = exceptionTypesThatCanBeLogged.includes(
-      structuredErrorResponse.error.type,
-    );
+    const canLog = exceptionTypesThatCanBeLogged.includes(structuredErrorResponse.error.type);
     if (canLog) {
       this.loggerService.error(
         HttpAllExceptionsFilter.name,
         JSON.stringify(structuredErrorResponse),
       );
     }
-    response
-      .status(structuredErrorResponse.statusCode)
-      .json(structuredErrorResponse);
+    response.status(structuredErrorResponse.statusCode).json(structuredErrorResponse);
   }
 }

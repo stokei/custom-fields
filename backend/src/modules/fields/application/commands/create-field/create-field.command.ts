@@ -24,20 +24,20 @@ interface CreateFieldDTO {
 }
 
 export class CreateFieldCommand implements CommandBase, CreateFieldDTO {
-  readonly tenantId: string;
-  readonly organizationId: string;
-  readonly context: string;
-  readonly key: string;
-  readonly label: string;
-  readonly type: FieldTypeEnum;
-  readonly required: boolean;
-  readonly minLength?: number;
-  readonly maxLength?: number;
-  readonly pattern?: string;
-  readonly placeholder?: string;
-  readonly group: string;
-  readonly order: number;
-  readonly options: FieldOptionValueObjectProps[];
+  tenantId: string;
+  organizationId: string;
+  context: string;
+  key: string;
+  label: string;
+  type: FieldTypeEnum;
+  required: boolean;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  placeholder?: string;
+  group: string;
+  order: number;
+  options: FieldOptionValueObjectProps[];
 
   constructor(data: CreateFieldDTO) {
     this.tenantId = data.tenantId;
