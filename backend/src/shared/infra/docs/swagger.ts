@@ -20,6 +20,7 @@ export class Swagger {
       .addGlobalParameters({
         name: 'x-organization-id',
         in: 'header',
+        required: true,
         description: 'Organization ID da organização responsável pelos campos',
       })
       .build();

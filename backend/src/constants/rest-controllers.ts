@@ -9,7 +9,7 @@ export const REST_CONTROLLERS_URL_NAMES = {
     BASE: '/fields',
     CREATE_FIELD: '/fields',
     UPDATE_FIELD: '/fields/:fieldId',
-    GET_FIELDS_BY_CONTEXT: '/fields/:context',
+    GET_ALL_FIELDS_BY_CONTEXT: '/fields/:context',
     DELETE_FIELD: '/fields/:fieldId',
   },
   FIELD_VALUES: {
