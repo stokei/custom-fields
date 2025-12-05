@@ -61,11 +61,11 @@ describe(CreateFieldHandler.name, () => {
     });
 
     it('should return successfully with correct data', async () => {
-      jest.spyOn(fieldRepository, 'save').mockResolvedValue();
+      jest.spyOn(fieldRepository, 'create').mockResolvedValue();
       jest.spyOn(domainEventBusService, 'publishAll').mockResolvedValue(undefined);
       const createFieldPromise = await createFieldHandler.execute(createFieldCommand);
 
-      expect(fieldRepositoryMock.save).toHaveBeenCalledTimes(1);
+      expect(fieldRepositoryMock.create).toHaveBeenCalledTimes(1);
       expect(domainEventBusServiceMock.publishAll).toHaveBeenCalledTimes(1);
       expect(createFieldPromise.isSuccess).toBeTruthy();
     });

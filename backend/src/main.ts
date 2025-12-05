@@ -34,7 +34,8 @@ async function bootstrap() {
   logger.log(`Application is running on: ${SERVER_URL}`);
 }
 
-bootstrap().catch(() => {
+bootstrap().catch((error) => {
+  logger.error(error.message);
   logger.error('Failed to start the application');
   process.exit(1);
 });

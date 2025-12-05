@@ -13,7 +13,8 @@ export interface GetAllByTenantContextParams {
   context: string;
 }
 export interface FieldRepository {
-  save(field: FieldEntity): Promise<void>;
+  create(field: FieldEntity): Promise<void>;
+  update(field: FieldEntity): Promise<void>;
   getByTenantContextKey(params: GetByTenantContextKeyParams): Promise<FieldEntity | null>;
   getAllByTenantContext(params: GetAllByTenantContextParams): Promise<FieldEntity[]>;
 }

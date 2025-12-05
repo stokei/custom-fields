@@ -9,7 +9,6 @@ interface OptionDiff {
     id: string;
     data: FieldOptionPersistence;
   }>;
-  toDelete: PrismaFieldOption[];
 }
 
 export class FieldOptionMapper {
@@ -52,7 +51,6 @@ export class FieldOptionMapper {
 
     const toCreate: OptionDiff['toCreate'] = [];
     const toUpdate: OptionDiff['toUpdate'] = [];
-    const toDelete: OptionDiff['toDelete'] = [];
 
     for (const desiredOpt of desired) {
       const existingOpt = existingByValue.get(desiredOpt.value);
@@ -75,12 +73,6 @@ export class FieldOptionMapper {
       }
     }
 
-    for (const existingOpt of existing) {
-      if (!desiredByValue.has(existingOpt.value)) {
-        toDelete.push(existingOpt);
-      }
-    }
-
-    return { toCreate, toUpdate, toDelete };
+    return { toCreate, toUpdate };
   };
 }

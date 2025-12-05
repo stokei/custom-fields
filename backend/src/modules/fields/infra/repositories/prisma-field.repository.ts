@@ -15,14 +15,31 @@ import { FieldMapper } from '../mappers/field.mapper';
 export class PrismaFieldRepository implements FieldRepository {
   constructor(private readonly prisma: PrismaClientService) {}
 
-  async save(field: FieldEntity): Promise<void> {
+  async create(field: FieldEntity): Promise<void> {
+    const data = FieldMapper.toPersistence(field);
+    const options = field.options?.map((option) =>
+      FieldOptionMapper.toPersistence(field.id, option),
+    );
+    await this.prisma.field.create({
+      data: {
+        ...data,
+        options: {
+          createMany: {
+            data: options,
+            skipDuplicates: false,
+          },
+        },
+      },
+    });
+  }
+
+  async update(field: FieldEntity): Promise<void> {
     const data = FieldMapper.toPersistence(field);
     delete data.id;
     await this.prisma.$transaction(async (transaction) => {
-      await transaction.field.upsert({
+      await transaction.field.update({
         where: { id: field.id },
-        create: { id: field.id, ...data },
-        update: data,
+        data,
       });
       const desiredOptions = field.options?.map((option) =>
         FieldOptionMapper.toPersistence(field.id, option),
@@ -31,15 +48,10 @@ export class PrismaFieldRepository implements FieldRepository {
         where: { fieldId: field.id },
       });
 
-      const { toCreate, toUpdate, toDelete } = FieldOptionMapper.toDiffOptions(
+      const { toCreate, toUpdate } = FieldOptionMapper.toDiffOptions(
         existingOptions,
         desiredOptions,
       );
-      if (toDelete.length) {
-        await transaction.fieldOption.deleteMany({
-          where: { id: { in: toDelete.map(({ id }) => id || '') } },
-        });
-      }
       for (const updateItem of toUpdate) {
         await transaction.fieldOption.update({
           where: { id: updateItem.id },

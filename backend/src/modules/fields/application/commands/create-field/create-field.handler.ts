@@ -47,7 +47,7 @@ export class CreateFieldHandler extends CommandHandlerBase<
         );
       }
 
-      await this.fieldRepository.save(field);
+      await this.fieldRepository.create(field);
 
       this.domainEventBusService.publishAll(field.domainEvents);
 
