@@ -9,6 +9,8 @@ import {
   FieldOptionValueObjectProps,
 } from '../value-objects/field-option.vo';
 import { FieldTypeEnum, FieldTypeValueObject } from '../value-objects/field-type.vo';
+import { FieldRemovedEvent } from '../events/field-removed/field-removed.event';
+import { FieldUpdatedEvent } from '../events/field-updated/field-updated.event';
 
 interface FieldProps {
   organizationId: string;
@@ -35,6 +37,16 @@ export interface CreateFieldInput
   options: FieldOptionValueObjectProps[];
   createdAt?: string;
   updatedAt?: string;
+}
+export interface UpdateFieldInput {
+  key?: string;
+  label?: string;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  placeholder?: string;
+  group?: string;
 }
 
 export class FieldEntity extends AggregateRoot<FieldProps> {
@@ -187,6 +199,23 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
       field.addDomainEvent(new FieldCreatedEvent({ field }));
     }
     return field;
+  }
+
+  public remove() {
+    this.addDomainEvent(new FieldRemovedEvent({ field: this }));
+  }
+
+  public update(data: UpdateFieldInput) {
+    this.props.key = data.key || this.key;
+    this.props.label = data.label || this.label;
+    this.props.required = data.required || this.required;
+    this.props.minLength = data.minLength || this.minLength;
+    this.props.maxLength = data.maxLength || this.maxLength;
+    this.props.pattern = data.pattern || this.pattern;
+    this.props.placeholder = data.placeholder || this.placeholder;
+    this.props.group = data.group || this.group;
+
+    this.addDomainEvent(new FieldUpdatedEvent({ field: this }));
   }
 
   private addOption({ value, label, order, active }: FieldOptionValueObjectProps) {

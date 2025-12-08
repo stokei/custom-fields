@@ -51,48 +51,40 @@ describe(CreateFieldHandler.name, () => {
     fieldRepository = module.get(INJECT_FIELD_REPOSITORY_KEY);
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  it('should return successfully with correct data', async () => {
+    jest.spyOn(fieldRepository, 'create').mockResolvedValue();
+    jest.spyOn(domainEventBusService, 'publishAll').mockResolvedValue(undefined);
+    const createFieldPromise = await createFieldHandler.execute(createFieldCommand);
+
+    expect(fieldRepositoryMock.create).toHaveBeenCalledTimes(1);
+    expect(domainEventBusServiceMock.publishAll).toHaveBeenCalledTimes(1);
+    expect(createFieldPromise.isSuccess).toBeTruthy();
   });
 
-  describe('createField', () => {
-    it('should be defined', () => {
-      expect(createFieldHandler).toBeDefined();
-    });
+  it('should throw error when field already exists', async () => {
+    jest
+      .spyOn(fieldRepository, 'getByTenantContextKey')
+      .mockResolvedValue(singleSelectFieldEntityStub);
+    const createFieldPromise = await createFieldHandler.execute(createFieldCommand);
+    expect(domainEventBusServiceMock.publishAll).toHaveBeenCalledTimes(0);
+    expect(createFieldPromise.isFailure).toBeTruthy();
+    expect(createFieldPromise.getErrorValue()).toStrictEqual(
+      FieldAlreadyExistsException.create({
+        organizationId: createFieldCommand.organizationId,
+        context: createFieldCommand.context,
+        key: createFieldCommand.key,
+      }),
+    );
+  });
 
-    it('should return successfully with correct data', async () => {
-      jest.spyOn(fieldRepository, 'create').mockResolvedValue();
-      jest.spyOn(domainEventBusService, 'publishAll').mockResolvedValue(undefined);
-      const createFieldPromise = await createFieldHandler.execute(createFieldCommand);
+  it('should return error when required params are empty', async () => {
+    createFieldCommand.context = undefined as unknown as string;
+    const createFieldPromise = await createFieldHandler.execute(createFieldCommand);
 
-      expect(fieldRepositoryMock.create).toHaveBeenCalledTimes(1);
-      expect(domainEventBusServiceMock.publishAll).toHaveBeenCalledTimes(1);
-      expect(createFieldPromise.isSuccess).toBeTruthy();
-    });
-
-    it('should throw error when field already exists', async () => {
-      jest
-        .spyOn(fieldRepository, 'getByTenantContextKey')
-        .mockResolvedValue(singleSelectFieldEntityStub);
-      const createFieldPromise = await createFieldHandler.execute(createFieldCommand);
-      expect(createFieldPromise.isFailure).toBeTruthy();
-      expect(createFieldPromise.getErrorValue()).toStrictEqual(
-        FieldAlreadyExistsException.create({
-          organizationId: createFieldCommand.organizationId,
-          context: createFieldCommand.context,
-          key: createFieldCommand.key,
-        }),
-      );
-    });
-
-    it('should return error when required params are empty', async () => {
-      createFieldCommand.context = undefined as unknown as string;
-      const createFieldPromise = await createFieldHandler.execute(createFieldCommand);
-
-      expect(createFieldPromise.isFailure).toBeTruthy();
-      expect(createFieldPromise.getErrorValue()).toStrictEqual(
-        ArgumentNullOrUndefinedException.create('context'),
-      );
-    });
+    expect(domainEventBusServiceMock.publishAll).toHaveBeenCalledTimes(0);
+    expect(createFieldPromise.isFailure).toBeTruthy();
+    expect(createFieldPromise.getErrorValue()).toStrictEqual(
+      ArgumentNullOrUndefinedException.create('context'),
+    );
   });
 });

@@ -68,7 +68,17 @@ export class PrismaFieldRepository implements FieldRepository {
     });
   }
 
-  async getByTenantContextKey(params: GetByTenantContextKeyParams): Promise<FieldEntity | null> {
+  async remove(field: FieldEntity): Promise<void> {
+    const data = FieldMapper.toPersistence(field);
+    delete data.id;
+    await this.prisma.field.delete({
+      where: { id: field.id },
+    });
+  }
+
+  async getByTenantContextKey(
+    params: GetByTenantContextKeyParams,
+  ): Promise<FieldEntity | undefined> {
     const field = await this.prisma.field.findFirst({
       where: {
         tenantId: params.tenantId,
@@ -79,7 +89,7 @@ export class PrismaFieldRepository implements FieldRepository {
     });
 
     if (!field) {
-      return null;
+      return;
     }
 
     const optionRows = await this.prisma.fieldOption.findMany({
@@ -105,9 +115,6 @@ export class PrismaFieldRepository implements FieldRepository {
         context: params.context,
       },
     });
-    if (!fields) {
-      return [];
-    }
-    return fields.map((field) => FieldMapper.toDomain(field, field.options));
+    return fields?.map((field) => FieldMapper.toDomain(field, field.options));
   }
 }

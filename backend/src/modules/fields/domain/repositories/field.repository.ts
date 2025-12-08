@@ -15,7 +15,8 @@ export interface GetAllByTenantContextParams {
 export interface FieldRepository {
   create(field: FieldEntity): Promise<void>;
   update(field: FieldEntity): Promise<void>;
-  getByTenantContextKey(params: GetByTenantContextKeyParams): Promise<FieldEntity | null>;
+  remove(field: FieldEntity): Promise<void>;
+  getByTenantContextKey(params: GetByTenantContextKeyParams): Promise<FieldEntity | undefined>;
   getAllByTenantContext(params: GetAllByTenantContextParams): Promise<FieldEntity[]>;
 }
 

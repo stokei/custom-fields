@@ -1,108 +1,59 @@
 export abstract class ArrayList<T> {
-  private currentItems: T[];
-  private initial: T[];
-  private new: T[];
-  private removed: T[];
+  private items: T[];
 
   constructor(initialItems?: T[]) {
-    this.currentItems = initialItems ? initialItems : [];
-    this.initial = initialItems ? initialItems : [];
-    this.new = [];
-    this.removed = [];
+    this.items = initialItems ? initialItems : [];
   }
 
-  abstract compareItems(a: T, b: T): boolean;
+  protected abstract compareItems(a: T, b: T): boolean;
+  protected abstract sortBy(a: T, b: T): 1 | 0 | -1;
 
   public getItems(filter?: (value: T, index: number, array: T[]) => boolean): T[] {
-    if (!filter) return this.currentItems;
-    return this.currentItems.filter(filter);
+    if (!filter) return this.items;
+    return this.items.filter(filter);
   }
   public getItemBy(filter?: (value: T, index: number, array: T[]) => boolean): T | undefined {
     if (!filter) return;
-    return this.currentItems.find(filter);
+    return this.items.find(filter);
   }
 
   public size(): number {
-    return this.currentItems.length;
+    return this.items.length;
   }
 
   public sort(): void {
-    this.currentItems.sort((a, b) => {
-      if (this.compareItems(a, b)) {
-        return 0;
-      }
-      return a < b ? -1 : 1;
-    });
+    this.items.sort((a, b) => this.sortBy(a, b));
   }
 
   public isEmpty(): boolean {
     return !this.size();
   }
 
-  public getNewItems(): T[] {
-    return this.new;
-  }
-
-  public getRemovedItems(): T[] {
-    return this.removed;
-  }
-
-  private isCurrentItem(item: T): boolean {
-    return !!this.currentItems.filter((v: T) => this.compareItems(item, v)).length;
-  }
-
-  private isNewItem(item: T): boolean {
-    return !!this.new.filter((v: T) => this.compareItems(item, v)).length;
-  }
-
-  private isRemovedItem(item: T): boolean {
-    return !!this.removed.filter((v: T) => this.compareItems(item, v)).length;
-  }
-
-  private removeFromNew(item: T): void {
-    this.new = this.new.filter((v) => !this.compareItems(v, item));
-  }
-
-  private removeFromCurrent(item: T): void {
-    this.currentItems = this.currentItems.filter((v) => !this.compareItems(item, v));
-  }
-
-  private removeFromRemoved(item: T): void {
-    this.removed = this.removed.filter((v) => !this.compareItems(item, v));
-  }
-
-  private wasAddedInitially(item: T): boolean {
-    return !!this.initial.filter((v: T) => this.compareItems(item, v)).length;
-  }
-
   public exists(item: T): boolean {
-    return this.isCurrentItem(item);
+    return !!this.getItemBy((currentItem) => this.compareItems(item, currentItem));
   }
 
   public add(item: T): void {
-    if (this.isRemovedItem(item)) {
-      this.removeFromRemoved(item);
-    }
-
-    if (!this.isNewItem(item) && !this.wasAddedInitially(item)) {
-      this.new.push(item);
-    }
-
-    if (!this.isCurrentItem(item)) {
-      this.currentItems.push(item);
+    if (!this.exists(item)) {
+      this.items.push(item);
     }
   }
 
-  public remove(item: T): void {
-    this.removeFromCurrent(item);
-
-    if (this.isNewItem(item)) {
-      this.removeFromNew(item);
-      return;
+  public remove(removedItem: T): void {
+    if (this.exists(removedItem)) {
+      this.items.filter((item) => this.compareItems(item, removedItem));
     }
+  }
 
-    if (!this.isRemovedItem(item)) {
-      this.removed.push(item);
+  public update(updatedItem: T): void {
+    if (this.exists(updatedItem)) {
+      this.items = this.items.map((item) => {
+        const isCurrentItem = this.compareItems(item, updatedItem);
+        if (isCurrentItem) {
+          return updatedItem;
+        }
+        return item;
+      });
     }
   }
 }
