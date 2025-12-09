@@ -1,10 +1,13 @@
 generator client {
-  provider = "prisma-client-js"
+  provider               = "prisma-client"
+  output                 = "./prisma-generated-types"
+  moduleFormat           = "cjs"
+  generatedFileExtension = "ts"
+  importFileExtension    = ""
 }
 
 datasource db {
   provider     = "mysql"
-  url          = env("DATABASE_URL")
   relationMode = "foreignKeys"
 }
 
@@ -19,15 +22,24 @@ enum FieldType {
   MULTI_SELECT
 }
 
+enum FieldComparator {
+  EQUALS
+  GREATER_THAN
+  GREATER_OR_EQUALS_THAN
+  LESS_THAN
+  LESS_OR_EQUALS_THAN
+}
+
 model Field {
-  id             String    @id @default(uuid())
-  tenantId       String    @map("tenant_id")
-  organizationId String    @map("organization_id")
+  id             String          @id @default(uuid())
+  tenantId       String          @map("tenant_id")
+  organizationId String          @map("organization_id")
   context        String
   key            String
   label          String
   type           FieldType
-  required       Boolean   @default(false)
+  comparator     FieldComparator
+  required       Boolean         @default(false)
 
   minLength Int?    @map("min_length")
   maxLength Int?    @map("max_length")

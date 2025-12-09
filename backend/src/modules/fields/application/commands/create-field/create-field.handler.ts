@@ -57,7 +57,7 @@ export class CreateFieldHandler extends CommandHandlerBase<
         }),
       );
     } catch (error) {
-      return Result.fail<CreateFieldViewModel>(error);
+      return Result.fail<CreateFieldViewModel>(error as Error);
     }
   }
 }

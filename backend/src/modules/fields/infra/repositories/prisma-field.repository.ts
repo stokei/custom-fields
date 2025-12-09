@@ -1,6 +1,6 @@
 import { PrismaClientService } from '@/shared/infra/database/prisma/prisma-client.service';
 import { Injectable } from '@nestjs/common';
-import { FieldOption as PrismaFieldOption } from '@prisma/client';
+import { FieldOption as PrismaFieldOption } from '@/database/prisma/prisma-generated-types/client';
 import { FieldEntity } from '../../domain/entities/field.entity';
 import {
   FieldRepository,

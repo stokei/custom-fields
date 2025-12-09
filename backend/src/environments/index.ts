@@ -1,3 +1,9 @@
+import { config } from 'dotenv';
+config({
+  debug: false,
+  quiet: true,
+});
+
 export enum EnvironmentType {
   DEVELOPMENT = 'development',
   PRODUCTION = 'production',

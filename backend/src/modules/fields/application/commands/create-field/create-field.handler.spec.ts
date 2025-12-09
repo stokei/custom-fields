@@ -13,6 +13,7 @@ import { createSingleSelectFieldEntityStub } from '@/tests/stubs/fields/entities
 import { tenantContextStub } from '@/tests/stubs/http/tenant-context.stub';
 import { CreateFieldCommand } from './create-field.command';
 import { CreateFieldHandler } from './create-field.handler';
+import { FieldComparatorEnum } from '@/modules/fields/domain/value-objects/field-comparator.vo';
 
 const createFieldCommand = new CreateFieldCommand({
   ...tenantContextStub,
@@ -21,6 +22,7 @@ const createFieldCommand = new CreateFieldCommand({
   key: 'status',
   label: 'Status',
   type: FieldTypeEnum.SINGLE_SELECT,
+  comparator: FieldComparatorEnum.EQUALS,
   required: true,
   minLength: undefined,
   maxLength: undefined,

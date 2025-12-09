@@ -3,6 +3,7 @@ import { tenantContextStub } from '../../http/tenant-context.stub';
 import { FieldTypeEnum } from '@/modules/fields/domain/value-objects/field-type.vo';
 import { convertToISODateString } from '@/utils/dates';
 import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
+import { FieldComparatorEnum } from '@/modules/fields/domain/value-objects/field-comparator.vo';
 
 export const createSingleSelectFieldEntityStub = (
   overrides?: Partial<CreateFieldInput>,
@@ -17,6 +18,7 @@ export const createSingleSelectFieldEntityStub = (
       key: overrides?.key || 'status',
       label: overrides?.label || 'Status',
       type: overrides?.type || FieldTypeEnum.SINGLE_SELECT,
+      comparator: overrides?.comparator || FieldComparatorEnum.EQUALS,
       required: overrides?.required || true,
       minLength: overrides?.minLength || undefined,
       maxLength: overrides?.maxLength || undefined,

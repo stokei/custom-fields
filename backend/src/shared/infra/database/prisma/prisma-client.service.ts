@@ -1,12 +1,15 @@
+import { PrismaClient } from '@/database/prisma/prisma-generated-types/client';
+import { DATABASE_URL } from '@/environments';
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-
-import { PrismaClient as PrismaClientDefault } from '@prisma/client';
+import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 
 @Injectable()
-export class PrismaClientService
-  extends PrismaClientDefault
-  implements OnModuleInit, OnModuleDestroy
-{
+export class PrismaClientService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  constructor() {
+    super({
+      adapter: new PrismaMariaDb(DATABASE_URL),
+    });
+  }
   async onModuleDestroy() {
     await this.$disconnect();
   }

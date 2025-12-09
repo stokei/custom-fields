@@ -9,8 +9,8 @@
 ```http
 POST /v1/fields
 Headers:
-  X-Tenant-Id: <tenantId>
-  X-Org-Id: <organizationId>
+  x-api-key: <api-key>
+  x-organization-id: <organizationId>
 
 Body:
 {
@@ -18,12 +18,13 @@ Body:
   "group": "GENERAL",
   "key": "status",
   "label": "Status",
-  "type": "SINGLE_SELECT",       // TEXT | TEXTAREA | SINGLE_SELECT | MULTI_SELECT
+  "type": "SINGLE_SELECT",       // TEXT | TEXTAREA | RADIO | CHECKBOX | SINGLE_UPLOAD | MULTI_UPLOAD | SINGLE_SELECT | MULTI_SELECT
   "required": true,
   "minLength": null,
   "maxLength": null,
   "pattern": null,
   "placeholder": "Selecione um status",
+  "comparator": "EQUALS",  // EQUALS | GREATER_THAN | GREATER_OR_EQUALS_THAN | LESS_THAN | LESS_OR_EQUALS_THAN
   "order": 10,
   "options": [
     { "value": "active", "label": "Ativo" },
@@ -48,8 +49,8 @@ Resposta:
 ```http
 GET /v1/fields/{context}
 Headers:
-  X-Tenant-Id: <tenantId>
-  X-Org-Id: <organizationId>
+  x-api-key: <api-key>
+  x-organization-id: <organizationId>
 Query:
   activeOnly=true
 ```
@@ -103,8 +104,8 @@ Resposta:
 ```http
 PATCH /v1/fields/{context}/{key}
 Headers:
-  X-Tenant-Id: <tenantId>
-  X-Org-Id: <organizationId>
+  x-api-key: <api-key>
+  x-organization-id: <organizationId>
 
 Body (campos opcionais):
 {
@@ -115,31 +116,144 @@ Body (campos opcionais):
   "pattern": null,
   "placeholder": "Escolha um status",
   "group": "STATUS",
-  "order": 20,
-  "active": true,
-  "options": [
-    // Quando tiver opções, mandar todas opções
-    // Quando for array vazio, serão apagadas todas opções
-    {
-      "value": "",
-      "label": "",
-      "active": false
-    }
-  ]
+  "order": 20
 }
 ```
 
-## 2) Values – valores de campos (`FieldValue`)
+Resposta:
+
+```json
+{
+  "id": "uuid-do-field"
+}
+```
+
+### 1.4 Inativar um campo
+
+```http
+PATCH /v1/fields/{context}/{key}/deactivate
+Headers:
+  x-api-key: <api-key>
+  x-organization-id: <organizationId>
+```
+
+Resposta:
+
+```json
+{
+  "id": "uuid-do-field"
+}
+```
+
+### 1.5 Ativar um campo
+
+```http
+PATCH /v1/fields/{context}/{key}/activate
+Headers:
+  x-api-key: <api-key>
+  x-organization-id: <organizationId>
+```
+
+Resposta:
+
+```json
+{
+  "id": "uuid-do-field"
+}
+```
+
+## 2) Field options – Opções de um campo (`FieldOption`)
+
+### 2.1 Adicionar opção em um campo
+
+```http
+POST /v1/fields/{context}/{key}/options
+Headers:
+  x-api-key: <api-key>
+  x-organization-id: <organizationId>
+
+Body:
+{
+  "label": "Minha label",
+  "value": "value-da-option"
+}
+```
+
+Resposta:
+
+```json
+{
+  "value": "value-da-option"
+}
+```
+
+### 2.2 Atualizar opção de um campo
+
+```http
+PATCH /v1/fields/{context}/{key}/options/{value}
+Headers:
+  x-api-key: <api-key>
+  x-organization-id: <organizationId>
+
+Body:
+{
+  "label": "Minha label"
+}
+```
+
+Resposta:
+
+```json
+{
+  "value": "value-da-option"
+}
+```
+
+### 2.3 Inativar opção de um campo
+
+```http
+PATCH /v1/fields/{context}/{key}/options/{value}/deactivate
+Headers:
+  x-api-key: <api-key>
+  x-organization-id: <organizationId>
+```
+
+Resposta:
+
+```json
+{
+  "value": "value-da-option"
+}
+```
+
+### 2.4 Ativar opção de um campo
+
+```http
+PATCH /v1/fields/{context}/{key}/options/{value}/activate
+Headers:
+  x-api-key: <api-key>
+  x-organization-id: <organizationId>
+```
+
+Resposta:
+
+```json
+{
+  "value": "value-da-option"
+}
+```
+
+## 3) Values – valores de campos (`FieldValue`)
 
 Aqui a ideia é: **guardar o valor de cada field para uma entidade do cliente**
 
-### 2.1 Salvar/atualizar os valores de uma entidade
+### 3.1 Salvar/atualizar os valores de uma entidade
 
 ```http
 PUT /v1/values/{context}/{entityId}
 Headers:
-  X-Tenant-Id: <tenantId>
-  X-Org-Id: <organizationId>
+  x-api-key: <api-key>
+  x-organization-id: <organizationId>
 
 Body:
 {
@@ -186,13 +300,13 @@ Resposta:
 
 ---
 
-### 2.2 Buscar valores de uma entidade
+### 3.2 Buscar valores de uma entidade
 
 ```http
 GET /v1/values/{context}/{entityId}
 Headers:
-  X-Tenant-Id: <tenantId>
-  X-Org-Id: <organizationId>
+  x-api-key: <api-key>
+  x-organization-id: <organizationId>
 ```
 
 Resposta:
@@ -205,6 +319,42 @@ Resposta:
     {
       "key": "status",
       "value": ["active"]
+    },
+    {
+      "key": "notes",
+      "value": ["Cliente bom pagador"]
+    },
+    {
+      "key": "tags",
+      "value": ["vip", "newsletter"]
+    }
+  ]
+}
+```
+
+
+### 3.2 Comparar valores de Duas entidades
+
+```http
+GET /v1/values/{context}/compare/{entityIdA}/{entityIdB}
+Headers:
+  x-api-key: <api-key>
+  x-organization-id: <organizationId>
+```
+
+Resposta:
+
+```json
+{
+  "context": "CUSTOMER",
+  "values": [
+    {
+      "key": "status",
+      "comparator": "=",
+      "value": {
+        "a": ["active"],
+        "b": ["active"]
+      }
     },
     {
       "key": "notes",

@@ -57,7 +57,7 @@ export class RemoveFieldHandler extends CommandHandlerBase<
         }),
       );
     } catch (error) {
-      return Result.fail<RemoveFieldViewModel>(error);
+      return Result.fail<RemoveFieldViewModel>(error as Error);
     }
   }
 }

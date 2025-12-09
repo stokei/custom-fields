@@ -6,11 +6,11 @@ import { HttpMethod } from '../enums/http-method';
 
 export class HttpExceptionResponseError<TErrorDetails = any> {
   @ApiProperty({ enum: ExceptionType })
-  public type: ExceptionType;
+  public type!: ExceptionType;
   @ApiProperty({ enum: ExceptionCode })
-  public code: ExceptionCode;
+  public code!: ExceptionCode;
   @ApiProperty({ type: [String] })
-  public message: string[];
+  public message!: string[];
   @ApiPropertyOptional({ type: 'array', items: { type: 'object' } })
   public details?: TErrorDetails[];
 }

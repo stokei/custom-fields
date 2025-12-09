@@ -10,7 +10,7 @@ import {
   ExceptionFilter,
   HttpException as NestHttpException,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@/database/prisma/prisma-generated-types/client';
 import { PrismaRecordNotFoundException } from '../../database/prisma/errors/prisma-record-not-found-exception';
 import { PrismaResourceAlreadyExistsException } from '../../database/prisma/errors/prisma-resource-already-exists-exception';
 import { PrismaSomeValidationException } from '../../database/prisma/errors/prisma-some-validation-exception';

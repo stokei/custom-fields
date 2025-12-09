@@ -55,7 +55,7 @@
 
     // Excludes
     "files.watcherExclude": {
-      "**/prisma-generated-types/*": true,
+      "**/prisma-generated-types/*": false,
       "**/node_modules/*": true,
       "**/.git/*": true,
       "**/.next": true,
@@ -63,7 +63,7 @@
       "**/build": true
     },
     "files.exclude": {
-      "**/prisma-generated-types/*": true,
+      "**/prisma-generated-types/*": false,
       "**/node_modules/*": true,
       "**/.git/*": true,
       "**/.next": true,

@@ -6,7 +6,7 @@ volumes:
   mysql-data:
 services:
   custom-fields-mysql:
-    image: bitnami/mysql:8.2.0
+    image: mysql:9.5.0
     container_name: custom-fields-mysql
     environment:
       MYSQL_ROOT_USER: dev
@@ -15,7 +15,7 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - mysql-data:/bitnami/mysql/data
+      - mysql-data:/var/lib/mysql
     networks:
       - custom-fields-network
     healthcheck:

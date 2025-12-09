@@ -12,6 +12,7 @@ import {
 
 import { FieldTypeEnum } from '../../../../domain/value-objects/field-type.vo';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { FieldComparatorEnum } from '@/modules/fields/domain/value-objects/field-comparator.vo';
 
 export class CreateFieldOptionDTO {
   @ApiProperty()
@@ -46,6 +47,11 @@ export class CreateFieldDTO {
   @IsEnum(FieldTypeEnum)
   type!: FieldTypeEnum;
 
+  @ApiProperty({ enum: FieldComparatorEnum })
+  @IsString()
+  @IsEnum(FieldComparatorEnum)
+  comparator!: FieldComparatorEnum;
+
   @ApiProperty({ type: 'boolean' })
   @IsBoolean()
   required!: boolean;
@@ -72,15 +78,15 @@ export class CreateFieldDTO {
 
   @ApiProperty()
   @IsString()
-  group: string;
+  group!: string;
 
   @ApiProperty({ type: 'number' })
   @IsInt()
-  order: number;
+  order!: number;
 
   @ApiProperty({ type: [CreateFieldOptionDTO] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateFieldOptionDTO)
-  options: CreateFieldOptionDTO[];
+  options!: CreateFieldOptionDTO[];
 }

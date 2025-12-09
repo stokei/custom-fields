@@ -1,6 +1,7 @@
 import { FieldTypeEnum } from '@/modules/fields/domain/value-objects/field-type.vo';
 import { CommandBase } from '@/shared/application/base/command-base';
 import { FieldOptionValueObjectProps } from '@/modules/fields/domain/value-objects/field-option.vo';
+import { FieldComparatorEnum } from '@/modules/fields/domain/value-objects/field-comparator.vo';
 
 interface CreateFieldOptionDTO {
   value: string;
@@ -13,6 +14,7 @@ interface CreateFieldDTO {
   key: string;
   label: string;
   type: FieldTypeEnum;
+  comparator: FieldComparatorEnum;
   required: boolean;
   minLength?: number;
   maxLength?: number;
@@ -30,6 +32,7 @@ export class CreateFieldCommand implements CommandBase, CreateFieldDTO {
   key: string;
   label: string;
   type: FieldTypeEnum;
+  comparator: FieldComparatorEnum;
   required: boolean;
   minLength?: number;
   maxLength?: number;
@@ -46,6 +49,7 @@ export class CreateFieldCommand implements CommandBase, CreateFieldDTO {
     this.key = data.key;
     this.label = data.label;
     this.type = data.type;
+    this.comparator = data.comparator;
     this.required = data.required;
     this.minLength = data.minLength;
     this.maxLength = data.maxLength;

@@ -11,6 +11,10 @@ import {
 import { FieldTypeEnum, FieldTypeValueObject } from '../value-objects/field-type.vo';
 import { FieldRemovedEvent } from '../events/field-removed/field-removed.event';
 import { FieldUpdatedEvent } from '../events/field-updated/field-updated.event';
+import {
+  FieldComparatorEnum,
+  FieldComparatorValueObject,
+} from '../value-objects/field-comparator.vo';
 
 interface FieldProps {
   organizationId: string;
@@ -19,6 +23,7 @@ interface FieldProps {
   key: string;
   label: string;
   type: FieldTypeValueObject;
+  comparator: FieldComparatorValueObject;
   required: boolean;
   minLength?: number;
   maxLength?: number;
@@ -32,14 +37,14 @@ interface FieldProps {
   options: FieldOptionValueObject[];
 }
 export interface CreateFieldInput
-  extends Omit<FieldProps, 'type' | 'options' | 'createdAt' | 'updatedAt'> {
+  extends Omit<FieldProps, 'type' | 'comparator' | 'options' | 'createdAt' | 'updatedAt'> {
   type: FieldTypeEnum;
+  comparator: FieldComparatorEnum;
   options: FieldOptionValueObjectProps[];
   createdAt?: string;
   updatedAt?: string;
 }
 export interface UpdateFieldInput {
-  key?: string;
   label?: string;
   required?: boolean;
   minLength?: number;
@@ -80,6 +85,10 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
 
   get type(): FieldTypeValueObject {
     return this.props.type;
+  }
+
+  get comparator(): FieldComparatorValueObject {
+    return this.props.comparator;
   }
 
   get required(): boolean {
@@ -135,6 +144,7 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
       Guard.againstNullOrUndefined('label', input.label),
       Guard.againstNullOrUndefined('group', input.group),
       Guard.againstNullOrUndefined('type', input.type),
+      Guard.againstNullOrUndefined('comparator', input.comparator),
     ]);
     if (inputValuesAreNullOrUndefinedGuard.isFailure) {
       throw inputValuesAreNullOrUndefinedGuard.getErrorValue();
@@ -154,6 +164,7 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
       }
     }
 
+    const comparator = FieldComparatorValueObject.create(input.comparator);
     const type = FieldTypeValueObject.create(input.type);
     let inputOptions = input.options || [];
     if (type.hasOptions) {
@@ -174,6 +185,7 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
         key: input.key,
         label: input.label,
         type,
+        comparator,
         required: input.required,
         active: true,
         order: input.order,
@@ -205,15 +217,14 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     this.addDomainEvent(new FieldRemovedEvent({ field: this }));
   }
 
-  public update(data: UpdateFieldInput) {
-    this.props.key = data.key || this.key;
-    this.props.label = data.label || this.label;
-    this.props.required = data.required || this.required;
-    this.props.minLength = data.minLength || this.minLength;
-    this.props.maxLength = data.maxLength || this.maxLength;
-    this.props.pattern = data.pattern || this.pattern;
-    this.props.placeholder = data.placeholder || this.placeholder;
-    this.props.group = data.group || this.group;
+  public update(input: UpdateFieldInput) {
+    this.props.label = input.label || this.label;
+    this.props.required = input.required || this.required;
+    this.props.minLength = input.minLength || this.minLength;
+    this.props.maxLength = input.maxLength || this.maxLength;
+    this.props.pattern = input.pattern || this.pattern;
+    this.props.placeholder = input.placeholder || this.placeholder;
+    this.props.group = input.group || this.group;
 
     this.addDomainEvent(new FieldUpdatedEvent({ field: this }));
   }

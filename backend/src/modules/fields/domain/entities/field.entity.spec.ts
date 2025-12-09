@@ -5,6 +5,7 @@ import { FieldOptionAlreadyExistsException } from '../errors/field-option-alread
 import { FieldCreatedEvent } from '../events/field-created/field-created.event';
 import { FieldTypeEnum } from '../value-objects/field-type.vo';
 import { CreateFieldInput, FieldEntity } from './field.entity';
+import { FieldComparatorEnum } from '../value-objects/field-comparator.vo';
 
 const REQUIRED_FIELDS: (keyof FieldEntity)[] = [
   'tenantId',
@@ -15,12 +16,13 @@ const REQUIRED_FIELDS: (keyof FieldEntity)[] = [
   'group',
   'type',
 ];
-const mountFieldEntityProps = (overrides: Partial<CreateFieldInput> = {}) => ({
+const mountFieldEntityProps = (overrides: Partial<CreateFieldInput> = {}): CreateFieldInput => ({
   ...tenantContextStub,
   context: 'nonconformities',
   key: 'field_key',
   label: 'My Field',
   type: FieldTypeEnum.TEXT,
+  comparator: FieldComparatorEnum.EQUALS,
   required: true,
   minLength: 1,
   maxLength: 10,

@@ -41,7 +41,7 @@ export class GetAllFieldsByContextHandler extends QueryHandlerBase<
         GetAllFieldsByContextViewModel.create(query.context, fields),
       );
     } catch (error) {
-      return Result.fail<GetAllFieldsByContextViewModel>(error);
+      return Result.fail<GetAllFieldsByContextViewModel>(error as Error);
     }
   }
 }

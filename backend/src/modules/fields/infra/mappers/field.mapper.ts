@@ -1,7 +1,13 @@
 import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { convertToISODateString } from '@/utils/dates';
-import { Prisma, Field as PrismaField, FieldOption as PrismaFieldOption } from '@prisma/client';
+import {
+  Prisma,
+  Field as PrismaField,
+  FieldOption as PrismaFieldOption,
+} from '@/database/prisma/prisma-generated-types/client';
 import { FieldEntity } from '../../domain/entities/field.entity';
+import { FieldTypeEnum } from '../../domain/value-objects/field-type.vo';
+import { FieldComparatorEnum } from '../../domain/value-objects/field-comparator.vo';
 
 export class FieldMapper {
   static toPersistence = (field: FieldEntity): Prisma.FieldCreateInput => {
@@ -17,6 +23,7 @@ export class FieldMapper {
       order: field.order ?? null,
       placeholder: field.placeholder ?? null,
       organizationId: field.organizationId,
+      comparator: field.comparator.value,
       group: field.group,
     };
   };
@@ -28,8 +35,9 @@ export class FieldMapper {
         context: raw.context,
         key: raw.key,
         label: raw.label,
-        type: raw.type,
+        type: raw.type as FieldTypeEnum,
         required: raw.required,
+        comparator: raw.comparator as FieldComparatorEnum,
         order: raw.order ?? 0,
         placeholder: raw.placeholder ?? undefined,
         organizationId: raw.organizationId,
