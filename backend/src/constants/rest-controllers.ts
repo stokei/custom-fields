@@ -8,9 +8,10 @@ export const REST_CONTROLLERS_URL_NAMES = {
     DOCUMENTATION_TITLE: 'Fields',
     BASE: '/fields',
     CREATE_FIELD: '/fields',
-    UPDATE_FIELD: '/fields/:fieldId',
     GET_ALL_FIELDS_BY_CONTEXT: '/fields/:context',
-    DELETE_FIELD: '/fields/:fieldId',
+    UPDATE_FIELD: '/fields/:context/:key',
+    ACTIVATE_FIELD: '/fields/:context/:key/activate',
+    DEACTIVATE_FIELD: '/fields/:context/:key/deactivate',
   },
   FIELD_VALUES: {
     DOCUMENTATION_TITLE: 'Field Values',

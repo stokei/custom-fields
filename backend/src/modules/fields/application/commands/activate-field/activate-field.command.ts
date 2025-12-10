@@ -1,19 +1,19 @@
 import { CommandBase } from '@/shared/application/base/command-base';
 
-interface RemoveFieldDTO {
+interface ActivateFieldDTO {
   tenantId: string;
   organizationId: string;
   context: string;
   key: string;
 }
 
-export class RemoveFieldCommand implements CommandBase, RemoveFieldDTO {
+export class ActivateFieldCommand implements CommandBase, ActivateFieldDTO {
   tenantId: string;
   organizationId: string;
   context: string;
   key: string;
 
-  constructor(data: RemoveFieldDTO) {
+  constructor(data: ActivateFieldDTO) {
     this.tenantId = data.tenantId;
     this.organizationId = data.organizationId;
     this.context = data.context;

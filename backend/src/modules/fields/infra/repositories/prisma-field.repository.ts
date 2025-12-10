@@ -70,14 +70,6 @@ export class PrismaFieldRepository implements FieldRepository {
     });
   }
 
-  async remove(field: FieldEntity): Promise<void> {
-    const data = FieldMapper.toPersistence(field);
-    delete data.id;
-    await this.prisma.field.delete({
-      where: { id: field.id },
-    });
-  }
-
   async getByTenantContextKey(
     params: GetByTenantContextKeyParams,
   ): Promise<FieldEntity | undefined> {
@@ -115,6 +107,7 @@ export class PrismaFieldRepository implements FieldRepository {
         tenantId: params.tenantId,
         organizationId: params.organizationId,
         context: params.context,
+        ...(params.filters?.activeOnly && { active: true }),
       },
     });
     return fields?.map((field) => FieldMapper.toDomain(field, field.options));

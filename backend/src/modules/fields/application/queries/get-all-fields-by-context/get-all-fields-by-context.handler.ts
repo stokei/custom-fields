@@ -38,6 +38,7 @@ export class GetAllFieldsByContextHandler extends QueryHandlerBase<
         tenantId: query.tenantId,
         organizationId: query.organizationId,
         context: query.context,
+        filters: query.filters,
       });
       return Result.ok<GetAllFieldsByContextViewModel>(
         GetAllFieldsByContextViewModel.create(query.context, fields),

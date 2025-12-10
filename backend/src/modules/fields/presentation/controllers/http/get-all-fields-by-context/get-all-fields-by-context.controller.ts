@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { REST_CONTROLLERS_URL_NAMES } from '@/constants/rest-controllers';
@@ -8,6 +8,7 @@ import { GetAllFieldsByContextQuery } from '@/modules/fields/application/queries
 import { GetAllFieldsByContextViewModel } from '@/modules/fields/application/viewmodels/get-all-fields-by-context/get-all-fields-by-context.viewmodel';
 import { TenantContext } from '@/shared/domain/tenant-context/tenant-context';
 import { ApiWithTenantAuth } from '@/shared/infra/docs/decorators/auth/api-auth.decorator';
+import { QueryParamBoolean } from '@/shared/infra/http/decorators/query-params/query-param-boolean.decorator';
 import { Tenant } from '@/shared/infra/http/decorators/tenant/tenant.decorator';
 import { ApiKeyGuard } from '@/shared/infra/http/guards/api-key.guard';
 import { QueryBusService } from '@/shared/infra/query-bus/query-bus.service';
@@ -37,7 +38,7 @@ export class GetAllFieldsByContextController extends HttpControllerBase {
     summary: 'Get all fields by context',
   })
   @ApiOkResponse({
-    description: 'Sucess',
+    description: 'Success',
     type: GetAllFieldsByContextViewModel,
     example: GetAllFieldsByContextViewModel.create('USERS', [
       createTextFieldEntityStub({ context: 'USERS', order: 0 }),
@@ -47,7 +48,7 @@ export class GetAllFieldsByContextController extends HttpControllerBase {
   async createField(
     @Tenant() tenant: TenantContext,
     @Param('context') context: string,
-    @Query('context') context: string,
+    @QueryParamBoolean('activeOnly') activeOnly: boolean,
   ) {
     return this.rejectOrResolve(() =>
       this.queryBusService.execute(
@@ -55,6 +56,9 @@ export class GetAllFieldsByContextController extends HttpControllerBase {
           context,
           tenantId: tenant.tenantId,
           organizationId: tenant.organizationId,
+          filters: {
+            activeOnly,
+          },
         }),
       ),
     );

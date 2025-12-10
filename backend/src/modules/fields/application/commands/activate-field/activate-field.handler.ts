@@ -1,5 +1,6 @@
 import { CommandHandler } from '@nestjs/cqrs';
 
+import { FieldAlreadyActivatedException } from '@/modules/fields/domain/errors/field-already-activated-exception';
 import { FieldNotFoundException } from '@/modules/fields/domain/errors/field-not-found-exception';
 import {
   FieldRepository,
@@ -10,14 +11,14 @@ import { Result } from '@/shared/domain/base/result';
 import { Guard } from '@/shared/domain/guards/guard';
 import { DomainEventBusService } from '@/shared/infra/event-bus/domain-event-bus.service';
 
-import { RemoveFieldViewModel } from '../../viewmodels/remove-field/remove-field.viewmodel';
-import { RemoveFieldCommand } from './remove-field.command';
+import { ActivateFieldViewModel } from '../../viewmodels/activate-field/activate-field.viewmodel';
+import { ActivateFieldCommand } from './activate-field.command';
 
-export type RemoveFieldCommandResponse = Result<RemoveFieldViewModel>;
-@CommandHandler(RemoveFieldCommand)
-export class RemoveFieldHandler extends CommandHandlerBase<
-  RemoveFieldCommand,
-  Promise<RemoveFieldCommandResponse>
+export type ActivateFieldCommandResponse = Result<ActivateFieldViewModel>;
+@CommandHandler(ActivateFieldCommand)
+export class ActivateFieldHandler extends CommandHandlerBase<
+  ActivateFieldCommand,
+  Promise<ActivateFieldCommandResponse>
 > {
   constructor(
     @InjectFieldRepository()
@@ -27,7 +28,7 @@ export class RemoveFieldHandler extends CommandHandlerBase<
     super();
   }
 
-  async execute(command: RemoveFieldCommand) {
+  async execute(command: ActivateFieldCommand) {
     try {
       const validateCommandProps = Guard.combine([
         Guard.againstNullOrUndefined('tenantId', command.tenantId),
@@ -45,21 +46,26 @@ export class RemoveFieldHandler extends CommandHandlerBase<
         key: command.key,
       });
       if (!field) {
-        return Result.fail<RemoveFieldViewModel>(FieldNotFoundException.create(command.key));
+        return Result.fail<ActivateFieldViewModel>(FieldNotFoundException.create(command.key));
+      }
+      if (field.active) {
+        return Result.fail<ActivateFieldViewModel>(
+          FieldAlreadyActivatedException.create(command.key),
+        );
       }
 
-      await this.fieldRepository.remove(field);
-      field.remove();
+      field.activate();
+      await this.fieldRepository.update(field);
 
       this.domainEventBusService.publishAll(field.domainEvents);
 
-      return Result.ok<RemoveFieldViewModel>(
-        RemoveFieldViewModel.create({
+      return Result.ok<ActivateFieldViewModel>(
+        ActivateFieldViewModel.create({
           id: field.id,
         }),
       );
     } catch (error) {
-      return Result.fail<RemoveFieldViewModel>(error as Error);
+      return Result.fail<ActivateFieldViewModel>(error as Error);
     }
   }
 }

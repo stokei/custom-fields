@@ -14,7 +14,7 @@ export const createSingleSelectFieldEntityStub = (
     {
       ...tenantContextStub,
       context: overrides?.context || 'CUSTOMER',
-      active: overrides?.active || true,
+      active: overrides?.active ?? true,
       group: overrides?.group || 'GENERAL',
       key: overrides?.key || 'status',
       label: overrides?.label || 'Status',

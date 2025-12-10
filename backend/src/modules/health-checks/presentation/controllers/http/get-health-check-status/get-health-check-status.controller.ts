@@ -19,7 +19,7 @@ export class GetHealthCheckStatusController {
     summary: 'API Status',
   })
   @ApiOkResponse({
-    description: 'Sucess',
+    description: 'Success',
     type: GetHealthCheckStatusViewModel,
     example: GetHealthCheckStatusViewModel.create({
       ok: true,

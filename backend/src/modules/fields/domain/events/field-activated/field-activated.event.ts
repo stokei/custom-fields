@@ -3,16 +3,16 @@ import { convertToISOTimestamp } from '@/utils/dates';
 
 import { FieldEntity } from '../../entities/field.entity';
 
-interface FieldCreatedEventProps {
+interface FieldActivatedEventProps {
   readonly field: FieldEntity;
 }
 
-export class FieldCreatedEvent extends DomainEvent {
+export class FieldActivatedEvent extends DomainEvent {
   public readonly field: FieldEntity;
 
-  constructor(props: FieldCreatedEventProps) {
+  constructor(props: FieldActivatedEventProps) {
     super({
-      eventName: EventNameEnum.FIELD_CREATED,
+      eventName: EventNameEnum.FIELD_ACTIVATED,
       occurredAt: convertToISOTimestamp(new Date()),
       aggregateId: props.field.id,
     });

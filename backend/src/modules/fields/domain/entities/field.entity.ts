@@ -4,8 +4,9 @@ import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { convertToISODateString } from '@/utils/dates';
 
 import { FieldOptionAlreadyExistsException } from '../errors/field-option-already-exists-exception';
+import { FieldActivatedEvent } from '../events/field-activated/field-activated.event';
 import { FieldCreatedEvent } from '../events/field-created/field-created.event';
-import { FieldRemovedEvent } from '../events/field-removed/field-removed.event';
+import { FieldDeactivatedEvent } from '../events/field-deactivated/field-deactivated.event';
 import { FieldUpdatedEvent } from '../events/field-updated/field-updated.event';
 import {
   FieldComparatorEnum,
@@ -188,7 +189,7 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
         type,
         comparator,
         required: input.required,
-        active: true,
+        active: input.active ?? true,
         order: input.order,
         placeholder: input.placeholder,
         group: input.group,
@@ -214,8 +215,13 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     return field;
   }
 
-  public remove() {
-    this.addDomainEvent(new FieldRemovedEvent({ field: this }));
+  public deactivate() {
+    this.props.active = false;
+    this.addDomainEvent(new FieldDeactivatedEvent({ field: this }));
+  }
+  public activate() {
+    this.props.active = true;
+    this.addDomainEvent(new FieldActivatedEvent({ field: this }));
   }
 
   public update(input: UpdateFieldInput) {

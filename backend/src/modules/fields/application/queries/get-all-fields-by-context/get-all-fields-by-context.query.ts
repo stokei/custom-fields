@@ -1,7 +1,7 @@
 import { QueryBase } from '@/shared/application/base/query-base';
 
 interface GetAllFieldsByContextFiltersDTO {
-  activeOnly: boolean;
+  activeOnly?: boolean;
 }
 
 interface GetAllFieldsByContextDTO {
@@ -21,6 +21,8 @@ export class GetAllFieldsByContextQuery implements QueryBase, GetAllFieldsByCont
     this.tenantId = data.tenantId;
     this.organizationId = data.organizationId;
     this.context = data.context;
-    this.filters = data.filters;
+    this.filters = {
+      activeOnly: data.filters?.activeOnly,
+    };
   }
 }

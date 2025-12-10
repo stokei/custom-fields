@@ -39,7 +39,7 @@ const mountFieldEntityProps = (overrides: Partial<CreateFieldInput> = {}): Creat
 });
 
 describe(FieldEntity.name, () => {
-  it('should create a new user with default values and trigger FieldCreatedEvent', () => {
+  it('should create new user with default values and trigger FieldCreatedEvent', () => {
     const input = mountFieldEntityProps({
       type: FieldTypeEnum.SINGLE_SELECT,
       options: [

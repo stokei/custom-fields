@@ -1,3 +1,4 @@
+import { FieldEntity } from '@/modules/fields/domain/entities/field.entity';
 import { FieldAlreadyExistsException } from '@/modules/fields/domain/errors/field-already-exists-exception';
 import {
   FieldRepository,
@@ -35,12 +36,12 @@ const createFieldCommand = new CreateFieldCommand({
     { value: 'inactive', label: 'Inativo' },
   ],
 });
-const singleSelectFieldEntityStub = createSingleSelectFieldEntityStub(createFieldCommand);
 
 describe(CreateFieldHandler.name, () => {
   let createFieldHandler: CreateFieldHandler;
   let domainEventBusService: DomainEventBusService;
   let fieldRepository: FieldRepository;
+  let fieldEntityStub: FieldEntity;
 
   beforeEach(async () => {
     const module = await createTestingModule()
@@ -52,6 +53,7 @@ describe(CreateFieldHandler.name, () => {
     createFieldHandler = module.get(CreateFieldHandler);
     domainEventBusService = module.get(DomainEventBusService);
     fieldRepository = module.get(INJECT_FIELD_REPOSITORY_KEY);
+    fieldEntityStub = createSingleSelectFieldEntityStub(createFieldCommand);
   });
 
   it('should return successfully with correct data', async () => {
@@ -65,9 +67,7 @@ describe(CreateFieldHandler.name, () => {
   });
 
   it('should throw error when field already exists', async () => {
-    jest
-      .spyOn(fieldRepository, 'getByTenantContextKey')
-      .mockResolvedValue(singleSelectFieldEntityStub);
+    jest.spyOn(fieldRepository, 'getByTenantContextKey').mockResolvedValue(fieldEntityStub);
     const createFieldPromise = await createFieldHandler.execute(createFieldCommand);
     expect(domainEventBusServiceMock.publishAll).toHaveBeenCalledTimes(0);
     expect(createFieldPromise.isFailure).toBeTruthy();

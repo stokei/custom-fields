@@ -12,11 +12,13 @@ export interface GetAllByTenantContextParams {
   tenantId: string;
   organizationId: string;
   context: string;
+  filters?: {
+    activeOnly?: boolean;
+  };
 }
 export interface FieldRepository {
   create(field: FieldEntity): Promise<void>;
   update(field: FieldEntity): Promise<void>;
-  remove(field: FieldEntity): Promise<void>;
   getByTenantContextKey(params: GetByTenantContextKeyParams): Promise<FieldEntity | undefined>;
   getAllByTenantContext(params: GetAllByTenantContextParams): Promise<FieldEntity[]>;
 }

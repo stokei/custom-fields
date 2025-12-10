@@ -29,6 +29,8 @@ export class Swagger {
     const createDocument = SwaggerModule.createDocument(app, document);
     SwaggerModule.setup('/docs', app, createDocument, {
       jsonDocumentUrl: 'openapi.json',
+      customfavIcon: '/favicon.ico',
+      customSiteTitle: 'Fields - Rest API',
     });
   }
 }

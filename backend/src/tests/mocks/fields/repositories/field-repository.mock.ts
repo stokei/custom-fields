@@ -5,6 +5,5 @@ const repositoryMock: jest.Mocked<FieldRepository> = {
   getByTenantContextKey: jest.fn(),
   create: jest.fn(),
   update: jest.fn(),
-  remove: jest.fn(),
 };
 export const fieldRepositoryMock: jest.Mocked<Partial<FieldRepository>> = repositoryMock;
