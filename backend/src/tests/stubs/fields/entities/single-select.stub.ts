@@ -1,9 +1,10 @@
 import { CreateFieldInput, FieldEntity } from '@/modules/fields/domain/entities/field.entity';
-import { tenantContextStub } from '../../http/tenant-context.stub';
-import { FieldTypeEnum } from '@/modules/fields/domain/value-objects/field-type.vo';
-import { convertToISODateString } from '@/utils/dates';
-import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { FieldComparatorEnum } from '@/modules/fields/domain/value-objects/field-comparator.vo';
+import { FieldTypeEnum } from '@/modules/fields/domain/value-objects/field-type.vo';
+import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
+import { convertToISODateString } from '@/utils/dates';
+
+import { tenantContextStub } from '../../http/tenant-context.stub';
 
 export const createSingleSelectFieldEntityStub = (
   overrides?: Partial<CreateFieldInput>,

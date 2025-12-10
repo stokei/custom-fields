@@ -1,4 +1,5 @@
 import { Global, Module } from '@nestjs/common';
+
 import { InfraProviders } from './infra';
 
 const Providers = [...InfraProviders];

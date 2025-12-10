@@ -1,10 +1,11 @@
+import { Injectable } from '@nestjs/common';
+import { Unkey } from '@unkey/api';
+
 import { UNKEY_ROOT_KEY } from '@/environments';
 import {
   ApiKeyVerificationResult,
   ApiKeyVerifier,
 } from '@/shared/domain/ports/api-key-verifier.port';
-import { Injectable } from '@nestjs/common';
-import { Unkey } from '@unkey/api';
 
 @Injectable()
 export class UnkeyApiKeyVerifier implements ApiKeyVerifier {

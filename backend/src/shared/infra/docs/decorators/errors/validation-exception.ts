@@ -1,10 +1,11 @@
+import { HttpStatus } from '@nestjs/common';
+import { ApiBadRequestResponse } from '@nestjs/swagger';
+
 import { AlreadyExistsException } from '@/shared/domain/errors/base/already-exists-exception';
 import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
 import { HttpMethod } from '@/shared/infra/http/enums/http-method';
 import { ClassValidatorValidationException } from '@/shared/infra/http/errors/class-validator-validation-exception';
 import { HttpExceptionResponse } from '@/shared/infra/http/errors/http-exception-response';
-import { HttpStatus } from '@nestjs/common';
-import { ApiBadRequestResponse } from '@nestjs/swagger';
 
 interface ApiDocValidationExceptionParams {
   path?: string;

@@ -1,8 +1,9 @@
+import { Injectable } from '@nestjs/common';
+
 import {
   ApiKeyVerificationResult,
   ApiKeyVerifier,
 } from '@/shared/domain/ports/api-key-verifier.port';
-import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class LocalApiKeyVerifier implements ApiKeyVerifier {

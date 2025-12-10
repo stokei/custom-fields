@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -10,9 +11,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { FieldTypeEnum } from '../../../../domain/value-objects/field-type.vo';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { FieldComparatorEnum } from '@/modules/fields/domain/value-objects/field-comparator.vo';
+
+import { FieldTypeEnum } from '../../../../domain/value-objects/field-type.vo';
 
 export class CreateFieldOptionDTO {
   @ApiProperty()

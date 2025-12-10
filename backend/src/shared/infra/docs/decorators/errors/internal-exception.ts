@@ -1,9 +1,10 @@
+import { HttpStatus } from '@nestjs/common';
+import { ApiInternalServerErrorResponse } from '@nestjs/swagger';
+
 import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
 import { ExceptionType } from '@/shared/domain/errors/base/exception-types';
 import { HttpMethod } from '@/shared/infra/http/enums/http-method';
 import { HttpExceptionResponse } from '@/shared/infra/http/errors/http-exception-response';
-import { HttpStatus } from '@nestjs/common';
-import { ApiInternalServerErrorResponse } from '@nestjs/swagger';
 
 interface ApiDocInternalExceptionParams {
   path?: string;

@@ -1,7 +1,7 @@
+import { FieldComparatorEnum } from '@/modules/fields/domain/value-objects/field-comparator.vo';
+import { FieldOptionValueObjectProps } from '@/modules/fields/domain/value-objects/field-option.vo';
 import { FieldTypeEnum } from '@/modules/fields/domain/value-objects/field-type.vo';
 import { CommandBase } from '@/shared/application/base/command-base';
-import { FieldOptionValueObjectProps } from '@/modules/fields/domain/value-objects/field-option.vo';
-import { FieldComparatorEnum } from '@/modules/fields/domain/value-objects/field-comparator.vo';
 
 interface CreateFieldOptionDTO {
   value: string;

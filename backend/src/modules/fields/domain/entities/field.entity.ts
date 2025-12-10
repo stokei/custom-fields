@@ -2,19 +2,20 @@ import { AggregateRoot } from '@/shared/domain/base/aggregate-root';
 import { Guard } from '@/shared/domain/guards/guard';
 import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { convertToISODateString } from '@/utils/dates';
+
 import { FieldOptionAlreadyExistsException } from '../errors/field-option-already-exists-exception';
 import { FieldCreatedEvent } from '../events/field-created/field-created.event';
-import {
-  FieldOptionValueObject,
-  FieldOptionValueObjectProps,
-} from '../value-objects/field-option.vo';
-import { FieldTypeEnum, FieldTypeValueObject } from '../value-objects/field-type.vo';
 import { FieldRemovedEvent } from '../events/field-removed/field-removed.event';
 import { FieldUpdatedEvent } from '../events/field-updated/field-updated.event';
 import {
   FieldComparatorEnum,
   FieldComparatorValueObject,
 } from '../value-objects/field-comparator.vo';
+import {
+  FieldOptionValueObject,
+  FieldOptionValueObjectProps,
+} from '../value-objects/field-option.vo';
+import { FieldTypeEnum, FieldTypeValueObject } from '../value-objects/field-type.vo';
 
 interface FieldProps {
   organizationId: string;

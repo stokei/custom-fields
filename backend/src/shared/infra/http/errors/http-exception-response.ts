@@ -1,7 +1,9 @@
-import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
-import { ExceptionType } from '@/shared/domain/errors/base/exception-types';
 import { HttpStatus } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
+import { ExceptionType } from '@/shared/domain/errors/base/exception-types';
+
 import { HttpMethod } from '../enums/http-method';
 
 export class HttpExceptionResponseError<TErrorDetails = any> {

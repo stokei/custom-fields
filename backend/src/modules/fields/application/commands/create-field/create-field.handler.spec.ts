@@ -3,6 +3,7 @@ import {
   FieldRepository,
   INJECT_FIELD_REPOSITORY_KEY,
 } from '@/modules/fields/domain/repositories/field.repository';
+import { FieldComparatorEnum } from '@/modules/fields/domain/value-objects/field-comparator.vo';
 import { FieldTypeEnum } from '@/modules/fields/domain/value-objects/field-type.vo';
 import { ArgumentNullOrUndefinedException } from '@/shared/domain/errors/guards/argument-null-or-undefined-exception';
 import { DomainEventBusService } from '@/shared/infra/event-bus/domain-event-bus.service';
@@ -11,9 +12,9 @@ import { fieldRepositoryMock } from '@/tests/mocks/fields/repositories/field-rep
 import { createTestingModule } from '@/tests/mocks/server/create-testing-module';
 import { createSingleSelectFieldEntityStub } from '@/tests/stubs/fields/entities/single-select.stub';
 import { tenantContextStub } from '@/tests/stubs/http/tenant-context.stub';
+
 import { CreateFieldCommand } from './create-field.command';
 import { CreateFieldHandler } from './create-field.handler';
-import { FieldComparatorEnum } from '@/modules/fields/domain/value-objects/field-comparator.vo';
 
 const createFieldCommand = new CreateFieldCommand({
   ...tenantContextStub,

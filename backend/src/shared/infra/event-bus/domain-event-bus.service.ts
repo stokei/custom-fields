@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
+
 import { DomainEvent } from '../../domain/base/domain-event';
 
 @Injectable()

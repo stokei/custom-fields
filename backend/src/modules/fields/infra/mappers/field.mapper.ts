@@ -1,13 +1,14 @@
-import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
-import { convertToISODateString } from '@/utils/dates';
 import {
-  Prisma,
   Field as PrismaField,
   FieldOption as PrismaFieldOption,
+  Prisma,
 } from '@/database/prisma/prisma-generated-types/client';
+import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
+import { convertToISODateString } from '@/utils/dates';
+
 import { FieldEntity } from '../../domain/entities/field.entity';
-import { FieldTypeEnum } from '../../domain/value-objects/field-type.vo';
 import { FieldComparatorEnum } from '../../domain/value-objects/field-comparator.vo';
+import { FieldTypeEnum } from '../../domain/value-objects/field-type.vo';
 
 export class FieldMapper {
   static toPersistence = (field: FieldEntity): Prisma.FieldCreateInput => {

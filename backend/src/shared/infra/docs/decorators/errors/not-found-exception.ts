@@ -1,8 +1,9 @@
+import { HttpStatus } from '@nestjs/common';
+import { ApiNotFoundResponse } from '@nestjs/swagger';
+
 import { NotFoundException } from '@/shared/domain/errors/base/not-found-exception';
 import { HttpMethod } from '@/shared/infra/http/enums/http-method';
 import { HttpExceptionResponse } from '@/shared/infra/http/errors/http-exception-response';
-import { HttpStatus } from '@nestjs/common';
-import { ApiNotFoundResponse } from '@nestjs/swagger';
 
 interface ApiDocNotFoundExceptionParams {
   path?: string;

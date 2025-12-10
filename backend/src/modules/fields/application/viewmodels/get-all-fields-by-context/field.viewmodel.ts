@@ -1,8 +1,10 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
 import { FieldEntity } from '@/modules/fields/domain/entities/field.entity';
 import { FieldOptionValueObject } from '@/modules/fields/domain/value-objects/field-option.vo';
 import { FieldTypeEnum } from '@/modules/fields/domain/value-objects/field-type.vo';
 import { BaseViewModel } from '@/shared/application/base/viewmodel-base';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
 import { FieldOptionViewModel } from './field-option.viewmodel';
 
 interface FieldViewModelProps {

@@ -11,6 +11,7 @@ import { fieldRepositoryMock } from '@/tests/mocks/fields/repositories/field-rep
 import { createTestingModule } from '@/tests/mocks/server/create-testing-module';
 import { createSingleSelectFieldEntityStub } from '@/tests/stubs/fields/entities/single-select.stub';
 import { tenantContextStub } from '@/tests/stubs/http/tenant-context.stub';
+
 import { RemoveFieldViewModel } from '../../viewmodels/remove-field/remove-field.viewmodel';
 import { RemoveFieldCommand } from './remove-field.command';
 import { RemoveFieldHandler } from './remove-field.handler';

@@ -1,5 +1,5 @@
-import { NotFoundException } from '@/shared/domain/errors/base/not-found-exception';
 import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
+import { NotFoundException } from '@/shared/domain/errors/base/not-found-exception';
 
 export class PrismaRecordNotFoundException extends NotFoundException {
   private constructor(recordName: string) {

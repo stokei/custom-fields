@@ -1,7 +1,8 @@
 import {
-  Prisma,
   FieldOption as PrismaFieldOption,
+  Prisma,
 } from '@/database/prisma/prisma-generated-types/client';
+
 import { FieldOptionValueObject } from '../../domain/value-objects/field-option.vo';
 
 export type FieldOptionPersistence = Prisma.FieldOptionCreateManyInput;

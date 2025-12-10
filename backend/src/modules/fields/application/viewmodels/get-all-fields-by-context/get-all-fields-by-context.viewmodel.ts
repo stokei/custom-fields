@@ -1,6 +1,8 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 import { FieldEntity } from '@/modules/fields/domain/entities/field.entity';
 import { BaseViewModel } from '@/shared/application/base/viewmodel-base';
-import { ApiProperty } from '@nestjs/swagger';
+
 import { FieldViewModel } from './field.viewmodel';
 import { GroupViewModel } from './group.viewmodel';
 

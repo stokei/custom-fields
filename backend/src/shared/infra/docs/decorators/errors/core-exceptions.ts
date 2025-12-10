@@ -1,9 +1,11 @@
-import { HttpMethod } from '@/shared/infra/http/enums/http-method';
 import { applyDecorators } from '@nestjs/common';
+
+import { HttpMethod } from '@/shared/infra/http/enums/http-method';
+
 import { ApiDocDomainExceptionResponse } from './domain-exception';
+import { ApiDocInternalExceptionResponse } from './internal-exception';
 import { ApiDocNotFoundExceptionResponse } from './not-found-exception';
 import { ApiDocValidationExceptionResponse } from './validation-exception';
-import { ApiDocInternalExceptionResponse } from './internal-exception';
 
 interface ApiDocCoreExceptionResponseParams {
   path?: string;

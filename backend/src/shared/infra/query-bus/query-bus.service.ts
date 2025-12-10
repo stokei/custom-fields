@@ -1,6 +1,7 @@
-import { QueryBase } from '@/shared/application/base/query-base';
 import { Injectable } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
+
+import { QueryBase } from '@/shared/application/base/query-base';
 
 @Injectable()
 export class QueryBusService<TQuery extends QueryBase, TResponse> {

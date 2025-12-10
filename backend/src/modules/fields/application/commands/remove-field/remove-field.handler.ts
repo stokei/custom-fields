@@ -1,3 +1,5 @@
+import { CommandHandler } from '@nestjs/cqrs';
+
 import { FieldNotFoundException } from '@/modules/fields/domain/errors/field-not-found-exception';
 import {
   FieldRepository,
@@ -5,11 +7,11 @@ import {
 } from '@/modules/fields/domain/repositories/field.repository';
 import { CommandHandlerBase } from '@/shared/application/base/command-base';
 import { Result } from '@/shared/domain/base/result';
+import { Guard } from '@/shared/domain/guards/guard';
 import { DomainEventBusService } from '@/shared/infra/event-bus/domain-event-bus.service';
-import { CommandHandler } from '@nestjs/cqrs';
+
 import { RemoveFieldViewModel } from '../../viewmodels/remove-field/remove-field.viewmodel';
 import { RemoveFieldCommand } from './remove-field.command';
-import { Guard } from '@/shared/domain/guards/guard';
 
 export type RemoveFieldCommandResponse = Result<RemoveFieldViewModel>;
 @CommandHandler(RemoveFieldCommand)

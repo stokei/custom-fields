@@ -1,16 +1,18 @@
-import { DomainException } from '@/shared/domain/errors/base/domain-exception';
-import { ExceptionType } from '@/shared/domain/errors/base/exception-types';
-import { HttpException } from '@/shared/domain/errors/base/http-exception';
-import { InternalException } from '@/shared/domain/errors/base/internal-exception';
-import { NotFoundException } from '@/shared/domain/errors/base/not-found-exception';
-import { ValidationException } from '@/shared/domain/errors/base/validation-exception';
 import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
   HttpException as NestHttpException,
 } from '@nestjs/common';
+
 import { Prisma } from '@/database/prisma/prisma-generated-types/client';
+import { DomainException } from '@/shared/domain/errors/base/domain-exception';
+import { ExceptionType } from '@/shared/domain/errors/base/exception-types';
+import { HttpException } from '@/shared/domain/errors/base/http-exception';
+import { InternalException } from '@/shared/domain/errors/base/internal-exception';
+import { NotFoundException } from '@/shared/domain/errors/base/not-found-exception';
+import { ValidationException } from '@/shared/domain/errors/base/validation-exception';
+
 import { PrismaRecordNotFoundException } from '../../database/prisma/errors/prisma-record-not-found-exception';
 import { PrismaResourceAlreadyExistsException } from '../../database/prisma/errors/prisma-resource-already-exists-exception';
 import { PrismaSomeValidationException } from '../../database/prisma/errors/prisma-some-validation-exception';

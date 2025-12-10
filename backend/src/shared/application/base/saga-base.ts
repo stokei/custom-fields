@@ -1,5 +1,6 @@
 import { ofType } from '@nestjs/cqrs';
 import { delay, mergeMap, Observable } from 'rxjs';
+
 import { CommandBase } from './command-base';
 import { EventBase } from './event-base';
 

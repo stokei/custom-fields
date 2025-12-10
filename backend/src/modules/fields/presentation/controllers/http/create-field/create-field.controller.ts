@@ -1,3 +1,6 @@
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+
 import { REST_CONTROLLERS_URL_NAMES } from '@/constants/rest-controllers';
 import { REST_VERSIONS } from '@/constants/rest-versions';
 import { CreateFieldCommand } from '@/modules/fields/application/commands/create-field/create-field.command';
@@ -8,12 +11,11 @@ import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { CommandBusService } from '@/shared/infra/command-bus/command-bus.service';
 import { ApiWithTenantAuth } from '@/shared/infra/docs/decorators/auth/api-auth.decorator';
 import { ApiDocCoreExceptionsResponse } from '@/shared/infra/docs/decorators/errors/core-exceptions';
-import { Tenant } from '@/shared/infra/http/decorators/tenant.decorator';
+import { Tenant } from '@/shared/infra/http/decorators/tenant/tenant.decorator';
 import { HttpMethod } from '@/shared/infra/http/enums/http-method';
 import { ApiKeyGuard } from '@/shared/infra/http/guards/api-key.guard';
 import { HttpControllerBase } from '@/shared/presentation/base/http/controller-base';
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+
 import { CreateFieldDTO } from './create-field.dto';
 
 @Controller({

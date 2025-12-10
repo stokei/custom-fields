@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { ApplicationProviders } from './application';
 import { DomainProviders } from './domain';
 import { InfraProviders } from './infra';

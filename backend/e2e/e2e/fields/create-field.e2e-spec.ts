@@ -1,10 +1,11 @@
+import { HttpStatus } from '@nestjs/common';
+
 import { REST_CONTROLLERS_URL_NAMES } from '@/constants/rest-controllers';
 import { createRequestTesting } from '@/e2e/stubs/create-request-testing';
 import { AppTesting, createAppTesting } from '@/e2e/stubs/create-testing-module';
 import { FieldTypeEnum } from '@/modules/fields/domain/value-objects/field-type.vo';
 import { CreateFieldDTO } from '@/modules/fields/presentation/controllers/http/create-field/create-field.dto';
 import { tenantContextStub } from '@/tests/stubs/http/tenant-context.stub';
-import { HttpStatus } from '@nestjs/common';
 
 const data: CreateFieldDTO = {
   ...tenantContextStub,

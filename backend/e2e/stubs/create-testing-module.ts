@@ -1,7 +1,8 @@
-import { MainModule } from '@/main.module';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { App } from 'supertest/types';
+
+import { MainModule } from '@/main.module';
 
 export type AppTesting = INestApplication<App>;
 export const createAppTesting = async (): Promise<AppTesting> => {

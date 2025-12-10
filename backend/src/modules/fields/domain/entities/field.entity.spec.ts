@@ -1,11 +1,12 @@
 import { ArgumentNullOrUndefinedException } from '@/shared/domain/errors/guards/argument-null-or-undefined-exception';
 import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { tenantContextStub } from '@/tests/stubs/http/tenant-context.stub';
+
 import { FieldOptionAlreadyExistsException } from '../errors/field-option-already-exists-exception';
 import { FieldCreatedEvent } from '../events/field-created/field-created.event';
+import { FieldComparatorEnum } from '../value-objects/field-comparator.vo';
 import { FieldTypeEnum } from '../value-objects/field-type.vo';
 import { CreateFieldInput, FieldEntity } from './field.entity';
-import { FieldComparatorEnum } from '../value-objects/field-comparator.vo';
 
 const REQUIRED_FIELDS: (keyof FieldEntity)[] = [
   'tenantId',

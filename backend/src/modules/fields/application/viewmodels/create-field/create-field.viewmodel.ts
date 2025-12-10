@@ -1,5 +1,6 @@
-import { BaseViewModel } from '@/shared/application/base/viewmodel-base';
 import { ApiProperty } from '@nestjs/swagger';
+
+import { BaseViewModel } from '@/shared/application/base/viewmodel-base';
 
 interface CreateFieldViewModelProps {
   readonly id: string;

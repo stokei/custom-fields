@@ -1,5 +1,7 @@
-import { BaseViewModel } from '@/shared/application/base/viewmodel-base';
 import { ApiProperty } from '@nestjs/swagger';
+
+import { BaseViewModel } from '@/shared/application/base/viewmodel-base';
+
 import { FieldViewModel } from './field.viewmodel';
 
 interface GroupViewModelProps {

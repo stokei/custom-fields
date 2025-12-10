@@ -1,5 +1,6 @@
 import { DomainEvent } from '@/shared/domain/base/domain-event';
 import { convertToISOTimestamp } from '@/utils/dates';
+
 import { FieldEntity } from '../../entities/field.entity';
 
 interface FieldCreatedEventProps {

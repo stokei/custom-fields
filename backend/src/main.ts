@@ -1,13 +1,14 @@
 import { Logger, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
+
 import { SERVER_HOST, SERVER_PORT, SERVER_URL } from './environments';
 import { MainModule } from './main.module';
 import { Swagger } from './shared/infra/docs/swagger';
 import { HttpAllExceptionsFilter } from './shared/infra/http/filters/http-all-exceptions.filter';
 import { ClassValidatiorValidationPipe } from './shared/infra/http/pipes/validation.pipe';
 import { LoggerService } from './shared/infra/logger/logger.service';
-import { join } from 'path';
 
 const logger = new Logger('Bootstrap');
 

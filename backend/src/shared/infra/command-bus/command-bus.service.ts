@@ -1,6 +1,7 @@
-import { CommandBase } from '@/shared/application/base/command-base';
 import { Injectable } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
+
+import { CommandBase } from '@/shared/application/base/command-base';
 
 @Injectable()
 export class CommandBusService<TCommand extends CommandBase, TResponse = any> {

@@ -1,4 +1,5 @@
 import { ValidationPipe as NestValidationPipe } from '@nestjs/common';
+
 import { ClassValidatorValidationException } from '../errors/class-validator-validation-exception';
 
 export class ClassValidatiorValidationPipe {

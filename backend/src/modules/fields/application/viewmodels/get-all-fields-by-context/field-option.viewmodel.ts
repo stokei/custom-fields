@@ -1,7 +1,7 @@
-import { BaseViewModel } from '@/shared/application/base/viewmodel-base';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { FieldOptionValueObject } from '@/modules/fields/domain/value-objects/field-option.vo';
+import { BaseViewModel } from '@/shared/application/base/viewmodel-base';
 
 interface FieldOptionViewModelProps {
   value: string;

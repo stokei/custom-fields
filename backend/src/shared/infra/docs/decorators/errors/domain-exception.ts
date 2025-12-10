@@ -1,8 +1,9 @@
+import { ApiConflictResponse } from '@nestjs/swagger';
+
 import { DomainException } from '@/shared/domain/errors/base/domain-exception';
 import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
 import { HttpMethod } from '@/shared/infra/http/enums/http-method';
 import { HttpExceptionResponse } from '@/shared/infra/http/errors/http-exception-response';
-import { ApiConflictResponse } from '@nestjs/swagger';
 
 interface ApiDocDomainExceptionParams {
   path?: string;

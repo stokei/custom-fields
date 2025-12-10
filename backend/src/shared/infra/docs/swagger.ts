@@ -1,6 +1,7 @@
-import { VERSION } from '@/environments';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+import { VERSION } from '@/environments';
 
 export class Swagger {
   public static setup(app: NestExpressApplication): void {
