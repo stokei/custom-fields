@@ -17,6 +17,8 @@ import { HttpMethod } from '@/shared/infra/http/enums/http-method';
 import { ApiKeyGuard } from '@/shared/infra/http/guards/api-key.guard';
 import { HttpControllerBase } from '@/shared/presentation/base/http/controller-base';
 
+import { ApiDocContextParam } from '../../../decorators/docs/api-doc-context-param.decorator';
+
 @Controller({
   path: REST_CONTROLLERS_URL_NAMES.FIELDS.DEACTIVATE_FIELD,
   version: REST_VERSIONS.V1,
@@ -38,6 +40,7 @@ export class DeactivateFieldController extends HttpControllerBase {
   @ApiOperation({
     summary: 'Deactivate field',
   })
+  @ApiDocContextParam()
   @ApiOkResponse({
     description: 'Success',
     type: DeactivateFieldViewModel,
@@ -47,7 +50,7 @@ export class DeactivateFieldController extends HttpControllerBase {
   })
   @ApiDocCoreExceptionsResponse({
     path: REST_CONTROLLERS_URL_NAMES.FIELDS.DEACTIVATE_FIELD,
-    method: HttpMethod.PATCH,
+    method: HttpMethod.PUT,
   })
   async deactivateField(
     @Tenant() tenant: TenantContext,
@@ -59,8 +62,7 @@ export class DeactivateFieldController extends HttpControllerBase {
         new DeactivateFieldCommand({
           key,
           context,
-          tenantId: tenant.tenantId,
-          organizationId: tenant.organizationId,
+          ...tenant,
         }),
       ),
     );

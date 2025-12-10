@@ -54,11 +54,10 @@ export class GetAllFieldsByContextController extends HttpControllerBase {
       this.queryBusService.execute(
         new GetAllFieldsByContextQuery({
           context,
-          tenantId: tenant.tenantId,
-          organizationId: tenant.organizationId,
           filters: {
             activeOnly,
           },
+          ...tenant,
         }),
       ),
     );

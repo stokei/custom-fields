@@ -1,69 +1,73 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Put, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { REST_CONTROLLERS_URL_NAMES } from '@/constants/rest-controllers';
 import { REST_VERSIONS } from '@/constants/rest-versions';
-import { CreateFieldCommand } from '@/modules/fields/application/commands/create-field/create-field.command';
-import { CreateFieldCommandResponse } from '@/modules/fields/application/commands/create-field/create-field.handler';
-import { CreateFieldViewModel } from '@/modules/fields/application/viewmodels/create-field/create-field.viewmodel';
+import { UpdateFieldCommand } from '@/modules/fields/application/commands/update-field/update-field.command';
+import { UpdateFieldCommandResponse } from '@/modules/fields/application/commands/update-field/update-field.handler';
+import { UpdateFieldViewModel } from '@/modules/fields/application/viewmodels/update-field/update-field.viewmodel';
 import { TenantContext } from '@/shared/domain/tenant-context/tenant-context';
 import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { CommandBusService } from '@/shared/infra/command-bus/command-bus.service';
 import { ApiWithTenantAuth } from '@/shared/infra/docs/decorators/auth/api-auth.decorator';
 import { ApiDocCoreExceptionsResponse } from '@/shared/infra/docs/decorators/errors/core-exceptions';
+import { QueryParam } from '@/shared/infra/http/decorators/query-params/query-param.decorator';
 import { Tenant } from '@/shared/infra/http/decorators/tenant/tenant.decorator';
 import { HttpMethod } from '@/shared/infra/http/enums/http-method';
 import { ApiKeyGuard } from '@/shared/infra/http/guards/api-key.guard';
 import { HttpControllerBase } from '@/shared/presentation/base/http/controller-base';
 
 import { ApiDocContextParam } from '../../../decorators/docs/api-doc-context-param.decorator';
-import { CreateFieldDTO } from './create-field.dto';
+import { UpdateFieldDTO } from './update-field.dto';
 
 @Controller({
-  path: REST_CONTROLLERS_URL_NAMES.FIELDS.CREATE_FIELD,
+  path: REST_CONTROLLERS_URL_NAMES.FIELDS.UPDATE_FIELD,
   version: REST_VERSIONS.V1,
 })
 @ApiTags(REST_CONTROLLERS_URL_NAMES.FIELDS.DOCUMENTATION_TITLE)
 @ApiWithTenantAuth()
-export class CreateFieldController extends HttpControllerBase {
+export class UpdateFieldController extends HttpControllerBase {
   constructor(
     private readonly commandBusService: CommandBusService<
-      CreateFieldCommand,
-      CreateFieldCommandResponse
+      UpdateFieldCommand,
+      UpdateFieldCommandResponse
     >,
   ) {
     super();
   }
 
-  @Post()
+  @Put()
   @UseGuards(ApiKeyGuard)
   @ApiOperation({
-    summary: 'Create new field',
+    summary: 'Update field',
   })
   @ApiDocContextParam()
-  @ApiBody({ type: CreateFieldDTO })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'Success',
-    type: CreateFieldViewModel,
-    example: CreateFieldViewModel.create({
+    type: UpdateFieldViewModel,
+    example: UpdateFieldViewModel.create({
       id: new UniqueEntityID().toString(),
     }),
   })
   @ApiDocCoreExceptionsResponse({
-    path: REST_CONTROLLERS_URL_NAMES.FIELDS.CREATE_FIELD,
-    method: HttpMethod.POST,
+    path: REST_CONTROLLERS_URL_NAMES.FIELDS.UPDATE_FIELD,
+    method: HttpMethod.PUT,
   })
-  async createField(
+  async updateField(
     @Tenant() tenant: TenantContext,
-    @Param('context') context: string,
-    @Body() dto: CreateFieldDTO,
+    @Body() dto: UpdateFieldDTO,
+    @QueryParam('context') context: string,
+    @QueryParam('key') key: string,
   ) {
     return this.rejectOrResolve(() =>
       this.commandBusService.execute(
-        new CreateFieldCommand({
-          ...dto,
-          context,
-          ...tenant,
+        new UpdateFieldCommand({
+          data: dto,
+          where: {
+            key,
+            context,
+            ...tenant,
+          },
         }),
       ),
     );

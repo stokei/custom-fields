@@ -54,6 +54,7 @@ export interface UpdateFieldInput {
   pattern?: string;
   placeholder?: string;
   group?: string;
+  order?: number;
 }
 
 export class FieldEntity extends AggregateRoot<FieldProps> {
@@ -232,6 +233,7 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     this.props.pattern = input.pattern || this.pattern;
     this.props.placeholder = input.placeholder || this.placeholder;
     this.props.group = input.group || this.group;
+    this.props.order = input.order || this.order;
 
     this.addDomainEvent(new FieldUpdatedEvent({ field: this }));
   }

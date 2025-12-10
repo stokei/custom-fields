@@ -1,6 +1,7 @@
 import { FieldEntity } from '@/modules/fields/domain/entities/field.entity';
 import { FieldAlreadyActivatedException } from '@/modules/fields/domain/errors/field-already-activated-exception';
 import { FieldNotFoundException } from '@/modules/fields/domain/errors/field-not-found-exception';
+import { FieldActivatedEvent } from '@/modules/fields/domain/events/field-activated/field-activated.event';
 import {
   FieldRepository,
   INJECT_FIELD_REPOSITORY_KEY,
@@ -60,6 +61,7 @@ describe(ActivateFieldHandler.name, () => {
     expect(fieldEntityStub.active).toStrictEqual(true);
     expect(domainEventBusServiceMock.publishAll).toHaveBeenCalledTimes(1);
     expect(fieldEntityStub.domainEvents.length).toStrictEqual(1);
+    expect(fieldEntityStub.domainEvents[0] instanceof FieldActivatedEvent).toBeTruthy();
     expect(activateFieldPromise.isSuccess).toBeTruthy();
     expect(activateFieldPromise.getValue()).toStrictEqual(
       ActivateFieldViewModel.create({ id: fieldEntityStub.id }),

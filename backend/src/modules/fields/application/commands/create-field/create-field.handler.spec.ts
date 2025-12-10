@@ -1,5 +1,6 @@
 import { FieldEntity } from '@/modules/fields/domain/entities/field.entity';
 import { FieldAlreadyExistsException } from '@/modules/fields/domain/errors/field-already-exists-exception';
+import { FieldCreatedEvent } from '@/modules/fields/domain/events/field-created/field-created.event';
 import {
   FieldRepository,
   INJECT_FIELD_REPOSITORY_KEY,
@@ -63,6 +64,8 @@ describe(CreateFieldHandler.name, () => {
 
     expect(fieldRepositoryMock.create).toHaveBeenCalledTimes(1);
     expect(domainEventBusServiceMock.publishAll).toHaveBeenCalledTimes(1);
+    expect(fieldEntityStub.domainEvents.length).toStrictEqual(1);
+    expect(fieldEntityStub.domainEvents[0] instanceof FieldCreatedEvent).toBeTruthy();
     expect(createFieldPromise.isSuccess).toBeTruthy();
   });
 

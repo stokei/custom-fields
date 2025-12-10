@@ -7,7 +7,7 @@ export const REST_CONTROLLERS_URL_NAMES = {
   FIELDS: {
     DOCUMENTATION_TITLE: 'Fields',
     BASE: '/fields',
-    CREATE_FIELD: '/fields',
+    CREATE_FIELD: '/fields/:context',
     GET_ALL_FIELDS_BY_CONTEXT: '/fields/:context',
     UPDATE_FIELD: '/fields/:context/:key',
     ACTIVATE_FIELD: '/fields/:context/:key/activate',
