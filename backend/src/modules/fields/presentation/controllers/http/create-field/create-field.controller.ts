@@ -38,7 +38,11 @@ export class CreateFieldController extends HttpControllerBase {
   @Post()
   @UseGuards(ApiKeyGuard)
   @ApiOperation({
-    summary: 'Create new field',
+    summary: 'Create a new custom field',
+    description:
+      'Creates a new custom field inside the specified context of your application. ' +
+      'This endpoint allows your SaaS to offer dynamic, user-defined fields—letting customers extend your data model, ' +
+      'build flexible forms, configure workflows, and store custom attributes without schema changes.',
   })
   @ApiDocContextParam()
   @ApiBody({ type: CreateFieldDTO })

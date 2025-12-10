@@ -35,7 +35,12 @@ export class GetAllFieldsByContextController extends HttpControllerBase {
   @Get()
   @UseGuards(ApiKeyGuard)
   @ApiOperation({
-    summary: 'Get all fields by context',
+    summary: 'List custom fields by context',
+    description:
+      'Returns all custom fields registered under the specified context. ' +
+      'Use this endpoint to dynamically build forms, configure workflows, or fetch metadata structures used by your ' +
+      'customers. Supports optional filtering (e.g., only active fields), enabling your application to adapt its UI and ' +
+      'business logic based on the customer’s custom configuration—without relying on static schemas.',
   })
   @ApiOkResponse({
     description: 'Success',

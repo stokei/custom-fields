@@ -39,7 +39,12 @@ export class UpdateFieldController extends HttpControllerBase {
   @Put()
   @UseGuards(ApiKeyGuard)
   @ApiOperation({
-    summary: 'Update field',
+    summary: 'Update an existing custom field',
+    description:
+      'Updates the configuration of an existing custom field identified by its context and key. ' +
+      'Use this endpoint to evolve how your customers interact with your product over time—changing labels, ' +
+      'validation rules, required behavior, grouping, ordering, and other display properties—without performing ' +
+      'database schema migrations or redeploying your application.',
   })
   @ApiDocContextParam()
   @ApiOkResponse({

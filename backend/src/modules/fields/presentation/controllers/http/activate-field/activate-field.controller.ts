@@ -38,7 +38,12 @@ export class ActivateFieldController extends HttpControllerBase {
   @Put()
   @UseGuards(ApiKeyGuard)
   @ApiOperation({
-    summary: 'Activate field',
+    summary: 'Activate a custom field',
+    description:
+      'Reactivates a previously disabled custom field within the specified context. ' +
+      'Use this endpoint to restore fields that were temporarily turned off, allowing them to appear again in forms, ' +
+      'workflows, and integrations without recreating their configuration. This is useful when customers toggle feature ' +
+      'availability or reintroduce data attributes without modifying your underlying schema.',
   })
   @ApiDocContextParam()
   @ApiOkResponse({

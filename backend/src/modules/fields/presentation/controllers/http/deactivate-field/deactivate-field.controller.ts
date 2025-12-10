@@ -38,7 +38,12 @@ export class DeactivateFieldController extends HttpControllerBase {
   @Put()
   @UseGuards(ApiKeyGuard)
   @ApiOperation({
-    summary: 'Deactivate field',
+    summary: 'Deactivate a custom field',
+    description:
+      'Disables an existing custom field within the specified context. ' +
+      'Use this endpoint when a field should no longer appear in forms, workflows, or integrations, while preserving ' +
+      'its configuration and historical data. Deactivation allows your customers to temporarily hide or phase out ' +
+      'fields without deleting them or modifying your underlying schema.',
   })
   @ApiDocContextParam()
   @ApiOkResponse({
