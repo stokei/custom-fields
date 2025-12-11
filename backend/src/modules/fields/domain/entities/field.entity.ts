@@ -3,7 +3,13 @@ import { Guard } from '@/shared/domain/guards/guard';
 import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { convertToISODateString } from '@/utils/dates';
 
+import { FieldAlreadyActivatedException } from '../errors/field-already-activated-exception';
+import { FieldAlreadyDeactivatedException } from '../errors/field-already-deactivated-exception';
+import { FieldOptionAlreadyActivatedException } from '../errors/field-option-already-activated-exception';
+import { FieldOptionAlreadyDeactivatedException } from '../errors/field-option-already-deactivated-exception';
 import { FieldOptionAlreadyExistsException } from '../errors/field-option-already-exists-exception';
+import { FieldOptionNotFoundException } from '../errors/field-option-not-found-exception';
+import { FieldOptionsIsNotAllowedException } from '../errors/field-options-is-not-allowed-exception';
 import { FieldActivatedEvent } from '../events/field-activated/field-activated.event';
 import { FieldCreatedEvent } from '../events/field-created/field-created.event';
 import { FieldDeactivatedEvent } from '../events/field-deactivated/field-deactivated.event';
@@ -217,10 +223,16 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
   }
 
   public deactivate() {
+    if (!this.active) {
+      throw FieldAlreadyDeactivatedException.create(this.key);
+    }
     this.props.active = false;
     this.addDomainEvent(new FieldDeactivatedEvent({ field: this }));
   }
   public activate() {
+    if (this.active) {
+      throw FieldAlreadyActivatedException.create(this.key);
+    }
     this.props.active = true;
     this.addDomainEvent(new FieldActivatedEvent({ field: this }));
   }
@@ -238,19 +250,93 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     this.addDomainEvent(new FieldUpdatedEvent({ field: this }));
   }
 
-  private addOption({ value, label, order, active }: FieldOptionValueObjectProps) {
-    const exists = this.props.options.some((o) => o.value === value);
-    if (exists)
-      throw FieldOptionAlreadyExistsException.create(`option[${order}] - ${label}`, {
+  public addOption({ value, label, order, active }: FieldOptionValueObjectProps) {
+    if (!this.type.hasOptions) {
+      throw FieldOptionsIsNotAllowedException.create(this.key, this.type.value);
+    }
+
+    const newOption = FieldOptionValueObject.create({
+      value,
+      label,
+      order: order || this.options.length,
+      active: active ?? true,
+    });
+    const exists = this.props.options.some((o) => o.value === newOption.value);
+    if (exists) {
+      throw FieldOptionAlreadyExistsException.create({
+        label,
+        order: order || this.options.length,
         value,
       });
-    this.props.options.push(
-      FieldOptionValueObject.create({
-        value,
-        label,
-        order,
-        active: active ?? true,
-      }),
-    );
+    }
+    this.props.options.push(newOption);
+  }
+
+  public updateOption(
+    value: string,
+    { label, order }: Partial<Omit<FieldOptionValueObjectProps, 'active' | 'value'>>,
+  ) {
+    const resultGuard = Guard.againstEmptyString('option.value', value);
+    if (resultGuard.isFailure) {
+      throw resultGuard.getErrorValue();
+    }
+    const currentOption = this.props.options.find((o) => o.value === value);
+    if (!currentOption) throw FieldOptionNotFoundException.create(value);
+
+    this.props.options = this.props.options.map((option) => {
+      if (option.value === value) {
+        return FieldOptionValueObject.create({
+          value,
+          label: label || option.label,
+          order: order || option.order,
+          active: option.active,
+        });
+      }
+      return option;
+    });
+  }
+
+  public deactivateOption(value: string) {
+    const resultGuard = Guard.againstEmptyString('option.value', value);
+    if (resultGuard.isFailure) {
+      throw resultGuard.getErrorValue();
+    }
+    const currentOption = this.props.options.find((o) => o.value === value);
+    if (!currentOption) throw FieldOptionNotFoundException.create(value);
+    if (!currentOption.active) throw FieldOptionAlreadyDeactivatedException.create(value);
+
+    this.props.options = this.props.options.map((option) => {
+      if (option.value === value) {
+        return FieldOptionValueObject.create({
+          value: option.value,
+          label: option.label,
+          order: option.order,
+          active: false,
+        });
+      }
+      return option;
+    });
+  }
+
+  public activateOption(value: string) {
+    const resultGuard = Guard.againstEmptyString('option.value', value);
+    if (resultGuard.isFailure) {
+      throw resultGuard.getErrorValue();
+    }
+    const currentOption = this.props.options.find((o) => o.value === value);
+    if (!currentOption) throw FieldOptionNotFoundException.create(value);
+    if (currentOption.active) throw FieldOptionAlreadyActivatedException.create(value);
+
+    this.props.options = this.props.options.map((option) => {
+      if (option.value === value) {
+        return FieldOptionValueObject.create({
+          value: option.value,
+          label: option.label,
+          order: option.order,
+          active: true,
+        });
+      }
+      return option;
+    });
   }
 }

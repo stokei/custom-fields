@@ -8,6 +8,7 @@ import {
 } from '@/modules/fields/domain/repositories/field.repository';
 import { CommandHandlerBase } from '@/shared/application/base/command-base';
 import { Result } from '@/shared/domain/base/result';
+import { Guard } from '@/shared/domain/guards/guard';
 import { DomainEventBusService } from '@/shared/infra/event-bus/domain-event-bus.service';
 
 import { CreateFieldViewModel } from '../../viewmodels/create-field/create-field.viewmodel';
@@ -29,6 +30,15 @@ export class CreateFieldHandler extends CommandHandlerBase<
 
   async execute(command: CreateFieldCommand) {
     try {
+      const validateCommandProps = Guard.combine([
+        Guard.againstNullOrUndefined('tenantId', command.tenantId),
+        Guard.againstNullOrUndefined('organizationId', command.organizationId),
+        Guard.againstNullOrUndefined('context', command.context),
+        Guard.againstNullOrUndefined('key', command.key),
+      ]);
+      if (validateCommandProps.isFailure) {
+        throw validateCommandProps.getErrorValue();
+      }
       const field = FieldEntity.create({
         ...command,
         active: true,

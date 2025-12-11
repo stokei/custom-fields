@@ -90,7 +90,7 @@ export class Guard {
   }
 
   static againstEmptyString(argumentName: string, value: string): Result<GuardResponse> {
-    if (!value.trim().length) {
+    if (!value?.trim?.()?.length) {
       return Result.fail<GuardResponse>(ArgumentEmptyStringException.create(argumentName));
     }
     return Result.ok<GuardResponse>();

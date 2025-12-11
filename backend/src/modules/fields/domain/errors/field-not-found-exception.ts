@@ -2,7 +2,7 @@ import { NotFoundException } from '@/shared/domain/errors/base/not-found-excepti
 
 export class FieldNotFoundException extends NotFoundException {
   private constructor(key: string) {
-    super('field', key);
+    super('Field', key);
   }
 
   static create(key: string): FieldNotFoundException {

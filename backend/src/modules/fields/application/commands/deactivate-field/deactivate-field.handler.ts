@@ -1,6 +1,5 @@
 import { CommandHandler } from '@nestjs/cqrs';
 
-import { FieldAlreadyDeactivatedException } from '@/modules/fields/domain/errors/field-already-deactivated-exception';
 import { FieldNotFoundException } from '@/modules/fields/domain/errors/field-not-found-exception';
 import {
   FieldRepository,
@@ -47,11 +46,6 @@ export class DeactivateFieldHandler extends CommandHandlerBase<
       });
       if (!field) {
         return Result.fail<DeactivateFieldViewModel>(FieldNotFoundException.create(command.key));
-      }
-      if (!field.active) {
-        return Result.fail<DeactivateFieldViewModel>(
-          FieldAlreadyDeactivatedException.create(command.key),
-        );
       }
 
       field.deactivate();
