@@ -10,8 +10,9 @@ const config: Config = {
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
-  collectCoverageFrom: ['**/*.(t|j)s'],
-  coverageDirectory: '../coverage',
+  collectCoverageFrom: ['./src/**/*.(t|j)s'],
+  coverageDirectory: './coverage',
+  coverageReporters: ['html', 'lcov', 'text-summary'],
   testEnvironment: 'node',
   moduleNameMapper: {
     '^@/e2e/(.*)$': '<rootDir>/e2e/$1',

@@ -28,7 +28,7 @@ export const createSingleSelectFieldEntityStub = (
       order: overrides?.order || 0,
       createdAt: overrides?.createdAt || convertToISODateString(Date.now()),
       updatedAt: overrides?.updatedAt || convertToISODateString(Date.now()),
-      options: [
+      options: overrides?.options || [
         { value: 'active', label: 'Ativo' },
         { value: 'inactive', label: 'Inativo' },
       ],
