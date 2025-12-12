@@ -6,7 +6,7 @@ import { convertToISODateString } from '@/utils/dates';
 
 import { tenantContextStub } from '../../http/tenant-context.stub';
 
-export const createSingleSelectFieldEntityStub = (
+export const createCheckboxFieldEntityStub = (
   overrides?: Partial<CreateFieldInput>,
   id?: UniqueEntityID,
 ) =>
@@ -16,21 +16,22 @@ export const createSingleSelectFieldEntityStub = (
       context: overrides?.context || 'CUSTOMER',
       active: overrides?.active ?? true,
       group: overrides?.group || 'GENERAL',
-      key: overrides?.key || 'status',
-      label: overrides?.label || 'Status',
-      type: overrides?.type || FieldTypeEnum.SINGLE_SELECT,
+      key: overrides?.key || 'name',
+      label: overrides?.label || 'Name',
+      type: overrides?.type || FieldTypeEnum.CHECKBOX,
       comparator: overrides?.comparator || FieldComparatorEnum.EQUALS,
       required: overrides?.required ?? true,
       minLength: overrides?.minLength || undefined,
       maxLength: overrides?.maxLength || undefined,
       pattern: overrides?.pattern || undefined,
-      placeholder: overrides?.placeholder || 'Select status',
+      placeholder: overrides?.placeholder || "What's your name",
       order: overrides?.order || 0,
       createdAt: overrides?.createdAt || convertToISODateString(Date.now()),
       updatedAt: overrides?.updatedAt || convertToISODateString(Date.now()),
-      options: overrides?.options || [
-        { value: 'active', label: 'Ativo' },
-        { value: 'inactive', label: 'Inativo' },
+      options: [
+        { value: 'one', label: 'One' },
+        { value: 'two', label: 'Two' },
+        { value: 'three', label: 'Three' },
       ],
     },
     id,

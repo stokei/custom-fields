@@ -1,23 +1,12 @@
+import { AlreadyExistsException } from '@/shared/domain/errors/base/already-exists-exception';
 import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
-import { ValidationException } from '@/shared/domain/errors/base/validation-exception';
 
-interface FieldOptionAlreadyExistsDetails {
-  label: string;
-  value: string;
-  order?: number;
-}
-
-export class FieldOptionAlreadyExistsException extends ValidationException<FieldOptionAlreadyExistsDetails> {
-  private constructor(details: FieldOptionAlreadyExistsDetails) {
-    super(
-      'FieldOption',
-      `Option '${details.value}' already exists.`,
-      ExceptionCode.FIELD_OPTION_ALREADY_EXISTS,
-      [details],
-    );
+export class FieldOptionAlreadyExistsException extends AlreadyExistsException {
+  private constructor(value: string) {
+    super('FieldOption', ExceptionCode.FIELD_OPTION_ALREADY_EXISTS, value);
   }
 
-  static create(details: FieldOptionAlreadyExistsDetails): FieldOptionAlreadyExistsException {
-    return new FieldOptionAlreadyExistsException(details);
+  static create(value: string): FieldOptionAlreadyExistsException {
+    return new FieldOptionAlreadyExistsException(value);
   }
 }

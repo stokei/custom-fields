@@ -3,14 +3,14 @@ import { ApiProperty } from '@nestjs/swagger';
 import { BaseViewModel } from '@/shared/application/base/viewmodel-base';
 
 interface UpdateFieldViewModelProps {
-  readonly id: string;
+  readonly key: string;
 }
 export class UpdateFieldViewModel extends BaseViewModel {
   @ApiProperty()
-  readonly id: string;
+  readonly key: string;
   private constructor(data: UpdateFieldViewModelProps) {
     super();
-    this.id = data.id;
+    this.key = data.key;
   }
 
   static create(field: UpdateFieldViewModelProps) {
@@ -19,7 +19,7 @@ export class UpdateFieldViewModel extends BaseViewModel {
 
   toJSON() {
     return {
-      id: this.id,
+      key: this.key,
     };
   }
 }

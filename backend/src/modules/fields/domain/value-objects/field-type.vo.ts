@@ -1,16 +1,8 @@
+import { FieldType as FieldTypeEnum } from '@/database/prisma/prisma-generated-types/client';
 import { ValueObject } from '@/shared/domain/base/value-object';
 import { Guard } from '@/shared/domain/guards/guard';
 
-export enum FieldTypeEnum {
-  TEXT = 'TEXT',
-  TEXTAREA = 'TEXTAREA',
-  CHECKBOX = 'CHECKBOX',
-  RADIO = 'RADIO',
-  SINGLE_UPLOAD = 'SINGLE_UPLOAD',
-  MULTI_UPLOAD = 'MULTI_UPLOAD',
-  SINGLE_SELECT = 'SINGLE_SELECT',
-  MULTI_SELECT = 'MULTI_SELECT',
-}
+export { FieldTypeEnum };
 
 interface FieldTypeProps {
   value: FieldTypeEnum;

@@ -1,23 +1,12 @@
+import { AlreadyExistsException } from '@/shared/domain/errors/base/already-exists-exception';
 import { ExceptionCode } from '@/shared/domain/errors/base/exception-codes';
-import { ValidationException } from '@/shared/domain/errors/base/validation-exception';
 
-interface FieldAlreadyExistsDetails {
-  context: string;
-  organizationId: string;
-  key: string;
-}
-
-export class FieldAlreadyExistsException extends ValidationException<FieldAlreadyExistsDetails> {
-  private constructor(details: FieldAlreadyExistsDetails) {
-    super(
-      'Field',
-      `key "${details.key}" already exists in organization "${details.organizationId}" and context "${details.context}".`,
-      ExceptionCode.FIELD_ALREADY_EXISTS,
-      [details],
-    );
+export class FieldAlreadyExistsException extends AlreadyExistsException {
+  private constructor(key: string) {
+    super('Field', ExceptionCode.FIELD_ALREADY_EXISTS, key);
   }
 
-  static create(details: FieldAlreadyExistsDetails): FieldAlreadyExistsException {
-    return new FieldAlreadyExistsException(details);
+  static create(key: string): FieldAlreadyExistsException {
+    return new FieldAlreadyExistsException(key);
   }
 }

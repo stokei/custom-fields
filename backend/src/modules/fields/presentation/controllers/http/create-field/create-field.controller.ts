@@ -7,7 +7,6 @@ import { CreateFieldCommand } from '@/modules/fields/application/commands/create
 import { CreateFieldCommandResponse } from '@/modules/fields/application/commands/create-field/create-field.handler';
 import { CreateFieldViewModel } from '@/modules/fields/application/viewmodels/create-field/create-field.viewmodel';
 import { TenantContext } from '@/shared/domain/tenant-context/tenant-context';
-import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { CommandBusService } from '@/shared/infra/command-bus/command-bus.service';
 import { ApiWithTenantAuth } from '@/shared/infra/docs/decorators/auth/api-auth.decorator';
 import { ApiDocCoreExceptionsResponse } from '@/shared/infra/docs/decorators/errors/core-exceptions';
@@ -50,7 +49,7 @@ export class CreateFieldController extends HttpControllerBase {
     description: 'Success',
     type: CreateFieldViewModel,
     example: CreateFieldViewModel.create({
-      id: new UniqueEntityID().toString(),
+      key: 'field-key',
     }),
   })
   @ApiDocCoreExceptionsResponse({

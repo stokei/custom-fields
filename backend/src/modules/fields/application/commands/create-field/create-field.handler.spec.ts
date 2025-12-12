@@ -15,6 +15,7 @@ import { createTestingModule } from '@/tests/mocks/server/create-testing-module'
 import { createSingleSelectFieldEntityStub } from '@/tests/stubs/fields/entities/single-select.stub';
 import { tenantContextStub } from '@/tests/stubs/http/tenant-context.stub';
 
+import { CreateFieldViewModel } from '../../viewmodels/create-field/create-field.viewmodel';
 import { CreateFieldCommand } from './create-field.command';
 import { CreateFieldHandler } from './create-field.handler';
 
@@ -67,6 +68,11 @@ describe(CreateFieldHandler.name, () => {
     expect(fieldEntityStub.domainEvents.length).toStrictEqual(1);
     expect(fieldEntityStub.domainEvents[0] instanceof FieldCreatedEvent).toBeTruthy();
     expect(createFieldPromise.isSuccess).toBeTruthy();
+    expect(createFieldPromise.getValue()).toStrictEqual(
+      CreateFieldViewModel.create({
+        key: fieldEntityStub.key,
+      }),
+    );
   });
 
   it('should throw error when field already exists', async () => {
@@ -75,11 +81,7 @@ describe(CreateFieldHandler.name, () => {
     expect(domainEventBusServiceMock.publishAll).toHaveBeenCalledTimes(0);
     expect(createFieldPromise.isFailure).toBeTruthy();
     expect(createFieldPromise.getErrorValue()).toStrictEqual(
-      FieldAlreadyExistsException.create({
-        organizationId: createFieldCommand.organizationId,
-        context: createFieldCommand.context,
-        key: createFieldCommand.key,
-      }),
+      FieldAlreadyExistsException.create(createFieldCommand.key),
     );
   });
 

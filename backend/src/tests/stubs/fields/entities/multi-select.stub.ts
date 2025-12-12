@@ -6,7 +6,7 @@ import { convertToISODateString } from '@/utils/dates';
 
 import { tenantContextStub } from '../../http/tenant-context.stub';
 
-export const createSingleSelectFieldEntityStub = (
+export const createMultiSelectFieldEntityStub = (
   overrides?: Partial<CreateFieldInput>,
   id?: UniqueEntityID,
 ) =>
@@ -18,7 +18,7 @@ export const createSingleSelectFieldEntityStub = (
       group: overrides?.group || 'GENERAL',
       key: overrides?.key || 'status',
       label: overrides?.label || 'Status',
-      type: overrides?.type || FieldTypeEnum.SINGLE_SELECT,
+      type: overrides?.type || FieldTypeEnum.MULTI_SELECT,
       comparator: overrides?.comparator || FieldComparatorEnum.EQUALS,
       required: overrides?.required ?? true,
       minLength: overrides?.minLength || undefined,

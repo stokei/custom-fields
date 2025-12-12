@@ -23,5 +23,5 @@ export interface FieldRepository {
   getAllByTenantContext(params: GetAllByTenantContextParams): Promise<FieldEntity[]>;
 }
 
-export const INJECT_FIELD_REPOSITORY_KEY = 'FieldRepository';
+export const INJECT_FIELD_REPOSITORY_KEY = 'FieldsModuleFieldRepository';
 export const InjectFieldRepository = () => Inject(INJECT_FIELD_REPOSITORY_KEY);

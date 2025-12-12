@@ -8,7 +8,6 @@ import { BaseViewModel } from '@/shared/application/base/viewmodel-base';
 import { FieldOptionViewModel } from './field-option.viewmodel';
 
 interface FieldViewModelProps {
-  id: string;
   key: string;
   label: string;
   type: FieldTypeEnum;
@@ -22,9 +21,6 @@ interface FieldViewModelProps {
 }
 
 export class FieldViewModel extends BaseViewModel {
-  @ApiProperty()
-  id: string;
-
   @ApiProperty()
   key: string;
 
@@ -58,7 +54,6 @@ export class FieldViewModel extends BaseViewModel {
   private constructor(props: FieldViewModelProps) {
     super();
 
-    this.id = props.id;
     this.key = props.key;
     this.label = props.label;
     this.type = props.type;
@@ -73,7 +68,6 @@ export class FieldViewModel extends BaseViewModel {
 
   static create(field: FieldEntity): FieldViewModel {
     return new FieldViewModel({
-      id: field.id,
       key: field.key,
       label: field.label,
       type: field.type.value,
@@ -90,7 +84,6 @@ export class FieldViewModel extends BaseViewModel {
   }
   toJSON() {
     return {
-      id: this.id,
       key: this.key,
       label: this.label,
       type: this.type,

@@ -182,13 +182,7 @@ describe(FieldEntity.name, () => {
             order: 1,
             active: true,
           }),
-        ).toThrow(
-          FieldOptionAlreadyExistsException.create({
-            value: fieldEntity.options[0].value,
-            label: 'Option X',
-            order: 1,
-          }),
-        );
+        ).toThrow(FieldOptionAlreadyExistsException.create(fieldEntity.options[0].value));
       });
 
       it.each(['value', 'label'])(`should throw an error when '%s' are empty`, (fieldKey) => {

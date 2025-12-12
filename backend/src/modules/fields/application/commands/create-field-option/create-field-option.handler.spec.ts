@@ -82,10 +82,7 @@ describe(CreateFieldOptionHandler.name, () => {
     expect(domainEventBusServiceMock.publishAll).toHaveBeenCalledTimes(0);
     expect(createFieldOptionPromise.isFailure).toBeTruthy();
     expect(createFieldOptionPromise.getErrorValue()).toStrictEqual(
-      FieldOptionAlreadyExistsException.create({
-        label: createFieldOptionCommand.option.label,
-        value: createFieldOptionCommand.option.value,
-      }),
+      FieldOptionAlreadyExistsException.create(createFieldOptionCommand.option.value),
     );
   });
 

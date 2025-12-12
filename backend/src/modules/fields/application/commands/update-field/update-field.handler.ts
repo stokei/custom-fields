@@ -55,7 +55,7 @@ export class UpdateFieldHandler extends CommandHandlerBase<
 
       return Result.ok<UpdateFieldViewModel>(
         UpdateFieldViewModel.create({
-          id: field.id,
+          key: field.key,
         }),
       );
     } catch (error) {

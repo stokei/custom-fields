@@ -20,7 +20,7 @@ export const createTextFieldEntityStub = (
       label: overrides?.label || 'Name',
       type: overrides?.type || FieldTypeEnum.TEXT,
       comparator: overrides?.comparator || FieldComparatorEnum.EQUALS,
-      required: overrides?.required || true,
+      required: overrides?.required ?? true,
       minLength: overrides?.minLength || undefined,
       maxLength: overrides?.maxLength || undefined,
       pattern: overrides?.pattern || undefined,

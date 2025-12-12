@@ -7,7 +7,6 @@ import { ActivateFieldCommand } from '@/modules/fields/application/commands/acti
 import { ActivateFieldCommandResponse } from '@/modules/fields/application/commands/activate-field/activate-field.handler';
 import { ActivateFieldViewModel } from '@/modules/fields/application/viewmodels/activate-field/activate-field.viewmodel';
 import { TenantContext } from '@/shared/domain/tenant-context/tenant-context';
-import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { CommandBusService } from '@/shared/infra/command-bus/command-bus.service';
 import { ApiWithTenantAuth } from '@/shared/infra/docs/decorators/auth/api-auth.decorator';
 import { ApiDocCoreExceptionsResponse } from '@/shared/infra/docs/decorators/errors/core-exceptions';
@@ -50,7 +49,7 @@ export class ActivateFieldController extends HttpControllerBase {
     description: 'Success',
     type: ActivateFieldViewModel,
     example: ActivateFieldViewModel.create({
-      id: new UniqueEntityID().toString(),
+      key: 'field-key',
     }),
   })
   @ApiDocCoreExceptionsResponse({

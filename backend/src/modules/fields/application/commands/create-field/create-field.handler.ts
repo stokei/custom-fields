@@ -50,13 +50,7 @@ export class CreateFieldHandler extends CommandHandlerBase<
         key: command.key,
       });
       if (exists) {
-        return Result.fail<CreateFieldViewModel>(
-          FieldAlreadyExistsException.create({
-            organizationId: command.organizationId,
-            context: command.context,
-            key: command.key,
-          }),
-        );
+        return Result.fail<CreateFieldViewModel>(FieldAlreadyExistsException.create(command.key));
       }
 
       await this.fieldRepository.create(field);
@@ -65,7 +59,7 @@ export class CreateFieldHandler extends CommandHandlerBase<
 
       return Result.ok<CreateFieldViewModel>(
         CreateFieldViewModel.create({
-          id: field.id,
+          key: field.key,
         }),
       );
     } catch (error) {

@@ -61,7 +61,7 @@ describe(DeactivateFieldHandler.name, () => {
     expect(fieldEntityStub.domainEvents[0] instanceof FieldDeactivatedEvent).toBeTruthy();
     expect(deactivateFieldPromise.isSuccess).toBeTruthy();
     expect(deactivateFieldPromise.getValue()).toStrictEqual(
-      DeactivateFieldViewModel.create({ id: fieldEntityStub.id }),
+      DeactivateFieldViewModel.create({ key: fieldEntityStub.key }),
     );
   });
 

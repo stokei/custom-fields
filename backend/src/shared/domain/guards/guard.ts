@@ -1,6 +1,9 @@
 export type GuardResponse = string;
 
 import { Result } from '../base/result';
+import { ArgumentArrayLengthNotEqualException } from '../errors/guards/argument-array-length-not-equal-exception';
+import { ArgumentArrayMaxItemsException } from '../errors/guards/argument-array-max-items-exception';
+import { ArgumentArrayMinItemsException } from '../errors/guards/argument-array-min-items-exception';
 import { ArgumentEmptyArrayException } from '../errors/guards/argument-empty-array-exception';
 import { ArgumentEmptyStringException } from '../errors/guards/argument-empty-string-exception';
 import { ArgumentNullOrUndefinedException } from '../errors/guards/argument-null-or-undefined-exception';
@@ -8,6 +11,7 @@ import { NumberNotGreaterOrEqualThanException } from '../errors/guards/number-no
 import { NumberNotGreaterThanException } from '../errors/guards/number-not-greater-than-exception';
 import { NumberNotInRangeException } from '../errors/guards/number-not-in-range-exception';
 import { NumbersNotAllInRangeException } from '../errors/guards/numbers-not-all-in-range-exception';
+import { PatternNotMatchException } from '../errors/guards/pattern-not-match-exception';
 import { TextTooLongException } from '../errors/guards/text-too-long-exception';
 import { TextTooShortException } from '../errors/guards/text-too-short-exception';
 import { ValueNotOneOfException } from '../errors/guards/value-not-one-of-exception';
@@ -98,11 +102,126 @@ export class Guard {
 
   static againstEmptyArray<TValue = string>(
     argumentName: string,
-    value: TValue[],
+    values: TValue[],
   ): Result<GuardResponse> {
-    if (!value?.length) {
+    if (!values?.length) {
       return Result.fail<GuardResponse>(ArgumentEmptyArrayException.create(argumentName));
     }
+    return Result.ok<GuardResponse>();
+  }
+
+  static arrayLengthEqual<TValue = unknown>(
+    argumentName: string,
+    array: TValue[],
+    expected: number,
+  ): Result<GuardResponse> {
+    if (!Array.isArray(array)) {
+      return Result.fail<GuardResponse>(ArgumentNullOrUndefinedException.create(argumentName));
+    }
+
+    const actual = array.length;
+
+    if (actual !== expected) {
+      return Result.fail<GuardResponse>(
+        ArgumentArrayLengthNotEqualException.create(argumentName, {
+          expected,
+          actual,
+        }),
+      );
+    }
+
+    return Result.ok<GuardResponse>();
+  }
+
+  static arrayMinLength<TValue = unknown>(
+    argumentName: string,
+    array: TValue[],
+    min: number,
+  ): Result<GuardResponse> {
+    if (!Array.isArray(array)) {
+      return Result.fail<GuardResponse>(ArgumentNullOrUndefinedException.create(argumentName));
+    }
+
+    const actual = array.length;
+
+    if (actual < min) {
+      return Result.fail<GuardResponse>(
+        ArgumentArrayMinItemsException.create(argumentName, {
+          min,
+          actual,
+        }),
+      );
+    }
+
+    return Result.ok<GuardResponse>();
+  }
+
+  static arrayMaxLength<TValue = unknown>(
+    argumentName: string,
+    array: TValue[],
+    max: number,
+  ): Result<GuardResponse> {
+    if (!Array.isArray(array)) {
+      return Result.fail<GuardResponse>(ArgumentNullOrUndefinedException.create(argumentName));
+    }
+
+    const actual = array.length;
+
+    if (actual > max) {
+      return Result.fail<GuardResponse>(
+        ArgumentArrayMaxItemsException.create(argumentName, {
+          max,
+          actual,
+        }),
+      );
+    }
+
+    return Result.ok<GuardResponse>();
+  }
+
+  static arrayLengthBetween<TValue = unknown>(
+    argumentName: string,
+    array: TValue[],
+    min: number,
+    max: number,
+  ): Result<GuardResponse> {
+    const checks = [
+      this.arrayMinLength(argumentName, array, min),
+      this.arrayMaxLength(argumentName, array, max),
+    ];
+
+    return this.combine(checks);
+  }
+
+  static matchRegex(argumentName: string, value: string, pattern: string): Result<GuardResponse> {
+    const nullCheck = Guard.againstNullOrUndefined(argumentName, value);
+    if (nullCheck.isFailure) return nullCheck;
+
+    const patternCheck = Guard.againstNullOrUndefined(`${argumentName}.pattern`, pattern);
+    if (patternCheck.isFailure) return patternCheck;
+
+    let regex: RegExp;
+    try {
+      regex = new RegExp(pattern);
+    } catch {
+      return Result.fail<GuardResponse>(
+        PatternNotMatchException.create(argumentName, {
+          value,
+          pattern,
+        }),
+      );
+    }
+
+    const matches = regex.test(value);
+    if (!matches) {
+      return Result.fail<GuardResponse>(
+        PatternNotMatchException.create(argumentName, {
+          value,
+          pattern,
+        }),
+      );
+    }
+
     return Result.ok<GuardResponse>();
   }
 

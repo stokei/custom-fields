@@ -64,7 +64,7 @@ describe(ActivateFieldHandler.name, () => {
     expect(fieldEntityStub.domainEvents[0] instanceof FieldActivatedEvent).toBeTruthy();
     expect(activateFieldPromise.isSuccess).toBeTruthy();
     expect(activateFieldPromise.getValue()).toStrictEqual(
-      ActivateFieldViewModel.create({ id: fieldEntityStub.id }),
+      ActivateFieldViewModel.create({ key: fieldEntityStub.key }),
     );
   });
 

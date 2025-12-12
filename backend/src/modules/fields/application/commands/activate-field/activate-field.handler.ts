@@ -55,7 +55,7 @@ export class ActivateFieldHandler extends CommandHandlerBase<
 
       return Result.ok<ActivateFieldViewModel>(
         ActivateFieldViewModel.create({
-          id: field.id,
+          key: field.key,
         }),
       );
     } catch (error) {

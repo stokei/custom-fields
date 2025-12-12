@@ -76,7 +76,7 @@ describe(UpdateFieldHandler.name, () => {
     expect(fieldEntityStub.domainEvents[0] instanceof FieldUpdatedEvent).toBeTruthy();
     expect(updateFieldPromise.isSuccess).toBeTruthy();
     expect(updateFieldPromise.getValue()).toStrictEqual(
-      UpdateFieldViewModel.create({ id: fieldEntityStub.id }),
+      UpdateFieldViewModel.create({ key: fieldEntityStub.key }),
     );
   });
 

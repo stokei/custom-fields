@@ -7,7 +7,6 @@ import { DeactivateFieldCommand } from '@/modules/fields/application/commands/de
 import { DeactivateFieldCommandResponse } from '@/modules/fields/application/commands/deactivate-field/deactivate-field.handler';
 import { DeactivateFieldViewModel } from '@/modules/fields/application/viewmodels/deactivate-field/deactivate-field.viewmodel';
 import { TenantContext } from '@/shared/domain/tenant-context/tenant-context';
-import { UniqueEntityID } from '@/shared/domain/utils/unique-entity-id';
 import { CommandBusService } from '@/shared/infra/command-bus/command-bus.service';
 import { ApiWithTenantAuth } from '@/shared/infra/docs/decorators/auth/api-auth.decorator';
 import { ApiDocCoreExceptionsResponse } from '@/shared/infra/docs/decorators/errors/core-exceptions';
@@ -50,7 +49,7 @@ export class DeactivateFieldController extends HttpControllerBase {
     description: 'Success',
     type: DeactivateFieldViewModel,
     example: DeactivateFieldViewModel.create({
-      id: new UniqueEntityID().toString(),
+      key: 'field-key',
     }),
   })
   @ApiDocCoreExceptionsResponse({

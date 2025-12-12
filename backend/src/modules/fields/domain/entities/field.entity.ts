@@ -42,7 +42,7 @@ interface FieldProps {
   updatedAt: string;
   order: number;
   active: boolean;
-  options: FieldOptionValueObject[];
+  options: Map<string, FieldOptionValueObject>;
 }
 export interface CreateFieldInput
   extends Omit<FieldProps, 'type' | 'comparator' | 'options' | 'createdAt' | 'updatedAt'> {
@@ -141,7 +141,7 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
   }
 
   get options(): FieldOptionValueObject[] {
-    return this.props.options;
+    return [...this.props.options.values()];
   }
 
   static create(input: CreateFieldInput, id?: UniqueEntityID) {
@@ -205,7 +205,7 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
         pattern: input.pattern,
         createdAt: convertToISODateString(input.createdAt || Date.now()),
         updatedAt: convertToISODateString(input.updatedAt || Date.now()),
-        options: [],
+        options: new Map(),
       },
       id,
     );
@@ -258,18 +258,14 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     const newOption = FieldOptionValueObject.create({
       value,
       label,
-      order: order || this.options.length,
+      order: order || this.props.options.size,
       active: active ?? true,
     });
-    const exists = this.props.options.some((o) => o.value === newOption.value);
+    const exists = this.props.options.has(newOption.value);
     if (exists) {
-      throw FieldOptionAlreadyExistsException.create({
-        label,
-        order: order || this.options.length,
-        value,
-      });
+      throw FieldOptionAlreadyExistsException.create(value);
     }
-    this.props.options.push(newOption);
+    this.props.options.set(newOption.value, newOption);
   }
 
   public updateOption(
@@ -280,20 +276,18 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     if (resultGuard.isFailure) {
       throw resultGuard.getErrorValue();
     }
-    const currentOption = this.props.options.find((o) => o.value === value);
+    const currentOption = this.props.options.get(value);
     if (!currentOption) throw FieldOptionNotFoundException.create(value);
 
-    this.props.options = this.props.options.map((option) => {
-      if (option.value === value) {
-        return FieldOptionValueObject.create({
-          value,
-          label: label || option.label,
-          order: order || option.order,
-          active: option.active,
-        });
-      }
-      return option;
-    });
+    this.props.options.set(
+      value,
+      FieldOptionValueObject.create({
+        value,
+        label: label || currentOption.label,
+        order: order || currentOption.order,
+        active: currentOption.active,
+      }),
+    );
   }
 
   public deactivateOption(value: string) {
@@ -301,21 +295,19 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     if (resultGuard.isFailure) {
       throw resultGuard.getErrorValue();
     }
-    const currentOption = this.props.options.find((o) => o.value === value);
+    const currentOption = this.props.options.get(value);
     if (!currentOption) throw FieldOptionNotFoundException.create(value);
     if (!currentOption.active) throw FieldOptionAlreadyDeactivatedException.create(value);
 
-    this.props.options = this.props.options.map((option) => {
-      if (option.value === value) {
-        return FieldOptionValueObject.create({
-          value: option.value,
-          label: option.label,
-          order: option.order,
-          active: false,
-        });
-      }
-      return option;
-    });
+    this.props.options.set(
+      value,
+      FieldOptionValueObject.create({
+        value,
+        label: currentOption.label,
+        order: currentOption.order,
+        active: false,
+      }),
+    );
   }
 
   public activateOption(value: string) {
@@ -323,20 +315,18 @@ export class FieldEntity extends AggregateRoot<FieldProps> {
     if (resultGuard.isFailure) {
       throw resultGuard.getErrorValue();
     }
-    const currentOption = this.props.options.find((o) => o.value === value);
+    const currentOption = this.props.options.get(value);
     if (!currentOption) throw FieldOptionNotFoundException.create(value);
     if (currentOption.active) throw FieldOptionAlreadyActivatedException.create(value);
 
-    this.props.options = this.props.options.map((option) => {
-      if (option.value === value) {
-        return FieldOptionValueObject.create({
-          value: option.value,
-          label: option.label,
-          order: option.order,
-          active: true,
-        });
-      }
-      return option;
-    });
+    this.props.options.set(
+      value,
+      FieldOptionValueObject.create({
+        value,
+        label: currentOption.label,
+        order: currentOption.order,
+        active: true,
+      }),
+    );
   }
 }

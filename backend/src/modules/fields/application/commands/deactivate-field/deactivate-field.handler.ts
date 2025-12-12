@@ -55,7 +55,7 @@ export class DeactivateFieldHandler extends CommandHandlerBase<
 
       return Result.ok<DeactivateFieldViewModel>(
         DeactivateFieldViewModel.create({
-          id: field.id,
+          key: field.key,
         }),
       );
     } catch (error) {
